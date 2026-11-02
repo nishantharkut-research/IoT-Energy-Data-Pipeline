@@ -8,8 +8,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Mapping
 
+from iot_energy_pipeline.contracts import MAX_SCALED_VALUE, MIN_SCALED_VALUE
 from iot_energy_pipeline.schedule import ReplaySchedule, max_event_time_lateness
-from jobs.spark.common import canonical_spark_schema, layer_counts, parse_delivery
+from jobs.spark.common import (
+    canonical_spark_schema,
+    json_shape_category,
+    layer_counts,
+    parse_delivery,
+)
 
 
 def assert_retaining_watermark(schedule: ReplaySchedule, watermark: timedelta) -> None:
@@ -90,14 +96,6 @@ def serialize_event(event: dict[str, Any]) -> str:
     return json.dumps(event, sort_keys=True, separators=(",", ":"))
 
 
-def _json_shape(raw: str) -> str | None:
-    try:
-        value = json.loads(raw)
-    except (json.JSONDecodeError, TypeError):
-        return "invalid_json"
-    return None if isinstance(value, dict) else "schema_mismatch"
-
-
 def _numeric_shape(raw: str) -> str | None:
     try:
         value = json.loads(raw)
@@ -106,7 +104,7 @@ def _numeric_shape(raw: str) -> str | None:
         return None
     if isinstance(scaled, bool) or not isinstance(scaled, int):
         return "invalid_numeric_value"
-    if scaled < -(2**63) or scaled > 2**63 - 1:
+    if scaled < MIN_SCALED_VALUE or scaled > MAX_SCALED_VALUE:
         return "numeric_overflow"
     return None
 
@@ -189,7 +187,7 @@ def run_structured_stream(
     )
 
     parsed = data.withColumn("event", functions.from_json("value", schema))
-    syntax_udf = functions.udf(_json_shape, StringType())
+    syntax_udf = functions.udf(json_shape_category, StringType())
     numeric_udf = functions.udf(_numeric_shape, StringType())
     parsed = parsed.withColumn("syntax_category", syntax_udf("value")).withColumn(
         "numeric_category", numeric_udf("value")

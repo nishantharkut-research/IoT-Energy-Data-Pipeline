@@ -9,7 +9,8 @@ import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
-DRIVE_LETTER_PATH = re.compile(r"[A-Za-z]:(?:\\|/)[^\"'\s]*")
+# A drive designator starts a token, not the final letter of a URL scheme.
+DRIVE_LETTER_PATH = re.compile(r"(?<![\w])[A-Za-z]:(?:\\|/)[^\"'\s]*")
 
 BINARY_SUFFIXES = frozenset(
     {

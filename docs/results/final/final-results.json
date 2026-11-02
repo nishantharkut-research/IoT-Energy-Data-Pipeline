@@ -1,0 +1,4575 @@
+{
+  "schema_version": "coursework-closure-v1",
+  "status": "complete_for_final_scope",
+  "verification_scope": "scope-bound run seals and published Gold/Hadoop outputs, manifests, reconciliation, decision, query, storage, and machine reports; runtime checkpoints and operational logs were not rehashed",
+  "verified_at_utc": "2026-11-02T03:14:22.302960+00:00",
+  "original_plan_sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09",
+  "final_scope_sha256": "6c875acb6e799807d2f83dc2de2843b1586b9ab7ef390fd7b6c47c40c315d666",
+  "excluded_runs": [
+    "scale-5000000-r01",
+    "scale-5000000-r02",
+    "scale-5000000-r03"
+  ],
+  "limitations": [
+    "No performance or correctness claim beyond 1M events from these experiments.",
+    "All 1M workflows were interrupted; complete workflow timings are unavailable.",
+    "Query configurations differ between 100K and 1M; their query timings are not a controlled scaling comparison.",
+    "Asia/Hong_Kong is an experimental timezone assumption. Monetary values are hypothetical scenarios, not HKUST financial results."
+  ],
+  "runs": [
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-clean-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "460c47d775b01054904bec0802a87297daa8e9e0a1f8cca2f59ab9b530204bed",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 144,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "3e9b11450e9fc0c5422f44a7038fae6453c73abdea3368a0018a73aecd42a53c",
+        "run_id": "correctness-clean-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 295904,
+        "storage_overhead_ratio": 2.4569193852387556,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 174.46522483197623,
+        "verification_storage_bytes": 295904,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 39714,
+          "reconciliation_report_bytes": 2281
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 66.72140532798949,
+          "hadoop_oracle_seconds": 61.94936828799837,
+          "layer_audit_seconds": 45.4516768159956,
+          "reconciliation_seconds": 0.34277439999277703
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.5308590570057277
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.263262812004541
+          }
+        },
+        "record_count": 144,
+        "run_id": "correctness-clean-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "42cb2546319c7d904384cff49b4d93e7709ca7741ea5b69fa270d8677db971db",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "ce38d4b9c6418e7b18e9d248c19f5c31d448b04b46906958fa3524222478b8b2",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.937976287998026,
+              "median": 1.3281327889999375,
+              "minimum": 1.299758669003495
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.937976287998026,
+              1.299758669003495,
+              1.3281327889999375
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.2632332780049182,
+              "median": 1.1640329110086896,
+              "minimum": 1.099869514000602
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.2632332780049182,
+              1.1640329110086896,
+              1.099869514000602
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.2148206370038679,
+              "median": 1.1801297659985721,
+              "minimum": 0.9557951460010372
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.2148206370038679,
+              1.1801297659985721,
+              0.9557951460010372
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.8911124370060861,
+              "median": 0.6802766809996683,
+              "minimum": 0.651897663003183
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.8911124370060861,
+              0.651897663003183,
+              0.6802766809996683
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 1.0067758609948214,
+              "median": 0.8239634500059765,
+              "minimum": 0.7680971319932723
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              1.0067758609948214,
+              0.8239634500059765,
+              0.7680971319932723
+            ]
+          }
+        ],
+        "run_id": "correctness-clean-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "duplicate",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-duplicate-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "3eb7e7c229421d1164c319df614889b525d58260f964696ec959f395eea0e475",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 288,
+        "duplicate_valid_deliveries": 144,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 288,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "05e9dc3ea0b18f861effc68ac4063212d4f2723811676337dbebb21368d4ee27",
+        "run_id": "correctness-duplicate-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 336239,
+        "storage_overhead_ratio": 2.7918247714572764,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 177.99021583797003,
+        "verification_storage_bytes": 336239,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 80044,
+          "reconciliation_report_bytes": 2286
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 66.62451979999605,
+          "hadoop_oracle_seconds": 61.22181279100187,
+          "layer_audit_seconds": 49.848975046988926,
+          "reconciliation_seconds": 0.2949081999831833
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.967380657006288
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.4877030580100836
+          }
+        },
+        "record_count": 144,
+        "run_id": "correctness-duplicate-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "d8bb0c679aa4cdb7c4e0b8fad844c1ad9aef421c5d153cb00d606decaf6bebad",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "e89bd9edc799fa7e8944beeb2ca3f125f1feb6d8a1f0c32dd5e483a7ade71ebe",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.722918204002781,
+              "median": 1.2201462759985588,
+              "minimum": 1.203750171000138
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.722918204002781,
+              1.2201462759985588,
+              1.203750171000138
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.3677489230030915,
+              "median": 1.1345441390003543,
+              "minimum": 1.0919970280083362
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.3677489230030915,
+              1.0919970280083362,
+              1.1345441390003543
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.3699072290037293,
+              "median": 1.075519265999901,
+              "minimum": 1.0081463050009916
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.3699072290037293,
+              1.075519265999901,
+              1.0081463050009916
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.8995397529943148,
+              "median": 0.8522014009940904,
+              "minimum": 0.7277960149949649
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.8995397529943148,
+              0.8522014009940904,
+              0.7277960149949649
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.843757454000297,
+              "median": 0.8120461819926277,
+              "minimum": 0.7639997770020273
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.843757454000297,
+              0.8120461819926277,
+              0.7639997770020273
+            ]
+          }
+        ],
+        "run_id": "correctness-duplicate-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "delayed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-delayed-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "6d9d552f6d4b7f1eaef11d63f0711259c273e0d70742848a2cf56c6a939aea42",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 144,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "207525fd78ce7f7ebe89f28cb8446eaa59378d8e669ed9f7ce63965282256eb3",
+        "run_id": "correctness-delayed-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 295906,
+        "storage_overhead_ratio": 2.456935991431205,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 164.5055537949811,
+        "verification_storage_bytes": 295906,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 39714,
+          "reconciliation_report_bytes": 2283
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 62.28497934498591,
+          "hadoop_oracle_seconds": 59.57419313600985,
+          "layer_audit_seconds": 42.340996514001745,
+          "reconciliation_seconds": 0.30538479998358525
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.573865685000783
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.0613298419921193
+          }
+        },
+        "record_count": 144,
+        "run_id": "correctness-delayed-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "55e86fd74f0444f14a2d61eb713fd6e29381d19218469a47b911a49843a5a05e",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "6ead75fb8b10c45151f159eef7653b6dd22afa3f2c151ae9af5f33e99688392c",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.523267258002306,
+              "median": 1.167976500990335,
+              "minimum": 1.1639874060056172
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.523267258002306,
+              1.1639874060056172,
+              1.167976500990335
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.4478699510073056,
+              "median": 1.155122273004963,
+              "minimum": 1.0003232150047552
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.4478699510073056,
+              1.155122273004963,
+              1.0003232150047552
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.3036851820070297,
+              "median": 1.0960131649917457,
+              "minimum": 1.0039949169877218
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.3036851820070297,
+              1.0960131649917457,
+              1.0039949169877218
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.8789121029985836,
+              "median": 0.7359499370068079,
+              "minimum": 0.7240190010052174
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.8789121029985836,
+              0.7240190010052174,
+              0.7359499370068079
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.8788093729963293,
+              "median": 0.8639307970006485,
+              "minimum": 0.7680620859900955
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.8788093729963293,
+              0.8639307970006485,
+              0.7680620859900955
+            ]
+          }
+        ],
+        "run_id": "correctness-delayed-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "malformed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-malformed-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "4fc56636582df92ed9894f3897b861e22dd7f915d933481212b888195aa5726f",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 288,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 144,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "18c3f29b16c628dbc647cdc15af0856ebc646c8050f21c6e52b2255a6760a563",
+        "run_id": "correctness-malformed-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 342719,
+        "storage_overhead_ratio": 2.845628834992569,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 179.65563468397886,
+        "verification_storage_bytes": 342719,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 86524,
+          "reconciliation_report_bytes": 2286
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 66.56476800999371,
+          "hadoop_oracle_seconds": 60.238141234993236,
+          "layer_audit_seconds": 52.55664213899581,
+          "reconciliation_seconds": 0.2960832999960985
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.507308593005291
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.187556072996813
+          }
+        },
+        "record_count": 144,
+        "run_id": "correctness-malformed-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "3502fffa80b01d2992337a647e2c31bc6c948c224e4445aeea50fcd06ac5bcac",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "cb0993a7f4c90708958b697de1d70fa166dbfdd5665043062a767c51a48a5f4e",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.69007697699999,
+              "median": 1.1681301960052224,
+              "minimum": 1.1399152780068107
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.69007697699999,
+              1.1681301960052224,
+              1.1399152780068107
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.247691907992703,
+              "median": 1.067954660000396,
+              "minimum": 1.0042064770095749
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.247691907992703,
+              1.067954660000396,
+              1.0042064770095749
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.255712324011256,
+              "median": 1.0600620639888803,
+              "minimum": 0.9920317369978875
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.255712324011256,
+              0.9920317369978875,
+              1.0600620639888803
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.8793320800032234,
+              "median": 0.8199917739984812,
+              "minimum": 0.7722660980070941
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.8793320800032234,
+              0.7722660980070941,
+              0.8199917739984812
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 1.0638356929994188,
+              "median": 0.8200918090005871,
+              "minimum": 0.7639206080057193
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              1.0638356929994188,
+              0.7639206080057193,
+              0.8200918090005871
+            ]
+          }
+        ],
+        "run_id": "correctness-malformed-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "combined",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-combined-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "c9cd50388b8e4a73fe1155345557cf48418f6cf8b3747e9cc3357936b8ee6279",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 432,
+        "duplicate_valid_deliveries": 144,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 288,
+        "quarantine_deliveries": 144,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "eb09065096208d4e2118ce65baf9a078a523c6021b388c31b5b5a1a7a31062a6",
+        "run_id": "correctness-combined-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 383163,
+        "storage_overhead_ratio": 3.181439258699569,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 199.32387078402098,
+        "verification_storage_bytes": 383163,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 126966,
+          "reconciliation_report_bytes": 2288
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 74.56192949801334,
+          "hadoop_oracle_seconds": 61.54545704100747,
+          "layer_audit_seconds": 62.910951744997874,
+          "reconciliation_seconds": 0.30553250000230037
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.648701265992713
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.4359667309909128
+          }
+        },
+        "record_count": 144,
+        "run_id": "correctness-combined-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "eed9709ed6e0ba393ff64aa93bbe3cb994cd69cf480f2696abff74765b2ba50f",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "1b4cd6a226831e65d281b443666c5cf987991aa0d01aedc754746c219f5c2d57",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.901711565995356,
+              "median": 1.2200246480060741,
+              "minimum": 1.2160290090105264
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.901711565995356,
+              1.2160290090105264,
+              1.2200246480060741
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.6826954079879215,
+              "median": 1.5720145090017468,
+              "minimum": 1.0042209050006932
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.6826954079879215,
+              1.5720145090017468,
+              1.0042209050006932
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.2396838619897608,
+              "median": 0.9600998560053995,
+              "minimum": 0.9439697100024205
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.2396838619897608,
+              0.9439697100024205,
+              0.9600998560053995
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.8628034549910808,
+              "median": 0.7160870609950507,
+              "minimum": 0.6358563739922829
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.8628034549910808,
+              0.6358563739922829,
+              0.7160870609950507
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.9273277140018763,
+              "median": 0.8358994060108671,
+              "minimum": 0.8319916399923386
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.9273277140018763,
+              0.8358994060108671,
+              0.8319916399923386
+            ]
+          }
+        ],
+        "run_id": "correctness-combined-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "recovery",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "mode": "uninterrupted",
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "recovery-uninterrupted-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "65bbe60ff44480d86f06f0070494cb6b40674b944152a1226375a59297f5f90d",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 144,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "0a60235d2b71d89b5750201899ad2ee58c00d54a371f38c58b6113596eccfe44",
+        "run_id": "recovery-uninterrupted-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 295909,
+        "storage_overhead_ratio": 2.4569609007198783,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 163.14678317599464,
+        "verification_storage_bytes": 295909,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 39714,
+          "reconciliation_report_bytes": 2286
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 63.20694608599297,
+          "hadoop_oracle_seconds": 57.267717540991725,
+          "layer_audit_seconds": 42.37788374899537,
+          "reconciliation_seconds": 0.29423580001457594
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.4900403849896975
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.095599931999459
+          }
+        },
+        "record_count": 144,
+        "run_id": "recovery-uninterrupted-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "ea03a3760db413f19c3b81fcd879d2d77fd49e3cd6c802ee9a36e7a07b4efdb3",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "9a12ef60fc8369817c330520789077ddec06a9cb2795ac141268458eeac37405",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.7810057350143325,
+              "median": 1.292081641004188,
+              "minimum": 1.2518167509988416
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.7810057350143325,
+              1.292081641004188,
+              1.2518167509988416
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.5397337520116707,
+              "median": 1.1960600029997295,
+              "minimum": 1.1679818289994728
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.5397337520116707,
+              1.1960600029997295,
+              1.1679818289994728
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.2518122409965144,
+              "median": 1.0399321209988557,
+              "minimum": 0.964182793002692
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.2518122409965144,
+              1.0399321209988557,
+              0.964182793002692
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.9515386730054161,
+              "median": 0.8080389419919811,
+              "minimum": 0.7399933330016211
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.9515386730054161,
+              0.8080389419919811,
+              0.7399933330016211
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 1.0237667859910289,
+              "median": 0.796102640000754,
+              "minimum": 0.7878983299888205
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              1.0237667859910289,
+              0.796102640000754,
+              0.7878983299888205
+            ]
+          }
+        ],
+        "run_id": "recovery-uninterrupted-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "recovery",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "mode": "interrupted_resumed",
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "recovery-interrupted_resumed-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "9e59e7d515dfe6a23e19205a887f749335c7061b8c5eeced955a36f28d905153",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 144,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 144,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "60099969e9e5d4661fa63aa463db077fd58441998a34c09a6bab60aa71128c7c",
+        "run_id": "recovery-interrupted_resumed-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 295914,
+        "storage_overhead_ratio": 2.4570024162010013,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 165.0177091989899,
+        "verification_storage_bytes": 295914,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 39714,
+          "reconciliation_report_bytes": 2291
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 64.12036110900226,
+          "hadoop_oracle_seconds": 58.32950379399699,
+          "layer_audit_seconds": 42.28183909598738,
+          "reconciliation_seconds": 0.2860052000032738
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.596207479989971
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.1994855450029718
+          }
+        },
+        "record_count": 144,
+        "run_id": "recovery-interrupted_resumed-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "03045cd30eed450557252861b855cf665f04bcc45e595a45d99a8f63a3a1c842",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "d9892f4ffca67b60f2380bd2f6e1b03ae77f009358c3a242acb095f724801daa",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.860166799990111,
+              "median": 1.1999839269992663,
+              "minimum": 0.9760215290007181
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.860166799990111,
+              0.9760215290007181,
+              1.1999839269992663
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.4557949150039349,
+              "median": 1.0280104460107395,
+              "minimum": 0.983941151003819
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.4557949150039349,
+              1.0280104460107395,
+              0.983941151003819
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.1976478309952654,
+              "median": 1.183966259995941,
+              "minimum": 1.0304232700000284
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.183966259995941,
+              1.1976478309952654,
+              1.0304232700000284
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.7916525249893311,
+              "median": 0.6679688470030669,
+              "minimum": 0.63570924900705
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.7916525249893311,
+              0.6679688470030669,
+              0.63570924900705
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.8882404250034597,
+              "median": 0.807855920997099,
+              "minimum": 0.7719330819963943
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.8882404250034597,
+              0.807855920997099,
+              0.7719330819963943
+            ]
+          }
+        ],
+        "run_id": "recovery-interrupted_resumed-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "watermark",
+      "fault": "delayed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 1,
+      "partition_count": 1,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "watermark-retaining-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 144,
+      "manifest_sha256": "9c78d4f0b8238d453c0acae33eb2872e26a1bc3a5f15e194ba95f44a6ef3dcfc",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 144,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 144,
+        "terminal_records": 1
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 6,
+        "candidate_interval_count": 138,
+        "candidate_storage_bytes": 120437,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "715d8010b794474898dc5d167149666e651df0b02782e3476e563e6d95f48052",
+        "run_id": "watermark-retaining-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 295970,
+        "storage_overhead_ratio": 2.4574673895895778,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 543.821827245978,
+        "verification_storage_bytes": 295970,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 39778,
+          "reconciliation_report_bytes": 2283
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 201.424466499986,
+          "hadoop_oracle_seconds": 58.60836521800957,
+          "layer_audit_seconds": 283.50189602799946,
+          "reconciliation_seconds": 0.28709949998301454
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.566074722009944
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.2411869100033073
+          }
+        },
+        "record_count": 144,
+        "run_id": "watermark-retaining-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "6223a0c137b94fc481b2a9875d6e67250bc8083a35bc788ceaac54db3944ae39",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "a11a0d2767f32c54010fa9ea3885653fdc4ee16f6ba7e62d05432b4b1f66ee72",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 4.6976465419866145,
+              "median": 1.2839730739942752,
+              "minimum": 1.1680184839933645
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              4.6976465419866145,
+              1.2839730739942752,
+              1.1680184839933645
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.3186143259954406,
+              "median": 1.1800635069957934,
+              "minimum": 1.0717027240025345
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.3186143259954406,
+              1.1800635069957934,
+              1.0717027240025345
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.5558532319992082,
+              "median": 1.0238544500025455,
+              "minimum": 1.020053808009834
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.5558532319992082,
+              1.020053808009834,
+              1.0238544500025455
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 0.9545184259914095,
+              "median": 0.6760546879959293,
+              "minimum": 0.6678732740110718
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.9545184259914095,
+              0.6678732740110718,
+              0.6760546879959293
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.8789419230015483,
+              "median": 0.776069567000377,
+              "minimum": 0.7359620370116318
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.8789419230015483,
+              0.776069567000377,
+              0.7359620370116318
+            ]
+          }
+        ],
+        "run_id": "watermark-retaining-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "watermark",
+      "fault": "delayed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 1,
+      "partition_count": 1,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "watermark-restrictive-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "1 minute",
+      "source_records": 144,
+      "manifest_sha256": "07952ebbd44f4e7b522ae3ea8b095dda629026d52dda61c92fb909117d53e85d",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 144,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 1,
+        "parsed_valid_deliveries": 144,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 143,
+        "terminal_records": 1
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 144,
+        "spark_record_count": 144
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 3,
+        "spark_record_count": 3
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 2,
+        "candidate_flagged_record_count": 3,
+        "candidate_interval_count": 140,
+        "candidate_storage_bytes": 119502,
+        "comparable_meter_period_count": 138,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 2,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "8c5c0c86719e4642d80cc9d208287c3af52605002ea733bdfac1414ca8650afb",
+        "run_id": "watermark-restrictive-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 295966,
+        "storage_overhead_ratio": 2.4766614784689795,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 565.7001613940229,
+        "verification_storage_bytes": 295966,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 828,
+          "gold_source_events_bytes": 126053,
+          "hadoop_aggregates_bytes": 831,
+          "hadoop_source_records_bytes": 126197,
+          "layer_dispositions_bytes": 39773,
+          "reconciliation_report_bytes": 2284
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 212.57886967100785,
+          "hadoop_oracle_seconds": 63.35546847700607,
+          "layer_audit_seconds": 289.4292916459963,
+          "reconciliation_seconds": 0.3365316000126768
+        },
+        "verified_flagged_record_count": 6,
+        "verified_interval_count": 138
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 126053,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34941,
+            "file_count": 8,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.27719292678476515,
+            "write_seconds": 2.4894408529944485
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 17714,
+            "file_count": 4,
+            "relative_to_ndjson": 0.14052819052303397,
+            "write_seconds": 2.135397901001852
+          }
+        },
+        "record_count": 144,
+        "run_id": "watermark-restrictive-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "e4205cacc8daf8f71088ec9295c7e5ed8cd2a6391f4f26077c11f1f3ee245747",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "29bd26c54e6ae75e9e69764de785a1198a41406eb0da6e94f3690e1f33769742",
+        "parameters": {
+          "building_id": "https://example.test/building-a",
+          "meter_id": "meter-a",
+          "window_end_utc": "2024-01-01T03:45:00.000001Z",
+          "window_start_utc": "2023-12-31T16:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "fc28b7818ec8ac9c017a3ae09ea1bb827aec67a32abcf41438ab9d9924d7035f",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 5.311993179988349,
+              "median": 1.359867828010465,
+              "minimum": 1.2879017169907456
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              5.311993179988349,
+              1.2879017169907456,
+              1.359867828010465
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "f4bede7c4abe636a594c236cc037672c818ec9031debd8488c9fd13f49fe89f8",
+            "row_count": 49,
+            "seconds": {
+              "maximum": 1.3747595790046034,
+              "median": 1.1040162840072298,
+              "minimum": 1.0359214040072402
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              1.3747595790046034,
+              1.1040162840072298,
+              1.0359214040072402
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "2c5c54335f2e193a08619ccf6723ba43e116a7628cfeefc67fdf35274f2a3d03",
+            "row_count": 144,
+            "seconds": {
+              "maximum": 1.2993726209970191,
+              "median": 1.0603101850138046,
+              "minimum": 1.0041243099985877
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              1.2993726209970191,
+              1.0041243099985877,
+              1.0603101850138046
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "83c953f186a0f8958a434a1023e414ff366fbdd42a52008976772e80109fbcd4",
+            "row_count": 48,
+            "seconds": {
+              "maximum": 1.4024330340034794,
+              "median": 0.7999678229971323,
+              "minimum": 0.6480867780046538
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              1.4024330340034794,
+              0.7999678229971323,
+              0.6480867780046538
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.9634634949907195,
+              "median": 0.8238016960094683,
+              "minimum": 0.7720524030009983
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.9634634949907195,
+              0.8238016960094683,
+              0.7720524030009983
+            ]
+          }
+        ],
+        "run_id": "watermark-restrictive-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": 100000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "scale-100000-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 100000,
+      "manifest_sha256": "f68eca6f9a68ac714167cc0e0d37a9ccbcbc24d7e6056d6cdd137671546e1725",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 100000,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 100000,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 100000,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 100000,
+        "spark_record_count": 100000
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 1320,
+        "spark_record_count": 1320
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 1457,
+        "candidate_interval_count": 98543,
+        "candidate_storage_bytes": 112040288,
+        "comparable_meter_period_count": 98543,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "c6d76737c946c25a9c34264e9f4aeeb4741782bec5c7ba15bfee5ebd4f4706fc",
+        "run_id": "scale-100000-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 252781170,
+        "storage_overhead_ratio": 2.256163158024014,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 817.6652294200012,
+        "verification_storage_bytes": 252781170,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 365101,
+          "gold_source_events_bytes": 112040288,
+          "hadoop_aggregates_bytes": 366421,
+          "hadoop_source_records_bytes": 112140288,
+          "layer_dispositions_bytes": 27866670,
+          "reconciliation_report_bytes": 2402
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 524.5981324630011,
+          "hadoop_oracle_seconds": 97.41600391199972,
+          "layer_audit_seconds": 178.84528904500075,
+          "reconciliation_seconds": 16.805803999999625
+        },
+        "verified_flagged_record_count": 1457,
+        "verified_interval_count": 98543
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 112040288,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "cf1242020733d5ccda1c9fd3e95af91429ba08b928e09a451756c14d893c411a",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34038766,
+            "file_count": 5264,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.3038082693968084,
+            "write_seconds": 618.1443615469998
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 6891280,
+            "file_count": 6,
+            "relative_to_ndjson": 0.06150716070990464,
+            "write_seconds": 4.477023511999505
+          }
+        },
+        "record_count": 100000,
+        "run_id": "scale-100000-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "d42c0566bdb438a1b0a1a1d5331cc86816865ec9fcb2f969cc14317e573ef47a",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "87fbe0b0e1a7a9a3d4612fdaeaaa07220c5daf8888ef4909cee8c364cd854d24",
+        "parameters": {
+          "building_id": "urn:www.HKUST_Electric_Meter.com#Academic_Building",
+          "meter_id": "D0001",
+          "window_end_utc": "2024-05-27T15:30:00.000001Z",
+          "window_start_utc": "2021-03-02T10:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "270e424e8186080840f4e761133535574be179afa797e255d24633c647adc9af",
+            "row_count": 123,
+            "seconds": {
+              "maximum": 10.342640065999149,
+              "median": 7.572039775001031,
+              "minimum": 7.451955153999734
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              10.342640065999149,
+              7.451955153999734,
+              7.572039775001031
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "12a7d4420c642b6b816da73c69b197650accebea4ee84fc6bf2d6db6d9362c0f",
+            "row_count": 36302,
+            "seconds": {
+              "maximum": 4.211119868999958,
+              "median": 3.748143157999948,
+              "minimum": 3.615973527999813
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              4.211119868999958,
+              3.615973527999813,
+              3.748143157999948
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "465ac30d96a03b69673489d4d079cb0f6914f0ba165dcf9387c319f64be55742",
+            "row_count": 100000,
+            "seconds": {
+              "maximum": 6.638709861001189,
+              "median": 6.0482947359996615,
+              "minimum": 5.9998870360013825
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              6.638709861001189,
+              6.0482947359996615,
+              5.9998870360013825
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "row_count": 0,
+            "seconds": {
+              "maximum": 0.40460723400065035,
+              "median": 0.34996142300042266,
+              "minimum": 0.2741176390009059
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.40460723400065035,
+              0.34996142300042266,
+              0.2741176390009059
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.8013040900004853,
+              "median": 0.7639882090006722,
+              "minimum": 0.6960280149996834
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.8013040900004853,
+              0.7639882090006722,
+              0.6960280149996834
+            ]
+          }
+        ],
+        "run_id": "scale-100000-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": 100000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 2,
+      "run_id": "scale-100000-r02",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 100000,
+      "manifest_sha256": "769710d1a902cb59c7a5058069ed0d420fc1bb2e010b516e86657b1c906b8dc3",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 100000,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 100000,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 100000,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 100000,
+        "spark_record_count": 100000
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 1320,
+        "spark_record_count": 1320
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 1457,
+        "candidate_interval_count": 98543,
+        "candidate_storage_bytes": 112040288,
+        "comparable_meter_period_count": 98543,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "bff6e6bfb063469095f0aaefa6153ee2e7ae5f83c1124b3251347ea07180c4b0",
+        "run_id": "scale-100000-r02",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 252781170,
+        "storage_overhead_ratio": 2.256163158024014,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 846.2367977759968,
+        "verification_storage_bytes": 252781170,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 365101,
+          "gold_source_events_bytes": 112040288,
+          "hadoop_aggregates_bytes": 366421,
+          "hadoop_source_records_bytes": 112140288,
+          "layer_dispositions_bytes": 27866670,
+          "reconciliation_report_bytes": 2402
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 541.7842563529994,
+          "hadoop_oracle_seconds": 96.471416589,
+          "layer_audit_seconds": 186.7282555339989,
+          "reconciliation_seconds": 21.252869299998565
+        },
+        "verified_flagged_record_count": 1457,
+        "verified_interval_count": 98543
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 112040288,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "cf1242020733d5ccda1c9fd3e95af91429ba08b928e09a451756c14d893c411a",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34038766,
+            "file_count": 5264,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.3038082693968084,
+            "write_seconds": 660.3374823009981
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 6891280,
+            "file_count": 6,
+            "relative_to_ndjson": 0.06150716070990464,
+            "write_seconds": 5.672769749002327
+          }
+        },
+        "record_count": 100000,
+        "run_id": "scale-100000-r02",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "10fe981b8b35ac550acf6f94acc947e16e4d69a156f5331446cb45ff6ccce4b1",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "ca4084f41b5b6467d326ec28c4e4b8721687c369084fc702839c2eb598c94ddb",
+        "parameters": {
+          "building_id": "urn:www.HKUST_Electric_Meter.com#Academic_Building",
+          "meter_id": "D0001",
+          "window_end_utc": "2024-05-27T15:30:00.000001Z",
+          "window_start_utc": "2021-03-02T10:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "270e424e8186080840f4e761133535574be179afa797e255d24633c647adc9af",
+            "row_count": 123,
+            "seconds": {
+              "maximum": 11.222082935997605,
+              "median": 7.751960634999705,
+              "minimum": 7.620011354996677
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              11.222082935997605,
+              7.751960634999705,
+              7.620011354996677
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "12a7d4420c642b6b816da73c69b197650accebea4ee84fc6bf2d6db6d9362c0f",
+            "row_count": 36302,
+            "seconds": {
+              "maximum": 4.863495503999729,
+              "median": 4.088350180998532,
+              "minimum": 3.927988687999459
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              4.863495503999729,
+              4.088350180998532,
+              3.927988687999459
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "465ac30d96a03b69673489d4d079cb0f6914f0ba165dcf9387c319f64be55742",
+            "row_count": 100000,
+            "seconds": {
+              "maximum": 7.147157575000165,
+              "median": 6.604116004000389,
+              "minimum": 6.291855085000861
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              7.147157575000165,
+              6.291855085000861,
+              6.604116004000389
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "row_count": 0,
+            "seconds": {
+              "maximum": 0.5507303710000997,
+              "median": 0.2768947730000946,
+              "minimum": 0.23949205800090567
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.5507303710000997,
+              0.2768947730000946,
+              0.23949205800090567
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.9042089650029084,
+              "median": 0.7398954500022228,
+              "minimum": 0.6919946659982088
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.9042089650029084,
+              0.7398954500022228,
+              0.6919946659982088
+            ]
+          }
+        ],
+        "run_id": "scale-100000-r02",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": 100000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 3,
+      "run_id": "scale-100000-r03",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 100000,
+      "manifest_sha256": "df6d6733592200920f6271d228c0c0a162299ebbe9c28dcd23fc6697d0197dc1",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 100000,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 100000,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 100000,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 100000,
+        "spark_record_count": 100000
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 1320,
+        "spark_record_count": 1320
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 1457,
+        "candidate_interval_count": 98543,
+        "candidate_storage_bytes": 112040288,
+        "comparable_meter_period_count": 98543,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "44fd3689fd2c85e65000db347b716fe35fbd7333d6e86c2cbcd88bf4a722db8b",
+        "run_id": "scale-100000-r03",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 252781170,
+        "storage_overhead_ratio": 2.256163158024014,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 832.7878147340052,
+        "verification_storage_bytes": 252781170,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 365101,
+          "gold_source_events_bytes": 112040288,
+          "hadoop_aggregates_bytes": 366421,
+          "hadoop_source_records_bytes": 112140288,
+          "layer_dispositions_bytes": 27866670,
+          "reconciliation_report_bytes": 2402
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 533.653571715,
+          "hadoop_oracle_seconds": 95.19938765700135,
+          "layer_audit_seconds": 187.10682456200084,
+          "reconciliation_seconds": 16.828030800003035
+        },
+        "verified_flagged_record_count": 1457,
+        "verified_interval_count": 98543
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 112040288,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "cf1242020733d5ccda1c9fd3e95af91429ba08b928e09a451756c14d893c411a",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 34038766,
+            "file_count": 5264,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.3038082693968084,
+            "write_seconds": 637.3575601289995
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 6891280,
+            "file_count": 6,
+            "relative_to_ndjson": 0.06150716070990464,
+            "write_seconds": 4.804416109000158
+          }
+        },
+        "record_count": 100000,
+        "run_id": "scale-100000-r03",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "9ab7686758f5937946701a309e2111e717c17cab2eaea841dcfe362e9988a5eb",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "6130f0bf8232b0b564130c9589ad9179ab8dee236d3095ee291bf67c0f7d7e0d",
+        "parameters": {
+          "building_id": "urn:www.HKUST_Electric_Meter.com#Academic_Building",
+          "meter_id": "D0001",
+          "window_end_utc": "2024-05-27T15:30:00.000001Z",
+          "window_start_utc": "2021-03-02T10:00:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "270e424e8186080840f4e761133535574be179afa797e255d24633c647adc9af",
+            "row_count": 123,
+            "seconds": {
+              "maximum": 10.784396143000777,
+              "median": 7.687988379999297,
+              "minimum": 7.62804131500161
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              10.784396143000777,
+              7.687988379999297,
+              7.62804131500161
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "12a7d4420c642b6b816da73c69b197650accebea4ee84fc6bf2d6db6d9362c0f",
+            "row_count": 36302,
+            "seconds": {
+              "maximum": 4.699740731000929,
+              "median": 3.9998101189994486,
+              "minimum": 3.567909442997916
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              4.699740731000929,
+              3.9998101189994486,
+              3.567909442997916
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "465ac30d96a03b69673489d4d079cb0f6914f0ba165dcf9387c319f64be55742",
+            "row_count": 100000,
+            "seconds": {
+              "maximum": 6.895657578999817,
+              "median": 6.380008321997593,
+              "minimum": 6.068146682999213
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              6.895657578999817,
+              6.068146682999213,
+              6.380008321997593
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "row_count": 0,
+            "seconds": {
+              "maximum": 0.4325902979981038,
+              "median": 0.2939397789996292,
+              "minimum": 0.2576286239964247
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              0.4325902979981038,
+              0.2939397789996292,
+              0.2576286239964247
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.8151900880002358,
+              "median": 0.8120585260003281,
+              "minimum": 0.6720173859976057
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.8151900880002358,
+              0.8120585260003281,
+              0.6720173859976057
+            ]
+          }
+        ],
+        "run_id": "scale-100000-r03",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": null
+    },
+    {
+      "event_count": 1000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "scale-1000000-r01",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 1000000,
+      "manifest_sha256": "7300b14bd73b42eeb745140e94f0a96988595781ae21f3d46829dde752349ba5",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 1000000,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 1000000,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 1000000,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 1000000,
+        "spark_record_count": 1000000
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 1326,
+        "spark_record_count": 1326
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 2607,
+        "candidate_interval_count": 997393,
+        "candidate_storage_bytes": 1120648884,
+        "comparable_meter_period_count": 997393,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "5723a28f3d0f714cc469f64b4e60e2f3553226f0246fb61ffadbe6c07ae4c0b9",
+        "run_id": "scale-1000000-r01",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 2522706815,
+        "storage_overhead_ratio": 2.2511125929073783,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 9805.082529838008,
+        "verification_storage_bytes": 2522706815,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 369322,
+          "gold_source_events_bytes": 1120648884,
+          "hadoop_aggregates_bytes": 370648,
+          "hadoop_source_records_bytes": 1121648884,
+          "layer_dispositions_bytes": 279666670,
+          "reconciliation_report_bytes": 2407
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 6919.3120171129995,
+          "hadoop_oracle_seconds": 393.4117875039956,
+          "layer_audit_seconds": 2048.6786665210093,
+          "reconciliation_seconds": 443.6800587000034
+        },
+        "verified_flagged_record_count": 2607,
+        "verified_interval_count": 997393
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 1120648884,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "f19f3055838351c08a396601d0333cf767cbefa268e0c324a7baea31dc9086e6",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 185370844,
+            "file_count": 23766,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.1654138478578095,
+            "write_seconds": 4734.639349243007
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 67320585,
+            "file_count": 20,
+            "relative_to_ndjson": 0.06007286132272631,
+            "write_seconds": 24.7640201519971
+          }
+        },
+        "record_count": 1000000,
+        "run_id": "scale-1000000-r01",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "d3ec9cbf329d9a044f3edf2da617042d868bb2efd9ca8a52b0d23e2446350803",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "b70ce02b892fa1d9b923ee1b18ab5fb2209a7e549b3e6d1bd90ff8bb1d509ff2",
+        "parameters": {
+          "building_id": "urn:www.HKUST_Electric_Meter.com#Academic_Building",
+          "meter_id": "D0001",
+          "window_end_utc": "2024-05-27T15:45:00.000001Z",
+          "window_start_utc": "2021-03-02T08:30:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "7ed6cdbccf3101fabe6f04b90d686eba7cde0d1ede8eb630406e9f08b7c6ec98",
+            "row_count": 1207,
+            "seconds": {
+              "maximum": 92.70878766500391,
+              "median": 88.42375399600132,
+              "minimum": 87.3441655679926
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              92.70878766500391,
+              88.42375399600132,
+              87.3441655679926
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "76e6fbf49c186efbb7e6933bb8fe43a9bed73a1b19616db79b57054e909574e7",
+            "row_count": 363998,
+            "seconds": {
+              "maximum": 51.62833248199604,
+              "median": 51.31485418799275,
+              "minimum": 50.47992332500871
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              51.31485418799275,
+              50.47992332500871,
+              51.62833248199604
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "d053778b95e952131f68751ed30f42b72638077abfff0e096f1cd5ff3e7bb414",
+            "row_count": 1000000,
+            "seconds": {
+              "maximum": 82.25027921400033,
+              "median": 81.32774333799898,
+              "minimum": 80.23228853500041
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              82.25027921400033,
+              80.23228853500041,
+              81.32774333799898
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "row_count": 0,
+            "seconds": {
+              "maximum": 5.928615966986399,
+              "median": 5.793499362000148,
+              "minimum": 4.653295319003519
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              5.928615966986399,
+              5.793499362000148,
+              4.653295319003519
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.9029768900072668,
+              "median": 0.8405472760059638,
+              "minimum": 0.7153752559970599
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.9029768900072668,
+              0.8405472760059638,
+              0.7153752559970599
+            ]
+          }
+        ],
+        "run_id": "scale-1000000-r01",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": {
+        "bindings": {
+          "experiment_plan_sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09",
+          "machine_metadata_sha256": "9fe9169ab75020d1b1efde2f2b62a1d10141d57edd12d2c595ac9a8a9f56c41e",
+          "snapshot_manifest_sha256": "9714c8b3fd395692a2231851ceae8e691a0c16b846c8deb4028eaf31a930edba"
+        },
+        "full_workflow_seconds": null,
+        "original_failure": "Java heap space during exact Parquet/NDJSON comparison",
+        "query_configuration": {
+          "spark.sql.adaptive.advisoryPartitionSizeInBytes": "16777216",
+          "spark.sql.adaptive.coalescePartitions.parallelismFirst": "false",
+          "spark.sql.files.maxPartitionBytes": "16777216",
+          "spark.sql.shuffle.partitions": "32"
+        },
+        "reason": "original in-memory preparation start lost on failure",
+        "recovery_elapsed_before_seal_seconds": 1915.4714253999991,
+        "recovery_query_seconds": 1902.5713292999862,
+        "resumed_stage": "query_benchmark",
+        "run_id": "scale-1000000-r01",
+        "schema_version": "stage-recovery-v1"
+      }
+    },
+    {
+      "event_count": 1000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 2,
+      "run_id": "scale-1000000-r02",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 1000000,
+      "manifest_sha256": "b417c76826ea327dbc0090a9917b4bc4a11d30b42a9435bb58925508f6fee865",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 1000000,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 1000000,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 1000000,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 1000000,
+        "spark_record_count": 1000000
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 1326,
+        "spark_record_count": 1326
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 2607,
+        "candidate_interval_count": 997393,
+        "candidate_storage_bytes": 1120648884,
+        "comparable_meter_period_count": 997393,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "f251df8c6062460042076b9eff26b795ecfd8b53c7b3570d43f45fd56a050556",
+        "run_id": "scale-1000000-r02",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 2522706816,
+        "storage_overhead_ratio": 2.2511125937997187,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 9958.049091524997,
+        "verification_storage_bytes": 2522706816,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 369322,
+          "gold_source_events_bytes": 1120648884,
+          "hadoop_aggregates_bytes": 370648,
+          "hadoop_source_records_bytes": 1121648884,
+          "layer_dispositions_bytes": 279666670,
+          "reconciliation_report_bytes": 2408
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 6811.627319095998,
+          "hadoop_oracle_seconds": 586.4043510389965,
+          "layer_audit_seconds": 2242.39743569,
+          "reconciliation_seconds": 317.61998570000287
+        },
+        "verified_flagged_record_count": 2607,
+        "verified_interval_count": 997393
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 1120648884,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "f19f3055838351c08a396601d0333cf767cbefa268e0c324a7baea31dc9086e6",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 185395636,
+            "file_count": 23766,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.16543597075495772,
+            "write_seconds": 4494.386989815001
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 67320585,
+            "file_count": 20,
+            "relative_to_ndjson": 0.06007286132272631,
+            "write_seconds": 21.260267990997818
+          }
+        },
+        "record_count": 1000000,
+        "run_id": "scale-1000000-r02",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "8bb24bae99c8aafd8cfc76f9488772d62ad675163f60e4c890b4946b96a34ebb",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "be3e51eb7b96fa8026d1407c43c63c8924cc6a97330a4f91a3bdbd367ad89d0a",
+        "parameters": {
+          "building_id": "urn:www.HKUST_Electric_Meter.com#Academic_Building",
+          "meter_id": "D0001",
+          "window_end_utc": "2024-05-27T15:45:00.000001Z",
+          "window_start_utc": "2021-03-02T08:30:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "7ed6cdbccf3101fabe6f04b90d686eba7cde0d1ede8eb630406e9f08b7c6ec98",
+            "row_count": 1207,
+            "seconds": {
+              "maximum": 86.41039645599813,
+              "median": 82.47583158199996,
+              "minimum": 82.2319560649994
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              86.41039645599813,
+              82.47583158199996,
+              82.2319560649994
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "76e6fbf49c186efbb7e6933bb8fe43a9bed73a1b19616db79b57054e909574e7",
+            "row_count": 363998,
+            "seconds": {
+              "maximum": 51.815548457998375,
+              "median": 50.17974639900058,
+              "minimum": 50.16388058500161
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              51.815548457998375,
+              50.16388058500161,
+              50.17974639900058
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "d053778b95e952131f68751ed30f42b72638077abfff0e096f1cd5ff3e7bb414",
+            "row_count": 1000000,
+            "seconds": {
+              "maximum": 87.46354829600023,
+              "median": 85.89997521699843,
+              "minimum": 85.16374991300108
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              87.46354829600023,
+              85.16374991300108,
+              85.89997521699843
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "row_count": 0,
+            "seconds": {
+              "maximum": 6.065044088005379,
+              "median": 5.549570786002732,
+              "minimum": 5.28466405600193
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              5.549570786002732,
+              6.065044088005379,
+              5.28466405600193
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.9310709460041835,
+              "median": 0.843900425999891,
+              "minimum": 0.7761249399991357
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.9310709460041835,
+              0.843900425999891,
+              0.7761249399991357
+            ]
+          }
+        ],
+        "run_id": "scale-1000000-r02",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": {
+        "bindings": {
+          "experiment_plan_sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09",
+          "machine_metadata_sha256": "9fe9169ab75020d1b1efde2f2b62a1d10141d57edd12d2c595ac9a8a9f56c41e",
+          "snapshot_manifest_sha256": "9714c8b3fd395692a2231851ceae8e691a0c16b846c8deb4028eaf31a930edba"
+        },
+        "full_workflow_seconds": null,
+        "query_configuration": {
+          "spark.sql.adaptive.advisoryPartitionSizeInBytes": "16777216",
+          "spark.sql.adaptive.coalescePartitions.parallelismFirst": "false",
+          "spark.sql.files.maxPartitionBytes": "16777216",
+          "spark.sql.shuffle.partitions": "32"
+        },
+        "reason": "user shutdown; uninterrupted workflow duration unavailable",
+        "resumed_processing_before_seal_seconds": 32284.5291794,
+        "resumed_stage": "spark_stream",
+        "run_id": "scale-1000000-r02",
+        "schema_version": "stage-recovery-v1"
+      }
+    },
+    {
+      "event_count": 1000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 3,
+      "run_id": "scale-1000000-r03",
+      "seed": 20260825,
+      "status": "finalized",
+      "watermark": "24 hours",
+      "source_records": 1000000,
+      "manifest_sha256": "a5d87464e34ce3b22106ed760a558a1a91d7a3af4a52f156dae1720968605808",
+      "freshly_verified_artifacts": [
+        "distributed-plan.json",
+        "gold/gold-aggregates.ndjson",
+        "gold/gold-manifest.json",
+        "gold/gold-source-events.ndjson",
+        "machine-metadata.json",
+        "oracle/hadoop-aggregates.ndjson",
+        "oracle/hadoop-oracle-manifest.json",
+        "oracle/hadoop-source-records.ndjson",
+        "reports/decision-impact.json",
+        "reports/query-benchmark.json",
+        "reports/reconciliation.json",
+        "storage/storage-benchmark.json"
+      ],
+      "layer_counts": {
+        "bronze_deliveries": 1000000,
+        "duplicate_valid_deliveries": 0,
+        "late_valid_deliveries": 0,
+        "parsed_valid_deliveries": 1000000,
+        "quarantine_deliveries": 0,
+        "silver_deliveries": 1000000,
+        "terminal_records": 3
+      },
+      "source_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "brick_building_ids",
+          "brick_entity_id",
+          "brick_metered_entities",
+          "brick_unit_uri",
+          "brick_usage_type",
+          "brick_zone_ids",
+          "dataset_version",
+          "decimal_scale",
+          "event_time_utc",
+          "measurement_kind",
+          "meter_id",
+          "original_numeric_text",
+          "original_timestamp_text",
+          "quality_flags",
+          "scaled_value",
+          "schema_version",
+          "source_event_id",
+          "source_relative_path",
+          "source_row_number",
+          "source_timezone",
+          "source_variant",
+          "unit",
+          "workbook_sheet"
+        ],
+        "hadoop_record_count": 1000000,
+        "spark_record_count": 1000000
+      },
+      "aggregate_comparison": {
+        "errors": [],
+        "exact_fields": [
+          "count",
+          "decimal_scale",
+          "group_key",
+          "max_event_time",
+          "measurement_kind",
+          "meter_id",
+          "min_event_time",
+          "quality_flag_count",
+          "sum_scaled",
+          "unit"
+        ],
+        "hadoop_record_count": 1326,
+        "spark_record_count": 1326
+      },
+      "decision": {
+        "absolute_kwh_discrepancy": "0",
+        "affected_meter_period_count": 0,
+        "candidate_flagged_record_count": 2607,
+        "candidate_interval_count": 997393,
+        "candidate_storage_bytes": 1120648884,
+        "comparable_meter_period_count": 997393,
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+          "Discrepancy and gross exposure sum comparable intervals only; zero subtotal does not establish zero total energy error.",
+          "Unavailable and unequal supports are excluded without allocating energy across intervals. Flagged records retain derivation exclusions, including periods unavailable in both series and initial baselines.",
+          "Reconciliation verifies source records, not measurement accuracy or complete temporal coverage; residual exposure is unknown."
+        ],
+        "incomparable_meter_period_count": 0,
+        "numeric_discrepancy_meter_period_count": 0,
+        "reconciliation_sha256": "51f211168d8c68fb3f0bad6d512519b7c4a095424997dd34f0cf531d6cc09e59",
+        "run_id": "scale-1000000-r03",
+        "schema_version": "decision-impact-v1",
+        "status": "verified",
+        "storage_overhead_bytes": 2522706816,
+        "storage_overhead_ratio": 2.2511125937997187,
+        "tariff_scenarios": [
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "0.5",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "1.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          },
+          {
+            "gross_exposure": "0",
+            "label": "hypothetical normalized tariff scenario",
+            "monetary_interpretation": "scenario only; not an HKUST financial result",
+            "normalized_rate": "2.0",
+            "rate_unit": "scenario currency units per kWh",
+            "residual_exposure_after_verification": null
+          }
+        ],
+        "verification_seconds": 9917.921640008994,
+        "verification_storage_bytes": 2522706816,
+        "verification_storage_scope": {
+          "excludes": [
+            "Silver candidate events (reported as candidate storage)",
+            "Bronze/Silver/Quarantine runtime storage outside finalized artifacts"
+          ],
+          "gold_aggregates_bytes": 369322,
+          "gold_source_events_bytes": 1120648884,
+          "hadoop_aggregates_bytes": 370648,
+          "hadoop_source_records_bytes": 1121648884,
+          "layer_dispositions_bytes": 279666670,
+          "reconciliation_report_bytes": 2408
+        },
+        "verification_time_components": {
+          "gold_finalization_seconds": 7158.892957251999,
+          "hadoop_oracle_seconds": 364.585710260988,
+          "layer_audit_seconds": 2089.374297196002,
+          "reconciliation_seconds": 305.06867530000454
+        },
+        "verified_flagged_record_count": 2607,
+        "verified_interval_count": 997393
+      },
+      "storage": {
+        "formats": {
+          "ndjson": {
+            "byte_size": 1120648884,
+            "file_count": 1,
+            "relative_to_ndjson": 1.0,
+            "sha256": "f19f3055838351c08a396601d0333cf767cbefa268e0c324a7baea31dc9086e6",
+            "write_seconds": null
+          },
+          "parquet_zstd_partitioned": {
+            "byte_size": 185379933,
+            "file_count": 23766,
+            "partition_columns": [
+              "source_variant",
+              "meter_id"
+            ],
+            "relative_to_ndjson": 0.16542195833748763,
+            "write_seconds": 4666.30204427299
+          },
+          "parquet_zstd_unpartitioned": {
+            "byte_size": 67320585,
+            "file_count": 20,
+            "relative_to_ndjson": 0.06007286132272631,
+            "write_seconds": 22.43862808299309
+          }
+        },
+        "record_count": 1000000,
+        "run_id": "scale-1000000-r03",
+        "schema_version": "storage-benchmark-v1",
+        "status": "complete"
+      },
+      "queries": {
+        "decision_impact_sha256": "1f0c78c0c5ce0b52e3db9d81145be1e4156287ace2b806c064bb6c6b40b8f9f1",
+        "execution_policy": "cached_input_full_ordered_json_result_sha256",
+        "gold_manifest_sha256": "d24e2656a83a460d33bb487473486b365610f01f54347bf7bc625866bb20d675",
+        "parameters": {
+          "building_id": "urn:www.HKUST_Electric_Meter.com#Academic_Building",
+          "meter_id": "D0001",
+          "window_end_utc": "2024-05-27T15:45:00.000001Z",
+          "window_start_utc": "2021-03-02T08:30:00.000000Z"
+        },
+        "results": [
+          {
+            "query": "meter",
+            "repetitions": 3,
+            "result_sha256": "7ed6cdbccf3101fabe6f04b90d686eba7cde0d1ede8eb630406e9f08b7c6ec98",
+            "row_count": 1207,
+            "seconds": {
+              "maximum": 91.28194678100408,
+              "median": 88.72379580100824,
+              "minimum": 88.62412451399723
+            },
+            "sql_sha256": "8ae2a4fbd5905e7bb158eaa202db3fef64ba77e30fff51e8d16c6bd5b063eb39",
+            "timings_seconds": [
+              91.28194678100408,
+              88.72379580100824,
+              88.62412451399723
+            ]
+          },
+          {
+            "query": "building",
+            "repetitions": 3,
+            "result_sha256": "76e6fbf49c186efbb7e6933bb8fe43a9bed73a1b19616db79b57054e909574e7",
+            "row_count": 363998,
+            "seconds": {
+              "maximum": 55.379992934991606,
+              "median": 54.84387178100587,
+              "minimum": 54.678659626995795
+            },
+            "sql_sha256": "83b05236e5aad3bf3e089d94d9480da82088656e8b8e816a318de3d3aafeea21",
+            "timings_seconds": [
+              54.678659626995795,
+              54.84387178100587,
+              55.379992934991606
+            ]
+          },
+          {
+            "query": "time_window",
+            "repetitions": 3,
+            "result_sha256": "d053778b95e952131f68751ed30f42b72638077abfff0e096f1cd5ff3e7bb414",
+            "row_count": 1000000,
+            "seconds": {
+              "maximum": 90.75871626401204,
+              "median": 90.07572221499868,
+              "minimum": 89.66412724800466
+            },
+            "sql_sha256": "e71d80b524720f44128e66f3cb280b54899a1cba5debdf384e4c362facc77af2",
+            "timings_seconds": [
+              90.75871626401204,
+              89.66412724800466,
+              90.07572221499868
+            ]
+          },
+          {
+            "query": "quality",
+            "repetitions": 3,
+            "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "row_count": 0,
+            "seconds": {
+              "maximum": 5.892952383001102,
+              "median": 5.858281155000441,
+              "minimum": 5.197160634008469
+            },
+            "sql_sha256": "7266e6e403186ec7267b95e066dcfeacf0ef457449e8b5fa6461bdb61e218ea2",
+            "timings_seconds": [
+              5.197160634008469,
+              5.892952383001102,
+              5.858281155000441
+            ]
+          },
+          {
+            "query": "exposure",
+            "repetitions": 3,
+            "result_sha256": "5e1ea9ad24359b7c3fe7f9637728e0111550b144bf7f7a966e8bc47efb30caf7",
+            "row_count": 3,
+            "seconds": {
+              "maximum": 0.9421500580065185,
+              "median": 0.7948806360072922,
+              "minimum": 0.7597518710099394
+            },
+            "sql_sha256": "4da2f14eba333188807faf1fc0b6296d79b91e56c0c1344eadeab5b6bc5ced1d",
+            "timings_seconds": [
+              0.9421500580065185,
+              0.7948806360072922,
+              0.7597518710099394
+            ]
+          }
+        ],
+        "run_id": "scale-1000000-r03",
+        "schema_version": "query-benchmark-v1",
+        "status": "complete"
+      },
+      "recovery": {
+        "bindings": {
+          "experiment_plan_sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09",
+          "machine_metadata_sha256": "9fe9169ab75020d1b1efde2f2b62a1d10141d57edd12d2c595ac9a8a9f56c41e",
+          "snapshot_manifest_sha256": "9714c8b3fd395692a2231851ceae8e691a0c16b846c8deb4028eaf31a930edba"
+        },
+        "full_workflow_seconds": null,
+        "query_configuration": {
+          "spark.sql.adaptive.advisoryPartitionSizeInBytes": "16777216",
+          "spark.sql.adaptive.coalescePartitions.parallelismFirst": "false",
+          "spark.sql.files.maxPartitionBytes": "16777216",
+          "spark.sql.shuffle.partitions": "32"
+        },
+        "reason": "Kafka storage I/O failure interrupted Spark streaming; D: passed repair checks and replay/checkpoints were verified before resumption",
+        "resumed_processing_before_seal_seconds": 34817.512446299996,
+        "resumed_stage": "spark_stream",
+        "run_id": "scale-1000000-r03",
+        "schema_version": "stage-recovery-v1"
+      }
+    }
+  ],
+  "performance_summary": [
+    {
+      "event_count": 100000,
+      "verification_seconds": {
+        "n": 3,
+        "minimum": 817.6652294200012,
+        "median": 832.7878147340052,
+        "maximum": 846.2367977759968
+      },
+      "verification_bytes": {
+        "n": 3,
+        "minimum": 252781170,
+        "median": 252781170,
+        "maximum": 252781170
+      }
+    },
+    {
+      "event_count": 1000000,
+      "verification_seconds": {
+        "n": 3,
+        "minimum": 9805.082529838008,
+        "median": 9917.921640008994,
+        "maximum": 9958.049091524997
+      },
+      "verification_bytes": {
+        "n": 3,
+        "minimum": 2522706815,
+        "median": 2522706816,
+        "maximum": 2522706816
+      }
+    }
+  ],
+  "correctness_semantic_equivalence": {
+    "status": "identical",
+    "reference_run_id": "correctness-clean-r01",
+    "run_hashes": {
+      "correctness-clean-r01": {
+        "gold_source_records": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+        "gold_aggregates": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+        "hadoop_source_records": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+        "hadoop_aggregates": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+      },
+      "correctness-duplicate-r01": {
+        "gold_source_records": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+        "gold_aggregates": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+        "hadoop_source_records": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+        "hadoop_aggregates": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+      },
+      "correctness-delayed-r01": {
+        "gold_source_records": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+        "gold_aggregates": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+        "hadoop_source_records": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+        "hadoop_aggregates": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+      },
+      "correctness-malformed-r01": {
+        "gold_source_records": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+        "gold_aggregates": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+        "hadoop_source_records": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+        "hadoop_aggregates": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+      },
+      "correctness-combined-r01": {
+        "gold_source_records": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+        "gold_aggregates": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+        "hadoop_source_records": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+        "hadoop_aggregates": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+      }
+    }
+  },
+  "watermark_effect": {
+    "gold_status": "identical",
+    "candidate_difference_exposed": true,
+    "retaining_affected_meter_periods": 0,
+    "restrictive_affected_meter_periods": 2,
+    "semantic_hashes": {
+      "gold_source_records": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+      "gold_aggregates": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+      "hadoop_source_records": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+      "hadoop_aggregates": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+    }
+  },
+  "recovery_semantic_equivalence": {
+    "status": "identical",
+    "comparisons": {
+      "gold_source_records": {
+        "uninterrupted_sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b",
+        "resumed_sha256": "3b6f9e502f02023bb044ca13475a5ed9c049e9646bfe5c87bd3ac33d95735a4b"
+      },
+      "hadoop_source_records": {
+        "uninterrupted_sha256": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b",
+        "resumed_sha256": "f574feffaa7abc15f39e5d27df8d9a5fd3aa5d51272bac41c9f8af21af547d4b"
+      },
+      "gold_aggregates": {
+        "uninterrupted_sha256": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de",
+        "resumed_sha256": "3ad38ce22a854af427fdd307eaa3143913660135e7ec671b8559e42fa591f3de"
+      },
+      "hadoop_aggregates": {
+        "uninterrupted_sha256": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f",
+        "resumed_sha256": "faae21c3051ba478b39d885dff1a92b79c9c71a9f4f71e1808801831fb0e1a2f"
+      }
+    }
+  }
+}

@@ -74,6 +74,13 @@ import pytest
                 "storage_overhead_bytes",
                 "storage_overhead_ratio",
                 "tariff_scenarios",
+                "candidate_interval_count",
+                "verified_interval_count",
+                "comparable_meter_period_count",
+                "incomparable_meter_period_count",
+                "numeric_discrepancy_meter_period_count",
+                "comparison_scope",
+                "coverage_limits",
             },
         ),
         (
@@ -149,6 +156,7 @@ import pytest
                 "run_id",
                 "gold_manifest_sha256",
                 "decision_impact_sha256",
+                "execution_policy",
                 "parameters",
                 "results",
             },
@@ -210,7 +218,9 @@ def test_query_benchmark_schema_closes_every_result_and_summary() -> None:
         "repetitions",
         "row_count",
         "seconds",
+        "timings_seconds",
         "sql_sha256",
+        "result_sha256",
     }
     assert result["properties"]["repetitions"]["const"] == 3
     summary = schema["$defs"]["summary"]

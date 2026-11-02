@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from decimal import localcontext
 from pathlib import Path
 
 import pytest
@@ -59,6 +60,46 @@ def test_source_mapper_recomputes_identity_and_preserves_every_field() -> None:
     assert key == event["source_event_id"]
     assert mapped == event
     assert mapped is not event
+
+
+@pytest.mark.parametrize(
+    ("text", "scale", "scaled"),
+    [
+        ("26724.7", 15, 26724700000000000000),
+        (str(10**38 - 1), 0, 10**38 - 1),
+        (str(-(10**38 - 1)), 0, -(10**38 - 1)),
+    ],
+)
+def test_independent_record_mapper_preserves_wide_integers(
+    text: str, scale: int, scaled: int
+) -> None:
+    event = _event(original_numeric_text=text, decimal_scale=scale, scaled_value=scaled)
+    with localcontext() as context:
+        context.prec = 6
+        _, mapped = map_source_record(json.loads(json.dumps(event)))
+    assert mapped == event
+    assert type(mapped["scaled_value"]) is int
+
+
+@pytest.mark.parametrize("scaled", [10**38, -(10**38)])
+def test_record_mapper_rejects_decimal38_overflow(scaled: int) -> None:
+    with pytest.raises(ValueError, match="bounds"):
+        map_source_record(
+            _event(
+                original_numeric_text=str(scaled), decimal_scale=0, scaled_value=scaled
+            )
+        )
+
+
+def test_record_mapper_source_comparison_never_rounds() -> None:
+    with pytest.raises(ValueError, match="scaled numeric"):
+        map_source_record(
+            _event(
+                original_numeric_text=str(10**37) + ".1",
+                decimal_scale=0,
+                scaled_value=10**37,
+            )
+        )
 
 
 @pytest.mark.parametrize(

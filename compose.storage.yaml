@@ -1,0 +1,25 @@
+# Optional host storage layout for a designated experiment disk.
+# Set PIPELINE_SERVICE_DATA_DIR to a fresh absolute directory on that disk.
+# YARN scratch and daemon logs retain Linux storage. This Windows Docker bind
+# mount did not preserve the POSIX modes required by YARN's localization cache.
+services:
+  kafka:
+    volumes:
+      - type: bind
+        source: ${PIPELINE_SERVICE_DATA_DIR:?Set PIPELINE_SERVICE_DATA_DIR}/kafka
+        target: /var/lib/kafka/data
+  spark-worker:
+    environment:
+      SPARK_LOCAL_DIRS: /var/lib/spark-local
+    volumes:
+      - type: bind
+        source: ${PIPELINE_SERVICE_DATA_DIR:?Set PIPELINE_SERVICE_DATA_DIR}/spark-local
+        target: /var/lib/spark-local
+  hdfs:
+    volumes:
+      - type: bind
+        source: ${PIPELINE_SERVICE_DATA_DIR:?Set PIPELINE_SERVICE_DATA_DIR}/hdfs-name
+        target: /var/lib/hadoop-hdfs/name
+      - type: bind
+        source: ${PIPELINE_SERVICE_DATA_DIR:?Set PIPELINE_SERVICE_DATA_DIR}/hdfs-data
+        target: /var/lib/hadoop-hdfs/data

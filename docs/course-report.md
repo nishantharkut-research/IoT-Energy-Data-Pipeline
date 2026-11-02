@@ -1,87 +1,89 @@
-# Auditable IoT Energy Data Pipeline
+﻿# Auditable IoT Energy Data Pipeline
 
-## Coursework question
+## Problem and purpose
 
-A successful Spark job proves that code reached its end; it does not by itself
-prove that every source event arrived once, that every invalid delivery was
-retained, or that the final aggregate is correct. This project implements an
-auditable IoT energy pipeline whose evidence is independent of job completion.
+A streaming job can finish while its output omits late events, counts repeated
+deliveries, or includes invalid measurements. This coursework accounts for every
+delivery and checks the finalized answer using an independent computation.
+The contribution is the implemented evidence chain and experiments across the
+pipeline. It is not a new streaming algorithm.
 
-## Public source and evidence boundary
+## Data and preparation
 
-The source is the public HKUST smart-meter deposit associated with Dryad DOI
-`10.5061/dryad.k3j9kd5h6`. The source archive, Excel telemetry, and Brick RDF
-are not committed. Raw and cleaned variants receive separate manifests,
-profiles, and snapshots.
+The public HKUST smart-meter dataset is deposited under Dryad DOI
+`10.5061/dryad.k3j9kd5h6`. Excel telemetry and Brick metadata are registered,
+profiled, and converted to canonical NDJSON and Parquet. Raw and cleaned source
+variants remain separate. Stable identifiers describe physical workbook rows.
+Original timestamp and numeric text is retained, and scaled integers preserve
+decimal values exactly.
 
-Bounded source inspection established the deposited file families and Brick
-relationship shape. Full profiling and canonicalization remain deferred until
-the reviewed rules registry has evidence for timezone, decimal scale, unit,
-and measurement semantics. Filename conventions alone never establish these
-claims.
+The executed real-data snapshot uses Asia/Hong_Kong as an explicit experimental
+timezone assumption, not an author-confirmed convention. Units and cumulative
+reading semantics follow the recorded evidence contracts. The
+[source audit](results/source-audit-2026-10-27.md) describes source preparation.
 
-## System design
+## Pipeline
 
-The pipeline has four data responsibilities:
+Deterministic schedules replay events into Kafka, including controlled duplicate,
+delayed, malformed, and interrupted delivery cases. Acknowledgements and terminal
+records establish partition completion.
 
-- Bronze preserves every acknowledged Kafka data delivery.
-- Silver gives a watermark-bounded operational candidate and records duplicate
-  or late dispositions.
-- Quarantine preserves malformed and contract-violating deliveries by finite
-  category.
-- Gold is rebuilt from all Bronze deliveries after replay completion and uses
-  exact structural source identity.
+Spark preserves every data delivery in Bronze. Silver provides an operational
+candidate with watermark-bounded deduplication. Invalid deliveries enter
+categorized quarantine. Valid late events remain accounted for. After replay
+completion, batch Gold rebuilds exact source records from Bronze, preserving
+valid records omitted from Silver.
 
-Canonical NDJSON independently enters HDFS. Two Hadoop Streaming jobs, whose
-mapper and reducer code import no Spark transformations, reproduce sorted
-source records and exact aggregates. Reconciliation compares every declared
-field, verifies artifact hashes, and checks layer conservation.
+Canonical NDJSON separately enters HDFS. Independent Hadoop Streaming programs
+reproduce source records and aggregates. Reconciliation checks declared exact
+fields, layer conservation, and artifact hashes. Incomplete or unreconciled runs
+cannot be sealed for the read-only dashboard.
 
-## Exactness and provenance
+## Experiments and findings
 
-A source event is one physical workbook row identified by dataset version,
-source variant, relative path, sheet, and row number. Numeric values preserve
-their original text and are represented as signed scaled integers. This avoids
-binary floating-point disagreement between Spark and Hadoop.
+The final matrix contains five correctness schedules, interrupted and
+uninterrupted recovery, retaining and restrictive watermarks, and three clean
+repetitions each at 100K and 1M events. Storage and five SQL queries are measured
+within the runs. The three originally planned 5M repetitions are excluded because
+of resource and time constraints.
 
-Replay schedules use a fixed seed, deterministic partitioning, unique delivery
-identifiers, and one terminal control record per partition. Fault injection may
-add duplicates, delays, or malformed deliveries but may not remove the only
-valid delivery of a source event.
+All 15 runs passed independent source-record and aggregate reconciliation.
+The correctness schedules produced identical semantic Gold and Hadoop outputs.
+Interrupted recovery reproduced all four semantic output artifacts byte for
+byte. In the combined-fault fixture, 432 deliveries were accounted for as 144
+unique valid records, 144 duplicates, and 144 quarantined deliveries.
 
-## Decision impact
+The restrictive watermark reduced Silver from 144 to 143 records. Gold and
+Hadoop both retained all 144. Two consumption periods changed; both were
+incomparable with the verified result because duplicate timestamps made their
+derivation ambiguous. Numeric discrepancy over comparable intervals was zero.
+Total energy error and residual financial exposure remain unknown.
 
-Interval consumption is derived only for verified cumulative-kWh contracts.
-Negative deltas, ambiguous duplicate timestamps, unresolved resets, and
-invalid readings are flagged instead of converted to valid consumption. The
-report compares the Silver candidate with verified Gold and records affected
-meter-periods, absolute kWh discrepancy, verification time, and explicitly
-scoped storage overhead.
+Median verification cost was 13.88 minutes at 100K and 165.30 minutes at 1M.
+Scoped verification artifacts occupied about 253 MB and 2.52 GB, respectively.
+These costs cover Gold, layer auditing, Hadoop, and reconciliation, rather than
+the complete workflow or total runtime storage. Full counts, timing ranges,
+storage ratios, query measurements, and evidence hashes are in the
+[generated results](results/final/course-results.md).
 
-Rates 0.5, 1.0, and 2.0 are normalized hypothetical scenarios. No monetary
-value is an HKUST tariff, bill, saving, or financial result.
+## Interpretation and limits
 
-## Experiment and publication controls
+These experiments show the usefulness and cost of retaining source evidence
+alongside a bounded streaming candidate. Agreement between Spark and Hadoop
+establishes agreement under declared contracts. It does not establish physical
+measurement accuracy or complete temporal coverage in the source.
 
-The fixed matrix covers five fault configurations, recovery, two watermarks,
-three scale sizes, storage formats, and five read-only queries. Clean scale
-runs have three repetitions and report median, minimum, and maximum.
+Consumption is derived only for supported cumulative-kWh readings. Initial
+baselines, negative deltas, resets, and ambiguous timestamps are flagged.
+Rates of 0.5, 1.0, and 2.0 currency units/kWh are hypothetical scenarios.
+No HKUST tariff, financial result, or demonstrated saving is claimed.
 
-Planning and execution are separate commands. The execution command requires a
-literal confirmation phrase and designated-machine metadata. A dashboard run
-is publishable only after exact reconciliation, decision-report validation,
-query and storage benchmarks, and a self-contained SHA-256 seal.
+All three 1M workflows required recovery, so complete workflow timings are
+unavailable. Smaller query partitions were introduced for 1M; query timings
+across scales are not a configuration-controlled comparison. Evidence is limited
+to historical replay through 1M source records on one designated machine.
 
-## Current status
-
-The implementation, contracts, lightweight tests, deferred orchestration,
-dashboard loader, and report generator are present. The repository currently
-makes no empirical full-data performance or financial claim. Such claims can
-appear only in the generated results report after the designated-machine runs.
-
-## Limitations
-
-This is controlled replay, not live campus ingestion. It does not prove
-universal exactly-once behavior, production readiness, energy savings, or a
-novel algorithm. Kubernetes, forecasting, machine learning, cloud deployment,
-adaptive verification, and real tariff analysis are outside scope.
+Future research could examine selective independent verification and its cost
+versus detected errors under realistic fault distributions. Such work would
+require a defined failure model, appropriate baselines, and further experiments.
+The current project makes no production-readiness or research novelty claim.

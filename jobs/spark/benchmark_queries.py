@@ -12,9 +12,23 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from iot_energy_pipeline.artifact_integrity import verify_gold_artifacts
 from iot_energy_pipeline.reports import summarize
+from jobs.spark.common import canonical_spark_schema
 
 QUERY_NAMES = ("meter", "building", "time_window", "quality", "exposure")
+EXECUTION_POLICY = "cached_input_full_ordered_json_result_sha256"
+
+
+def _consume_query_result(frame: Any) -> tuple[int, str]:
+    """Consume all projected values in SQL order without collecting all rows."""
+    digest = hashlib.sha256()
+    count = 0
+    for payload in frame.toJSON().toLocalIterator(prefetchPartitions=False):
+        digest.update(payload.encode("utf-8"))
+        digest.update(b"\n")
+        count += 1
+    return count, digest.hexdigest()
 
 
 def _sha256(path: Path) -> str:
@@ -98,19 +112,40 @@ def benchmark_queries(
         or decision.get("run_id") != gold_manifest.get("replay_run_id")
     ):
         raise ValueError("query benchmarks require a matching verified impact report")
+    reconciliation_path = decision_report_path.parent / "reconciliation.json"
+    reconciliation = _json_object(reconciliation_path, "reconciliation report")
+    if (
+        reconciliation.get("status") != "passed"
+        or reconciliation.get("run_id") != gold_manifest["replay_run_id"]
+        or decision.get("reconciliation_sha256") != _sha256(reconciliation_path)
+        or reconciliation.get("bindings", {}).get("gold_manifest_sha256")
+        != _sha256(gold_manifest_path)
+    ):
+        raise ValueError("query inputs are not bound to passed reconciliation")
+    verify_gold_artifacts(gold_dir, gold_manifest)
     query_paths = {name: queries_dir / f"{name}.sql" for name in QUERY_NAMES}
     if any(not path.is_file() or path.is_symlink() for path in query_paths.values()):
         raise ValueError("one or more declared query files are missing")
 
     try:
-        from pyspark.sql import SparkSession, functions
+        from pyspark.sql import SparkSession, functions, types
     except ImportError as exc:  # pragma: no cover - optional dependency gate
         raise RuntimeError("spark extra is required for query benchmarks") from exc
     spark = SparkSession.builder.appName("iot-energy-query-benchmark").getOrCreate()
     try:
+        spark.conf.set("spark.sql.jsonGenerator.ignoreNullFields", "false")
         events = spark.read.parquet(str(gold_dir / "source-events.parquet")).cache()
         if events.count() < 1:
             raise ValueError("Gold contains no source events to query")
+        reference = spark.read.schema(canonical_spark_schema()).json(
+            str(gold_dir / "gold-source-events.ndjson")
+        )
+        fields = reference.columns
+        if (
+            events.select(*fields).exceptAll(reference).limit(1).count()
+            or reference.exceptAll(events.select(*fields)).limit(1).count()
+        ):
+            raise ValueError("Gold Parquet rows differ from reconciled source records")
         first = events.orderBy("meter_id", "event_time_utc", "source_event_id").first()
         building = (
             events.select(functions.explode("brick_building_ids").alias("building_id"))
@@ -131,9 +166,26 @@ def benchmark_queries(
         scenarios = decision.get("tariff_scenarios")
         if not isinstance(scenarios, list) or not scenarios:
             raise ValueError("decision-impact tariff scenarios are missing")
-        spark.createDataFrame(scenarios).createOrReplaceTempView(
-            "decision_impact_scenarios"
+        scenario_schema = types.StructType(
+            [
+                types.StructField(
+                    name,
+                    types.StringType(),
+                    nullable=(name == "residual_exposure_after_verification"),
+                )
+                for name in (
+                    "label",
+                    "normalized_rate",
+                    "rate_unit",
+                    "gross_exposure",
+                    "residual_exposure_after_verification",
+                    "monetary_interpretation",
+                )
+            ]
         )
+        spark.createDataFrame(
+            scenarios, schema=scenario_schema
+        ).createOrReplaceTempView("decision_impact_scenarios")
         events.createOrReplaceTempView("gold_source_events")
 
         results: list[dict[str, Any]] = []
@@ -141,19 +193,24 @@ def benchmark_queries(
             sql = query_paths[name].read_text(encoding="utf-8")
             measurements: list[float] = []
             row_counts: list[int] = []
+            result_hashes: list[str] = []
             for _ in range(repetitions):
                 started = time.perf_counter()
-                row_counts.append(spark.sql(sql).count())
+                count, digest = _consume_query_result(spark.sql(sql))
+                row_counts.append(count)
+                result_hashes.append(digest)
                 measurements.append(time.perf_counter() - started)
-            if len(set(row_counts)) != 1:
-                raise ValueError(f"query {name} returned unstable row counts")
+            if len(set(row_counts)) != 1 or len(set(result_hashes)) != 1:
+                raise ValueError(f"query {name} returned unstable result values")
             results.append(
                 {
                     "query": name,
                     "repetitions": repetitions,
                     "row_count": row_counts[0],
                     "seconds": summarize(measurements),
+                    "timings_seconds": measurements,
                     "sql_sha256": _sha256(query_paths[name]),
+                    "result_sha256": result_hashes[0],
                 }
             )
         report: dict[str, Any] = {
@@ -162,6 +219,7 @@ def benchmark_queries(
             "run_id": gold_manifest["replay_run_id"],
             "gold_manifest_sha256": _sha256(gold_manifest_path),
             "decision_impact_sha256": _sha256(decision_report_path),
+            "execution_policy": EXECUTION_POLICY,
             "parameters": parameters,
             "results": results,
         }

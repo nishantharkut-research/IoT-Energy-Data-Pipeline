@@ -1,0 +1,361 @@
+{
+  "canonical_ndjson_sha256": "238a217f478fcb9558c625297d6658d9a86ae5b4a23d4a6ba9b0995be6ca4470",
+  "execution_gate": "explicit execute command required",
+  "full_event_count": 44238638,
+  "machine_metadata_sha256": "9fe9169ab75020d1b1efde2f2b62a1d10141d57edd12d2c595ac9a8a9f56c41e",
+  "matrix_sha256": "26ef85d97b5f9425436bbf37979279a77ecd9693685c9b9eba1d878d9f60f889",
+  "monetary_interpretation": "hypothetical scenarios; not HKUST results",
+  "normalized_tariff_rates": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "query_names": [
+    "meter",
+    "building",
+    "time_window",
+    "quality",
+    "exposure"
+  ],
+  "runs": [
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-clean-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "duplicate",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-duplicate-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "delayed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-delayed-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "malformed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-malformed-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "correctness",
+      "fault": "combined",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "correctness-combined-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "recovery",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "mode": "uninterrupted",
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "recovery-uninterrupted-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "recovery",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 60,
+      "mode": "interrupted_resumed",
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "recovery-interrupted_resumed-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "watermark",
+      "fault": "delayed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 1,
+      "partition_count": 1,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "watermark-retaining-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": "fixture",
+      "experiment": "watermark",
+      "fault": "delayed",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 1,
+      "partition_count": 1,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "watermark-restrictive-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "1 minute"
+    },
+    {
+      "event_count": 100000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "scale-100000-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 100000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 2,
+      "run_id": "scale-100000-r02",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 100000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": true,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 3,
+      "run_id": "scale-100000-r03",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 1000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "scale-1000000-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 1000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 2,
+      "run_id": "scale-1000000-r02",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 1000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 3,
+      "run_id": "scale-1000000-r03",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 5000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 1,
+      "run_id": "scale-5000000-r01",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 5000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 2,
+      "run_id": "scale-5000000-r02",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    },
+    {
+      "event_count": 5000000,
+      "experiment": "scale",
+      "fault": "clean",
+      "live_demo_eligible": false,
+      "max_offsets_per_trigger": 10000,
+      "partition_count": 3,
+      "publication_requirements": [
+        "Spark-Hadoop reconciliation passed",
+        "decision-impact report verified",
+        "finalized run integrity seal present"
+      ],
+      "repetition": 3,
+      "run_id": "scale-5000000-r03",
+      "seed": 20260825,
+      "status": "pending",
+      "watermark": "24 hours"
+    }
+  ],
+  "schema_version": "experiment-plan-v1",
+  "snapshot_manifest_sha256": "9714c8b3fd395692a2231851ceae8e691a0c16b846c8deb4028eaf31a930edba",
+  "status": "planned_not_executed",
+  "storage_formats": [
+    "ndjson",
+    "parquet_zstd_unpartitioned",
+    "parquet_zstd_partitioned"
+  ],
+  "summary_statistics": [
+    "median",
+    "minimum",
+    "maximum"
+  ]
+}

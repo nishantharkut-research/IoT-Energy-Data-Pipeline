@@ -18,6 +18,19 @@ def _event(value: int, time: str, flags: list[str] | None = None) -> dict:
     }
 
 
+@pytest.mark.parametrize("value", [26724700000000000000, 10**38 - 1, -(10**38 - 1)])
+def test_mapper_accepts_wide_exact_python_ints(value: int) -> None:
+    _, mapped = map_record(_event(value, "2024-01-01T00:00:00Z"))
+    assert mapped["sum_scaled"] == value
+    assert type(mapped["sum_scaled"]) is int
+
+
+@pytest.mark.parametrize("value", [10**38, -(10**38)])
+def test_mapper_rejects_values_outside_decimal38(value: int) -> None:
+    with pytest.raises(ValueError, match="bounds"):
+        map_record(_event(value, "2024-01-01T00:00:00Z"))
+
+
 def test_independent_mapper_and_reducer_match_gold_exact_fields() -> None:
     mapped = [
         map_record(_event(250, "2024-01-01T01:00:00Z", ["flag-a"])),

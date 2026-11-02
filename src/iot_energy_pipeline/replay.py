@@ -553,8 +553,10 @@ class ConfluentKafkaProducer:
             on_delivery=delivered,
         )
         deadline = time.monotonic() + self._timeout
-        while not completed.wait(0.05):
-            self._producer.poll(0)
+        while not completed.is_set():
+            # Native polling wakes when callbacks are ready; no separate wait is needed.
+            remaining = max(0.0, deadline - time.monotonic())
+            self._producer.poll(min(0.05, remaining))
             if not completed.is_set() and time.monotonic() >= deadline:
                 raise TimeoutError("Kafka acknowledgement timed out")
         error = outcome.get("error")

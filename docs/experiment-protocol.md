@@ -2,6 +2,11 @@
 
 The matrix in `configs/experiments.toml` is fixed before execution.
 
+The table below preserves that original plan. The final coursework scope
+excludes the three 5M repetitions because of resource and time constraints;
+all other 15 runs are finalized. See [the final results](results/final/course-results.md)
+and the hash-bound final scope record for the executed scope and timing limits.
+
 | Family | Configuration | Repetitions |
 | --- | --- | ---: |
 | Correctness | clean, duplicate, delayed, malformed, combined fixture | 1 |
@@ -45,6 +50,23 @@ including bytes, file counts, write time, relative size, and exact canonical
 NDJSON hash. Incomplete or arithmetically inconsistent benchmark documents
 cannot be sealed.
 
+Query timings use a warmed, cached Gold input. Each repetition consumes every
+projected JSON value in the SQL order and records a result SHA-256; counts and
+digests must agree across repetitions. Timings include serialization, transfer
+to the driver, and hashing. They measure this complete cached-result workload,
+not cold Parquet reads. Before timing, both Gold Parquet trees are hash-checked,
+and source-event Parquet rows are compared with the reconciled NDJSON export.
+
+Workflow timings cover run preparation through query benchmarking. They exclude
+service startup, sealing, and post-seal validation. A receipt is included in the
+sealed run; report generation checks it and recomputes performance summaries
+and cross-run gates from the bound evidence.
+
 Recovery compares semantic Gold and oracle bytes; offsets, timing, and Parquet
 layout bytes are not expected to match. Rates 0.5, 1.0, and 2.0 are normalized
 hypothetical currency units per kWh, not HKUST tariffs or financial outcomes.
+Only intervals with the same meter, start, and end can contribute a numeric
+energy discrepancy. Missing or differently supported intervals count as
+incomparable coverage and are excluded from energy and tariff subtotals.
+Residual exposure is unknown; source-record reconciliation does not establish
+measurement accuracy or complete temporal coverage.

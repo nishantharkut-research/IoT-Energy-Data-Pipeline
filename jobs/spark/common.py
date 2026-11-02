@@ -5,10 +5,23 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime
-from decimal import Decimal, InvalidOperation
 from typing import Any, Iterable, Mapping
 
-MIN_INT64, MAX_INT64 = -(2**63), 2**63 - 1
+from iot_energy_pipeline.contracts import (
+    MAX_SCALED_VALUE,
+    MIN_SCALED_VALUE,
+    to_scaled_int,
+)
+
+
+def json_shape_category(raw: str) -> str | None:
+    """Validate JSON syntax independently of Spark's permissive struct parser."""
+    try:
+        value = json.loads(raw)
+    except (json.JSONDecodeError, TypeError):
+        return "invalid_json"
+    return None if isinstance(value, dict) else "schema_mismatch"
+
 
 QUARANTINE_CATEGORIES = (
     "invalid_json",
@@ -103,7 +116,7 @@ def _numeric_category(
     scale = record.get("decimal_scale")
     if isinstance(scaled, bool) or not isinstance(scaled, int):
         return "invalid_numeric_value"
-    if scaled < MIN_INT64 or scaled > MAX_INT64:
+    if scaled < MIN_SCALED_VALUE or scaled > MAX_SCALED_VALUE:
         return "numeric_overflow"
     if isinstance(scale, bool) or not isinstance(scale, int) or scale < 0:
         return "invalid_numeric_value"
@@ -113,14 +126,12 @@ def _numeric_category(
     if not isinstance(original, str):
         return "invalid_numeric_value"
     try:
-        reconstructed = Decimal(original.strip()) * (Decimal(10) ** scale)
-    except (InvalidOperation, ValueError):
+        reconstructed = to_scaled_int(
+            original, scale, bounds=(MIN_SCALED_VALUE, MAX_SCALED_VALUE)
+        )
+    except (ValueError, OverflowError):
         return "invalid_numeric_value"
-    if (
-        not reconstructed.is_finite()
-        or reconstructed != reconstructed.to_integral_value()
-        or int(reconstructed) != scaled
-    ):
+    if reconstructed != scaled:
         return "invalid_numeric_value"
     return None
 
@@ -213,6 +224,7 @@ def canonical_spark_schema() -> Any:
 
     from pyspark.sql.types import (
         ArrayType,
+        DecimalType,
         LongType,
         StringType,
         StructField,
@@ -260,7 +272,7 @@ def canonical_spark_schema() -> Any:
         "original_numeric_text",
     ):
         fields.append(StructField(name, StringType(), False))
-    fields.append(StructField("scaled_value", LongType(), False))
+    fields.append(StructField("scaled_value", DecimalType(38, 0), False))
     fields.append(StructField("decimal_scale", LongType(), False))
     fields.append(StructField("measurement_kind", StringType(), False))
     fields.append(StructField("unit", StringType(), False))

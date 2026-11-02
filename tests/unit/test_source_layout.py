@@ -32,6 +32,23 @@ def _hkust_layout() -> SourceLayoutRules:
     )
 
 
+def test_source_row_text_defaults_preserve_existing_constructors() -> None:
+    from iot_energy_pipeline.identity import SourceLocator
+    from iot_energy_pipeline.workbook_source import WorkbookSourceRow
+
+    row = WorkbookSourceRow(
+        SourceLocator("v1", "raw", "GUI.NO.D0001.xlsx", "Sheet1", 2),
+        _hkust_layout().rules[0],
+        "2024-01-01T00:00:00",
+        "D0001",
+        "1.00",
+        ("2024-01-01T00:00:00", "1.00"),
+    )
+
+    assert row.timestamp_text is None
+    assert row.numeric_text is None
+
+
 def test_path_derived_meter_id_is_explicit_and_deterministic() -> None:
     layout = _hkust_layout()
 

@@ -119,6 +119,7 @@ def prepare_distributed_run(
     run_id: str,
     fault: str,
     event_count: int,
+    repetition: int = 1,
     seed: int = 20260825,
     partition_count: int = 3,
     watermark: str = "24 hours",
@@ -128,6 +129,12 @@ def prepare_distributed_run(
 
     if output_dir.exists():
         raise FileExistsError(f"distributed run already exists: {output_dir}")
+    if (
+        isinstance(repetition, bool)
+        or not isinstance(repetition, int)
+        or repetition < 1
+    ):
+        raise ValueError("repetition must be a positive integer")
     if (
         isinstance(event_count, bool)
         or not isinstance(event_count, int)
@@ -207,7 +214,7 @@ def prepare_distributed_run(
             partition_count=partition_count,
             fault=fault,
             requested_event_count=event_count,
-            repetition=1,
+            repetition=repetition,
             expected_delivery_count=schedule_metadata.delivery_count,
             expected_terminal_count=partition_count,
             maximum_event_time_lateness_seconds=(
@@ -329,6 +336,7 @@ def main() -> int:
         required=True,
     )
     prepare.add_argument("--event-count", type=int, required=True)
+    prepare.add_argument("--repetition", type=int, default=1)
     prepare.add_argument("--seed", type=int, default=20260825)
     prepare.add_argument("--partitions", type=int, default=3)
     prepare.add_argument("--watermark", default="24 hours")
@@ -346,6 +354,7 @@ def main() -> int:
             run_id=args.run_id,
             fault=args.fault,
             event_count=args.event_count,
+            repetition=args.repetition,
             seed=args.seed,
             partition_count=args.partitions,
             watermark=args.watermark,

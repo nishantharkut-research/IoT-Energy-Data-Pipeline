@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
 import pytest
@@ -18,6 +21,131 @@ from iot_energy_pipeline.manifests import (
     FileManifest,
     register_dataset,
 )
+
+
+@pytest.fixture(params=["manifest", "profile"])
+def immutable_json_writer(request: pytest.FixtureRequest) -> tuple[Any, Any]:
+    """Exercise both public serializers through their real filesystem writes."""
+    if request.param == "manifest":
+        from iot_energy_pipeline import manifests as module
+
+        return DatasetManifest("v1", "raw", ()), module
+    from iot_energy_pipeline import profile as module
+
+    return module.DatasetProfile("v1", "raw", ()), module
+
+
+@pytest.mark.skipif(os.name != "nt", reason="requires Windows no-replace rename")
+def test_windows_publication_needs_no_hard_links(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    immutable_json_writer: tuple[Any, Any],
+) -> None:
+    writer, module = immutable_json_writer
+    writer_os = SimpleNamespace(**vars(os))
+
+    def unsupported_link(*args: Any, **kwargs: Any) -> None:
+        raise OSError("hard links unsupported")
+
+    writer_os.link = unsupported_link
+    monkeypatch.setattr(module, "os", writer_os)
+    output = tmp_path / "output.json"
+
+    writer.to_json(output)
+
+    assert json.loads(output.read_text())["dataset_version"] == "v1"
+    assert list(tmp_path.iterdir()) == [output]
+
+
+@pytest.mark.parametrize("cleanup_fails", [False, True])
+def test_posix_publication_cleanup_is_best_effort(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    immutable_json_writer: tuple[Any, Any],
+    cleanup_fails: bool,
+) -> None:
+    writer, module = immutable_json_writer
+    writer_os = SimpleNamespace(**vars(os))
+    writer_os.name = "posix"
+    if cleanup_fails:
+
+        def blocked_cleanup(path: str) -> None:
+            raise PermissionError("temporary name is held open")
+
+        writer_os.unlink = blocked_cleanup
+    monkeypatch.setattr(module, "os", writer_os)
+    output = tmp_path / "output.json"
+
+    writer.to_json(output)
+
+    assert json.loads(output.read_text())["dataset_version"] == "v1"
+    temporary = list(tmp_path.glob("output.json.*.tmp"))
+    if cleanup_fails:
+        assert len(temporary) == 1
+        assert temporary[0].read_bytes() == output.read_bytes()
+    else:
+        assert temporary == []
+
+
+def test_posix_unsupported_links_fail_closed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    immutable_json_writer: tuple[Any, Any],
+) -> None:
+    writer, module = immutable_json_writer
+    writer_os = SimpleNamespace(**vars(os))
+    writer_os.name = "posix"
+
+    def unsupported_link(*args: Any, **kwargs: Any) -> None:
+        raise OSError("hard links unsupported")
+
+    def unsafe_fallback(*args: Any, **kwargs: Any) -> None:
+        pytest.fail("unsupported POSIX publication must not fall back to rename")
+
+    writer_os.link = unsupported_link
+    writer_os.rename = unsafe_fallback
+    writer_os.replace = unsafe_fallback
+    monkeypatch.setattr(module, "os", writer_os)
+
+    with pytest.raises(OSError, match="hard links unsupported"):
+        writer.to_json(tmp_path / "output.json")
+
+    assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize("platform", ["nt", "posix"])
+def test_publication_preserves_competing_destination(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    immutable_json_writer: tuple[Any, Any],
+    platform: str,
+) -> None:
+    if platform == "nt" and os.name != "nt":
+        pytest.skip("requires Windows no-replace rename")
+    writer, module = immutable_json_writer
+    writer_os = SimpleNamespace(**vars(os))
+    writer_os.name = platform
+    output = tmp_path / "output.json"
+    original = b"competing immutable output\n"
+
+    def competing_publication(source: str, destination: Path) -> None:
+        output.write_bytes(original)
+        if platform == "nt":
+            os.rename(source, destination)
+        else:
+            os.link(source, destination)
+
+    if platform == "nt":
+        writer_os.rename = competing_publication
+    else:
+        writer_os.link = competing_publication
+    monkeypatch.setattr(module, "os", writer_os)
+
+    with pytest.raises(FileExistsError):
+        writer.to_json(output)
+
+    assert output.read_bytes() == original
+    assert list(tmp_path.iterdir()) == [output]
 
 
 def _make_xlsx(path: Path, content: list[list[Any]] | None = None) -> None:
@@ -39,6 +167,67 @@ def _file_sha256(path: Path) -> str:
         for chunk in iter(lambda: f.read(8192), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+@pytest.mark.parametrize("path_kind", ["absolute", "windows_parent", "drive_relative"])
+def test_loaded_manifest_rejects_paths_outside_source_root(
+    tmp_path: Path, path_kind: str
+) -> None:
+    root = tmp_path / "source"
+    root.mkdir()
+    outside = tmp_path / "outside.xlsx"
+    outside.write_bytes(b"external source boundary probe")
+    relative = {
+        "absolute": str(outside),
+        "windows_parent": "..\\outside.xlsx",
+        "drive_relative": "C:outside.xlsx",
+    }[path_kind]
+    manifest = DatasetManifest(
+        "v1",
+        "clean",
+        (
+            FileManifest(
+                relative, outside.stat().st_size, _file_sha256(outside), "workbook"
+            ),
+        ),
+    )
+    output = tmp_path / "manifest.json"
+    manifest.to_json(output)
+
+    with pytest.raises(ValueError, match="unsafe|absolute|escapes"):
+        DatasetManifest.from_json(output, root=root)
+
+
+def test_loaded_manifest_rejects_directory_link_outside_source_root(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "source"
+    root.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    target = outside / "meter.xlsx"
+    target.write_bytes(b"external directory boundary probe")
+    try:
+        (root / "link").symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("directory symlinks are unavailable")
+    manifest = DatasetManifest(
+        "v1",
+        "clean",
+        (
+            FileManifest(
+                "link/meter.xlsx",
+                target.stat().st_size,
+                _file_sha256(target),
+                "workbook",
+            ),
+        ),
+    )
+    output = tmp_path / "manifest.json"
+    manifest.to_json(output)
+
+    with pytest.raises(ValueError, match="escapes"):
+        DatasetManifest.from_json(output, root=root)
 
 
 class TestFileManifest:
@@ -72,6 +261,34 @@ class TestFileManifest:
 
 class TestDatasetManifest:
     """Tests for DatasetManifest dataclass."""
+
+    @pytest.mark.parametrize("created_during_write", [False, True])
+    def test_to_json_preserves_existing_output(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        created_during_write: bool,
+    ) -> None:
+        output = tmp_path / "manifest.json"
+        original = b"existing immutable manifest\r\n"
+        manifest = DatasetManifest("v1", "raw", ())
+        if created_during_write:
+            mkstemp = tempfile.mkstemp
+
+            def create_competing_output(*args: Any, **kwargs: Any) -> tuple[int, str]:
+                result = mkstemp(*args, **kwargs)
+                output.write_bytes(original)
+                return result
+
+            monkeypatch.setattr(tempfile, "mkstemp", create_competing_output)
+        else:
+            output.write_bytes(original)
+
+        with pytest.raises(FileExistsError):
+            manifest.to_json(output)
+
+        assert output.read_bytes() == original
+        assert sorted(path.name for path in tmp_path.iterdir()) == [output.name]
 
     def test_dataset_manifest_is_frozen(self, tmp_path: Path) -> None:
         """DatasetManifest should be immutable."""
@@ -214,6 +431,31 @@ class TestDatasetManifest:
 
 class TestRegisterDataset:
     """Tests for register_dataset function."""
+
+    def test_existing_output_rejected_before_source_scan(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        root = tmp_path / "data"
+        root.mkdir()
+        output = tmp_path / "manifest.json"
+        original = b"existing immutable manifest\n"
+        output.write_bytes(original)
+
+        def unexpected_scan(root: Path) -> list[Path]:
+            pytest.fail("existing output must be rejected before scanning sources")
+
+        monkeypatch.setattr(
+            "iot_energy_pipeline.manifests._collect_all_files", unexpected_scan
+        )
+        with pytest.raises(FileExistsError):
+            register_dataset(
+                root=root,
+                output=output,
+                dataset_version="v1",
+                source_variant="raw",
+            )
+
+        assert output.read_bytes() == original
 
     def test_register_missing_root_raises(self, tmp_path: Path) -> None:
         """Registering a non-existent root raises ValueError."""

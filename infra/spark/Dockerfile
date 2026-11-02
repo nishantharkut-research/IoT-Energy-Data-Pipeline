@@ -7,7 +7,14 @@ USER root
 COPY --from=spark-distribution /opt/spark /opt/spark
 COPY --from=spark-distribution /opt/java /opt/java
 
-RUN apt-get update && \
+# Match the pinned Python base's Debian snapshot. Rolling Bullseye security
+# indexes can reference packages removed from the live mirror.
+ARG DEBIAN_SNAPSHOT=20240904T090000Z
+RUN sed -i \
+      -e "s|http://deb.debian.org/debian-security|https://snapshot.debian.org/archive/debian-security/${DEBIAN_SNAPSHOT}|g" \
+      -e "s|http://deb.debian.org/debian|https://snapshot.debian.org/archive/debian/${DEBIAN_SNAPSHOT}|g" \
+      /etc/apt/sources.list && \
+    apt-get -o Acquire::Check-Valid-Until=false update && \
     apt-get install -y --no-install-recommends bash ca-certificates curl procps tini && \
     rm -rf /var/lib/apt/lists/*
 

@@ -10,7 +10,8 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-MIN_INT64, MAX_INT64 = -(2**63), 2**63 - 1
+MAX_SCALED_VALUE = 10**38 - 1
+MIN_SCALED_VALUE = -MAX_SCALED_VALUE
 
 REQUIRED_FIELDS = frozenset(
     {
@@ -160,19 +161,18 @@ def map_source_record(record: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     scaled = record.get("scaled_value")
     if isinstance(scaled, bool) or not isinstance(scaled, int):
         raise TypeError("scaled_value must be an integer")
-    if not MIN_INT64 <= scaled <= MAX_INT64:
-        raise ValueError("scaled_value exceeds signed 64-bit bounds")
+    if not MIN_SCALED_VALUE <= scaled <= MAX_SCALED_VALUE:
+        raise ValueError("scaled_value exceeds 38-digit integer bounds")
     try:
-        reconstructed = Decimal(record["original_numeric_text"]) * (
-            Decimal(10) ** scale
+        original = Decimal(record["original_numeric_text"])
+        # Tuple construction and comparison are exact under any Decimal context.
+        # Keep this check independent of the canonical adapter and Spark code.
+        reconstructed = Decimal(
+            (int(scaled < 0), tuple(int(digit) for digit in str(abs(scaled))), -scale)
         )
     except (InvalidOperation, TypeError, ValueError) as exc:
         raise ValueError("original_numeric_text is invalid") from exc
-    if (
-        not reconstructed.is_finite()
-        or reconstructed != reconstructed.to_integral_value()
-        or int(reconstructed) != scaled
-    ):
+    if not original.is_finite() or original != reconstructed:
         raise ValueError("scaled numeric representation does not match source text")
     return source_id, copy.deepcopy(record)
 

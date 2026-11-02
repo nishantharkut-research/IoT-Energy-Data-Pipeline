@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": [
     "schema_version", "status", "run_id", "gold_manifest_sha256",
-    "decision_impact_sha256", "parameters", "results"
+    "decision_impact_sha256", "execution_policy", "parameters", "results"
   ],
   "properties": {
     "schema_version": {"const": "query-benchmark-v1"},
@@ -14,6 +14,7 @@
     "run_id": {"type": "string", "minLength": 1},
     "gold_manifest_sha256": {"$ref": "#/$defs/sha256"},
     "decision_impact_sha256": {"$ref": "#/$defs/sha256"},
+    "execution_policy": {"const": "cached_input_full_ordered_json_result_sha256"},
     "parameters": {
       "type": "object",
       "additionalProperties": false,
@@ -82,7 +83,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "query", "repetitions", "row_count", "seconds", "sql_sha256"
+        "query", "repetitions", "row_count", "seconds", "timings_seconds", "sql_sha256", "result_sha256"
       ],
       "properties": {
         "query": {
@@ -91,7 +92,12 @@
         "repetitions": {"const": 3},
         "row_count": {"type": "integer", "minimum": 0},
         "seconds": {"$ref": "#/$defs/summary"},
-        "sql_sha256": {"$ref": "#/$defs/sha256"}
+        "timings_seconds": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {"type": "number", "minimum": 0}
+        },
+        "sql_sha256": {"$ref": "#/$defs/sha256"},
+        "result_sha256": {"$ref": "#/$defs/sha256"}
       }
     }
   }

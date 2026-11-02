@@ -201,7 +201,7 @@ Test that identical values in separate source rows receive separate source
 identifiers, repeated conversion is deterministic, timestamps retain original
 text, Hong Kong timestamps convert to UTC only under a declared timezone, and
 scaled integer conversion either preserves the Decimal exactly or fails.
-Include explicit signed 64-bit overflow failures and prove that changing meter,
+Include explicit 38-digit canonical overflow failures and legacy int64 helper checks and prove that changing meter,
 time, or value does not change an identifier when the source locator is fixed.
 
 - [ ] **Step 2: Verify failures**
@@ -221,7 +221,8 @@ def to_scaled_int(text: str, scale: int) -> int: ...
 def canonicalize_time(text: str, source_zone: ZoneInfo) -> datetime: ...
 ```
 
-Use `Decimal` and explicit signed 64-bit bounds. Never derive source identity
+Use context-independent decimal digit scaling and explicit canonical bounds of
+`abs(scaled_value) <= 10**38 - 1` (legacy helper defaults remain int64). Never derive source identity
 from meter, timestamp, or value. Define `SourceLocator` as a frozen structure
 containing dataset version, source variant, relative path, sheet, and physical
 row number. Use SHA-256 and fail if two locators produce one identifier.

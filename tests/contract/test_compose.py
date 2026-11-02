@@ -2,7 +2,30 @@ from __future__ import annotations
 
 import json
 import subprocess
+import xml.etree.ElementTree as ET
 from pathlib import Path
+
+
+def test_hadoop_node_can_schedule_an_application_master_and_a_task() -> None:
+    def properties(name: str) -> dict[str, str]:
+        root = ET.parse(Path("infra/hadoop/conf") / name).getroot()
+        return {
+            item.findtext("name"): item.findtext("value")
+            for item in root.findall("property")
+        }
+
+    yarn = properties("yarn-site.xml")
+    mapred = properties("mapred-site.xml")
+    node_memory = int(yarn["yarn.nodemanager.resource.memory-mb"])
+    am_memory = int(mapred["yarn.app.mapreduce.am.resource.mb"])
+    task_memory = max(
+        int(mapred["mapreduce.map.memory.mb"]),
+        int(mapred["mapreduce.reduce.memory.mb"]),
+    )
+    assert am_memory + task_memory <= node_memory
+    assert max(am_memory, task_memory) <= int(
+        yarn["yarn.scheduler.maximum-allocation-mb"]
+    )
 
 
 def _compose() -> dict:
@@ -59,6 +82,17 @@ def test_kafka_uses_explicit_single_node_kraft_and_acknowledged_topic_config() -
     assert environment["KAFKA_AUTO_CREATE_TOPICS_ENABLE"] == "false"
     assert "kafka:9092" in environment["KAFKA_ADVERTISED_LISTENERS"]
     assert kafka["ports"]
+
+
+def test_kafka_logs_use_the_persistent_mount_and_ipv4_listener() -> None:
+    kafka = _compose()["services"]["kafka"]
+    environment = kafka["environment"]
+    log_directory = environment["KAFKA_LOG_DIRS"]
+    assert any(
+        volume["type"] == "volume" and volume["target"] == log_directory
+        for volume in kafka["volumes"]
+    )
+    assert "EXTERNAL://127.0.0.1:29092" in environment["KAFKA_ADVERTISED_LISTENERS"]
 
 
 def test_spark_healthcheck_targets_the_bound_master_interface() -> None:

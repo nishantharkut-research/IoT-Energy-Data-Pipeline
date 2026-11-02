@@ -69,6 +69,8 @@ generated/
 # Runtime output
 reports/runtime/
 reports/generated/
+/reports/launches/
+/reports/service-data/
 output/
 outputs/
 
@@ -98,7 +100,13 @@ kafka-logs/
 *.log
 logs/
 
+# LaTeX build intermediates (retain .tex sources and published PDFs)
+*.aux
+*.fls
+*.fdb_latexmk
+
 # Caches
 *.cache
 .caches/
 tmp/
+.playwright-cli/

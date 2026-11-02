@@ -50,8 +50,9 @@ def test_canonical_schema_declares_exact_numeric_and_time_constraints() -> None:
     )
     properties = schema["properties"]
 
-    assert properties["scaled_value"]["minimum"] == -(2**63)
-    assert properties["scaled_value"]["maximum"] == 2**63 - 1
+    assert properties["scaled_value"]["type"] == "integer"
+    assert properties["scaled_value"]["minimum"] == -(10**38 - 1)
+    assert properties["scaled_value"]["maximum"] == 10**38 - 1
     assert properties["event_time_utc"]["format"] == "date-time"
     assert properties["source_timezone"]["minLength"] == 1
     assert properties["quality_flags"]["uniqueItems"] is True

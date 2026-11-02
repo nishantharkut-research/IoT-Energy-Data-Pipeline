@@ -1,4 +1,4 @@
-name: manual-fixture-acceptance
+name: manual-local-fixture-checks
 on:
   workflow_dispatch:
 

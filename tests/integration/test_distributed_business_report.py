@@ -149,11 +149,57 @@ def test_distributed_business_report_is_bound_and_explicitly_hypothetical(
     assert report["candidate_flagged_records"]
     assert report["verified_flagged_records"]
     assert report["verification_storage_scope"]
+    assert report["affected_meter_period_count"] == 2
+    assert report["comparable_meter_period_count"] == 0
+    assert report["incomparable_meter_period_count"] == 2
+    assert report["absolute_kwh_discrepancy"] == "0"
+    assert report["affected_meter_periods"][0]["candidate_kwh"] is None
+    assert report["affected_meter_periods"][1]["comparison_status"] == (
+        "temporal_support_mismatch"
+    )
+    assert all(
+        s["residual_exposure_after_verification"] is None
+        for s in report["tariff_scenarios"]
+    )
+    assert (
+        json.loads((run / "reports/decision-impact.json").read_text("utf-8")) == report
+    )
     assert all(
         scenario["monetary_interpretation"]
         == "scenario only; not an HKUST financial result"
         for scenario in report["tariff_scenarios"]
     )
+
+
+def test_business_report_schema_preserves_unknown_energy(tmp_path: Path) -> None:
+    jsonschema = pytest.importorskip("jsonschema")
+    run, oracle, audit, reconciliation = _prepared(tmp_path)
+    report = build_distributed_business_report(
+        run_dir=run,
+        oracle_dir=oracle,
+        layer_audit_dir=audit,
+        reconciliation_path=reconciliation,
+        output=run / "reports/decision-impact.json",
+    )
+    schema = json.loads(
+        (
+            Path(__file__).resolve().parents[2]
+            / "schemas/decision-impact-v1.schema.json"
+        ).read_text("utf-8")
+    )
+    validator = jsonschema.Draft202012Validator(
+        schema, format_checker=jsonschema.FormatChecker()
+    )
+    validator.check_schema(schema)
+    validator.validate(report)
+    for field in ("candidate_kwh", "absolute_kwh_discrepancy"):
+        changed = json.loads(json.dumps(report))
+        changed["affected_meter_periods"][0][field] = "0"
+        with pytest.raises(jsonschema.ValidationError):
+            validator.validate(changed)
+    report["tariff_scenarios"][0]["residual_exposure_after_verification"] = "0"
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate(report)
 
 
 def test_business_report_refuses_failed_reconciliation(tmp_path: Path) -> None:

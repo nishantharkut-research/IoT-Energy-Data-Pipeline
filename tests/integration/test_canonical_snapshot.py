@@ -3,7 +3,10 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime
+from decimal import Decimal, Inexact, Rounded, localcontext
 from pathlib import Path
+from xml.etree import ElementTree as ET
+from zipfile import ZipFile
 
 import pytest
 from openpyxl import Workbook, load_workbook
@@ -24,6 +27,149 @@ from iot_energy_pipeline.source_layout import (
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _xml_source(tmp_path: Path, numeric_text: str, *, boolean_cell: str | None = None):
+    """Inject a decimal directly: saving a Python float would lose the regression."""
+    manifest = _source(tmp_path)
+    path = manifest._root / "readings.xlsx"
+    with ZipFile(path) as archive:
+        entries = {name: archive.read(name) for name in archive.namelist()}
+    namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    sheet = ET.fromstring(entries["xl/worksheets/sheet1.xml"])
+    for coordinate, text in (("A2", "45292.000000000000"), ("C2", numeric_text)):
+        cell = sheet.find(f".//{namespace}c[@r='{coordinate}']")
+        cell.clear()
+        cell.attrib.update(r=coordinate, t="n")
+        if coordinate == "A2":
+            cell.set("s", "1")
+        ET.SubElement(cell, namespace + "v").text = text
+    if boolean_cell is not None:
+        cell = sheet.find(f".//{namespace}c[@r='{boolean_cell}']")
+        cell.clear()
+        cell.attrib.update(r=boolean_cell, t="b")
+        ET.SubElement(cell, namespace + "v").text = numeric_text
+    entries["xl/worksheets/sheet1.xml"] = ET.tostring(sheet)
+    with ZipFile(path, "w") as archive:
+        for name, data in entries.items():
+            archive.writestr(name, data)
+    return register_dataset(
+        manifest._root,
+        tmp_path / "xml-manifest.json",
+        dataset_version="fixture-v1",
+        source_variant="clean",
+    )
+
+
+@pytest.mark.parametrize("text", ["0", "1"])
+@pytest.mark.parametrize(
+    ("coordinate", "category", "provenance_field"),
+    [
+        ("A2", "invalid_timestamp", "original_timestamp_text"),
+        ("C2", "invalid_numeric_value", "original_numeric_text"),
+    ],
+)
+def test_snapshot_rejects_boolean_cells_and_keeps_their_xml_text(
+    tmp_path: Path, text: str, coordinate: str, category: str, provenance_field: str
+) -> None:
+    manifest = _xml_source(tmp_path, text, boolean_cell=coordinate)
+
+    result = build_snapshot(manifest, tmp_path / "snapshot", _rules())
+
+    assert all(e["source_row_number"] != 2 for e in result.events)
+    row = next(r for r in result.source_quality if r["source_row_number"] == 2)
+    assert row["category"] == category
+    assert row[provenance_field] == text
+
+
+def test_snapshot_uses_exact_numeric_xml_and_preserves_excel_serial(tmp_path: Path):
+    manifest = _xml_source(tmp_path, "0.123456789012345678")
+    rules = _rules().with_measurement(
+        "meter-a", MeasurementRule("cumulative_energy", "kWh", 18, "fixture")
+    )
+
+    result = build_snapshot(manifest, tmp_path / "snapshot", rules)
+
+    event = next(e for e in result.events if e["source_row_number"] == 2)
+    assert event["scaled_value"] == 123456789012345678
+    assert event["original_numeric_text"] == "0.123456789012345678"
+    assert event["original_timestamp_text"] == "45292.000000000000"
+    assert event["event_time_utc"] == "2023-12-31T16:00:00.000000Z"
+    import pyarrow.parquet as pq
+
+    assert pq.read_table(tmp_path / "snapshot/canonical.parquet").to_pylist() == [
+        json.loads(line)
+        for line in (tmp_path / "snapshot/canonical.ndjson").read_text().splitlines()
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "scale", "expected"),
+    [
+        ("26724.7", 15, 26724700000000000000),
+        (str(10**38 - 1), 0, 10**38 - 1),
+        (str(-(10**38 - 1)), 0, -(10**38 - 1)),
+    ],
+)
+def test_snapshot_keeps_wide_integers_in_json_and_decimal128_in_parquet(
+    tmp_path: Path, text: str, scale: int, expected: int
+) -> None:
+    import pyarrow.parquet as pq
+
+    manifest = _xml_source(tmp_path, text)
+    rules = _rules().with_measurement(
+        "meter-a", MeasurementRule("cumulative_energy", "kWh", scale, "fixture")
+    )
+    with localcontext() as context:
+        context.prec = 6
+        context.traps[Inexact] = True
+        context.traps[Rounded] = True
+        result = build_snapshot(manifest, tmp_path / "snapshot", rules)
+        event = next(e for e in result.events if e["source_row_number"] == 2)
+        assert event["scaled_value"] == expected
+        assert type(event["scaled_value"]) is int
+        assert all(r["source_row_number"] != 2 for r in result.source_quality)
+        lines = (tmp_path / "snapshot/canonical.ndjson").read_text().splitlines()
+        json_rows = [json.loads(line) for line in lines]
+        assert all(type(r["scaled_value"]) is int for r in json_rows)
+        parquet_rows = pq.read_table(
+            tmp_path / "snapshot/canonical.parquet"
+        ).to_pylist()
+        assert all(type(r["scaled_value"]) is Decimal for r in parquet_rows)
+        assert [
+            dict(r, scaled_value=int(r["scaled_value"])) for r in parquet_rows
+        ] == json_rows
+        # Also exercise the direct writer; snapshots normally use its SQLite variant.
+        canonicalize_module._write_parquet([event], tmp_path / "direct.parquet")
+        assert pq.read_table(tmp_path / "direct.parquet").to_pylist()[0][
+            "scaled_value"
+        ] == Decimal(expected)
+
+
+@pytest.mark.parametrize(
+    ("text", "scale", "category"),
+    [
+        ("0.123456789012345678", 17, "invalid_numeric_value"),
+        (str(10**38), 0, "numeric_overflow"),
+        ("1.00000000000000000000000000001", 0, "invalid_numeric_value"),
+        (" 0.123456789012345678 ", 17, "invalid_numeric_value"),
+        ("1E-10000000", 0, "invalid_numeric_value"),
+    ],
+)
+def test_snapshot_rejects_inexact_scale_or_overflow_with_raw_provenance(
+    tmp_path: Path, text: str, scale: int, category: str
+):
+    manifest = _xml_source(tmp_path, text)
+    rules = _rules().with_measurement(
+        "meter-a", MeasurementRule("cumulative_energy", "kWh", scale, "fixture")
+    )
+
+    result = build_snapshot(manifest, tmp_path / "snapshot", rules)
+
+    row = next(r for r in result.source_quality if r["source_row_number"] == 2)
+    assert row["category"] == category
+    assert row["original_numeric_text"] == text
+    assert row["original_timestamp_text"] == "45292.000000000000"
 
 
 def test_snapshot_does_not_materialize_results_above_the_return_boundary(
@@ -132,7 +278,7 @@ def test_snapshot_preserves_rows_and_reports_invalid_source_rows(
         event
         for event in result.events
         if event["meter_id"] == "meter-a"
-        and event["original_timestamp_text"].startswith("2024-01-01T00:00:00")
+        and event["original_timestamp_text"] == "45292"
     ]
     assert len(duplicate_time) == 2
     assert {row["category"] for row in result.source_quality} == {
@@ -154,7 +300,7 @@ def test_snapshot_preserves_rows_and_reports_invalid_source_rows(
     assert matched["brick_unit_uri"].endswith("KiloW-HR")
     assert matched["event_time_utc"].endswith("Z")
     assert matched["event_time_utc"].startswith("2023-12-31T16:00:00")
-    assert matched["original_timestamp_text"].startswith("2024-01-01T00:00:00")
+    assert matched["original_timestamp_text"] == "45292"
     assert matched["original_numeric_text"] == "10.00"
 
 
@@ -176,7 +322,7 @@ def test_snapshot_preserves_subsecond_source_precision_and_uses_sortable_utc(
     result = build_snapshot(updated, tmp_path / "snapshot", _rules())
 
     row = next(event for event in result.events if event["source_row_number"] == 2)
-    assert row["original_timestamp_text"] == "2024-01-01T00:00:00.500000"
+    assert row["original_timestamp_text"] == "45292.00000578703"
     assert row["event_time_utc"] == "2023-12-31T16:00:00.500000Z"
 
 
@@ -201,10 +347,9 @@ def test_ndjson_and_parquet_contain_the_same_sorted_exact_records(
     assert [row["source_event_id"] for row in ndjson_records] == sorted(
         row["source_event_id"] for row in ndjson_records
     )
-    assert (
-        pq.read_schema(output / "canonical.parquet").field("scaled_value").type
-        == __import__("pyarrow").int64()
-    )
+    assert pq.read_schema(output / "canonical.parquet").field(
+        "scaled_value"
+    ).type == __import__("pyarrow").decimal128(38, 0)
 
 
 def test_snapshot_manifest_binds_every_input_and_output_hash(tmp_path: Path) -> None:

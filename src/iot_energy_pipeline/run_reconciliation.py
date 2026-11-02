@@ -11,6 +11,10 @@ import time
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
+from iot_energy_pipeline.artifact_integrity import (
+    verify_gold_artifacts,
+    verify_replay_evidence,
+)
 from jobs.hadoop.reconcile import reconcile_sorted_ndjson
 
 
@@ -153,6 +157,9 @@ def reconcile_distributed_run(
     _require_equal(
         layers.get("replay_manifest_hash"), replay_hash, "layer audit replay hash"
     )
+
+    replay_bindings = verify_replay_evidence(run_dir, plan)
+    verify_gold_artifacts(run_dir / "gold", gold)
 
     canonical = _relative_file(
         run_dir, plan.get("canonical_ndjson_path"), "canonical NDJSON"
@@ -350,6 +357,7 @@ def reconcile_distributed_run(
             "errors": source_errors,
         },
         "bindings": {
+            **replay_bindings,
             "canonical_ndjson_sha256": _sha256(canonical),
             "gold_manifest_sha256": _sha256(run_dir / "gold/gold-manifest.json"),
             "hadoop_manifest_sha256": _sha256(

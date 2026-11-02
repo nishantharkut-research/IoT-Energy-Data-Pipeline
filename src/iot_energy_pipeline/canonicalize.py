@@ -9,6 +9,7 @@ import sqlite3
 import tempfile
 from dataclasses import asdict, dataclass
 from datetime import date, datetime, time
+from decimal import Decimal
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any, Callable, Mapping
@@ -16,6 +17,8 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .brick import BrickMetadata, load_brick_metadata
 from .contracts import (
+    MAX_SCALED_VALUE,
+    MIN_SCALED_VALUE,
     CanonicalEvent,
     CanonicalMeteredEntity,
     canonicalize_time,
@@ -275,10 +278,14 @@ def _quality_row(
         "source_row_number": locator.physical_row,
         "source_event_id": source_event_id(locator),
         "original_timestamp_text": (
-            None if timestamp is None else _display_text(timestamp)
+            timestamp
+            if isinstance(timestamp, str) or timestamp is None
+            else _display_text(timestamp)
         ),
         "meter_id": None if meter_id is None else _display_text(meter_id),
-        "original_numeric_text": None if value is None else _display_text(value),
+        "original_numeric_text": (
+            value if isinstance(value, str) or value is None else _display_text(value)
+        ),
         "detail": detail,
     }
 
@@ -300,10 +307,11 @@ def _canonicalize(
     *,
     event_sink: Callable[[dict[str, Any]], None] | None = None,
     quality_sink: Callable[[dict[str, Any]], None] | None = None,
+    brick_metadata: BrickMetadata | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], BrickMetadata]:
     if manifest._root is None:
         raise ValueError("manifest must retain a verified source root")
-    brick = load_brick_metadata(_registered_brick_path(manifest))
+    brick = brick_metadata or load_brick_metadata(_registered_brick_path(manifest))
     source_zone = ZoneInfo(rules.source_timezone)
     events: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
@@ -327,14 +335,20 @@ def _canonicalize(
         timestamp = source_row.timestamp_value
         meter_value = source_row.meter_id_value
         numeric = source_row.numeric_value
+        timestamp_text = source_row.timestamp_text
+        if timestamp_text is None and timestamp is not None:
+            timestamp_text = _display_text(timestamp)
+        numeric_text = source_row.numeric_text
+        if numeric_text is None and numeric is not None:
+            numeric_text = _display_text(numeric)
         if timestamp is None:
             reject(
                 _quality_row(
                     locator,
                     "missing_timestamp",
-                    timestamp=timestamp,
+                    timestamp=timestamp_text,
                     meter_id=meter_value,
-                    value=numeric,
+                    value=numeric_text,
                     detail="timestamp cell is null",
                 )
             )
@@ -344,9 +358,9 @@ def _canonicalize(
                 _quality_row(
                     locator,
                     "missing_meter_id",
-                    timestamp=timestamp,
+                    timestamp=timestamp_text,
                     meter_id=meter_value,
-                    value=numeric,
+                    value=numeric_text,
                     detail="meter identifier cell is null or blank",
                 )
             )
@@ -357,9 +371,9 @@ def _canonicalize(
                 _quality_row(
                     locator,
                     "missing_numeric_value",
-                    timestamp=timestamp,
+                    timestamp=timestamp_text,
                     meter_id=meter_id,
-                    value=numeric,
+                    value=numeric_text,
                     detail="numeric cell is null or blank",
                 )
             )
@@ -369,24 +383,31 @@ def _canonicalize(
             raise ValueError(
                 f"no evidence-backed measurement contract for {meter_id!r}"
             )
-        timestamp_text = _display_text(timestamp)
-        numeric_text = _display_text(numeric)
+        assert timestamp_text is not None and numeric_text is not None
         try:
-            event_time = canonicalize_time(timestamp_text, source_zone)
+            if isinstance(timestamp, bool):
+                raise ValueError("boolean is not a timestamp")
+            event_time = canonicalize_time(_display_text(timestamp), source_zone)
         except ValueError as exc:
             reject(
                 _quality_row(
                     locator,
                     "invalid_timestamp",
-                    timestamp=timestamp,
+                    timestamp=timestamp_text,
                     meter_id=meter_id,
-                    value=numeric,
+                    value=numeric_text,
                     detail=str(exc),
                 )
             )
             continue
         try:
-            scaled_value = to_scaled_int(numeric_text, rule.decimal_scale)
+            if isinstance(numeric, bool):
+                raise ValueError("boolean is not a numeric reading")
+            scaled_value = to_scaled_int(
+                numeric_text,
+                rule.decimal_scale,
+                bounds=(MIN_SCALED_VALUE, MAX_SCALED_VALUE),
+            )
         except (ValueError, OverflowError) as exc:
             category = (
                 "numeric_overflow"
@@ -397,9 +418,9 @@ def _canonicalize(
                 _quality_row(
                     locator,
                     category,
-                    timestamp=timestamp,
+                    timestamp=timestamp_text,
                     meter_id=meter_id,
-                    value=numeric,
+                    value=numeric_text,
                     detail=str(exc),
                 )
             )
@@ -541,7 +562,7 @@ def _parquet_modules_and_schema() -> tuple[Any, Any, Any]:
             ("source_timezone", pa.string()),
             ("event_time_utc", pa.string()),
             ("original_numeric_text", pa.string()),
-            ("scaled_value", pa.int64()),
+            ("scaled_value", pa.decimal128(38, 0)),
             ("decimal_scale", pa.int32()),
             ("measurement_kind", pa.string()),
             ("unit", pa.string()),
@@ -553,7 +574,13 @@ def _parquet_modules_and_schema() -> tuple[Any, Any, Any]:
 
 def _write_parquet(records: list[dict[str, Any]], path: Path) -> None:
     pa, pq, schema = _parquet_modules_and_schema()
-    table = pa.Table.from_pylist(records, schema=schema)
+    table = pa.Table.from_pylist(
+        [
+            dict(record, scaled_value=Decimal(record["scaled_value"]))
+            for record in records
+        ],
+        schema=schema,
+    )
     pq.write_table(
         table,
         path,
@@ -587,6 +614,7 @@ def _write_parquet_from_database(
             value = json.loads(str(payload))
             if not isinstance(value, dict):
                 raise ValueError("canonical event store contains an invalid payload")
+            value["scaled_value"] = Decimal(value["scaled_value"])
             batch.append(value)
             if len(batch) >= 10_000:
                 writer.write_table(pa.Table.from_pylist(batch, schema=schema))
@@ -603,6 +631,78 @@ def _write_payload_query(
     with path.open("xb") as stream:
         for (payload,) in connection.execute(query):
             stream.write((str(payload) + "\n").encode("utf-8"))
+
+
+def _snapshot_manifest(
+    manifest: DatasetManifest,
+    rules: CanonicalizationRules,
+    brick: BrickMetadata,
+    unmatched: set[str],
+    stage: Path,
+    event_count: int,
+    quality_count: int,
+) -> dict[str, Any]:
+    ndjson_path = stage / "canonical.ndjson"
+    parquet_path = stage / "canonical.parquet"
+    quality_path = stage / "source-quality.ndjson"
+    source_projection = _manifest_projection(manifest)
+    snapshot_manifest: dict[str, Any] = {
+        "schema_version": "snapshot-manifest-v1",
+        "status": "complete",
+        "dataset_version": manifest.dataset_version,
+        "source_variant": manifest.source_variant,
+        "dataset_manifest_sha256": hashlib.sha256(
+            _canonical_json_bytes(source_projection)
+        ).hexdigest(),
+        "source_files": source_projection["files"],
+        "source_locator_fields": [
+            "dataset_version",
+            "source_variant",
+            "source_relative_path",
+            "workbook_sheet",
+            "source_row_number",
+        ],
+        "timezone": {
+            "name": rules.source_timezone,
+            "evidence": rules.timezone_evidence,
+        },
+        "source_layout": {
+            "sha256": rules.source_layout.sha256(),
+            "contract": rules.source_layout.to_dict(),
+        },
+        "measurement_registry": {
+            meter_id: asdict(rule)
+            for meter_id, rule in sorted(rules.measurements.items())
+        },
+        "brick": {
+            "sha256": brick.sha256,
+            "detected_namespace": brick.detected_brick_namespace,
+            "matched_meter_count": brick.report.matched_meter_count,
+            "brick_entity_count": brick.report.brick_entity_count,
+            "unmatched_meter_ids": sorted(unmatched),
+        },
+        "artifacts": {
+            "canonical_ndjson": {
+                "file": "canonical.ndjson",
+                "record_count": event_count,
+                "byte_size": ndjson_path.stat().st_size,
+                "sha256": _sha256(ndjson_path),
+            },
+            "canonical_parquet": {
+                "file": "canonical.parquet",
+                "record_count": event_count,
+                "byte_size": parquet_path.stat().st_size,
+                "sha256": _sha256(parquet_path),
+            },
+            "source_quality": {
+                "file": "source-quality.ndjson",
+                "record_count": quality_count,
+                "byte_size": quality_path.stat().st_size,
+                "sha256": _sha256(quality_path),
+            },
+        },
+    }
+    return snapshot_manifest
 
 
 def build_snapshot(
@@ -723,63 +823,9 @@ def build_snapshot(
             quality_path,
         )
 
-        source_projection = _manifest_projection(manifest)
-        snapshot_manifest: dict[str, Any] = {
-            "schema_version": "snapshot-manifest-v1",
-            "status": "complete",
-            "dataset_version": manifest.dataset_version,
-            "source_variant": manifest.source_variant,
-            "dataset_manifest_sha256": hashlib.sha256(
-                _canonical_json_bytes(source_projection)
-            ).hexdigest(),
-            "source_files": source_projection["files"],
-            "source_locator_fields": [
-                "dataset_version",
-                "source_variant",
-                "source_relative_path",
-                "workbook_sheet",
-                "source_row_number",
-            ],
-            "timezone": {
-                "name": rules.source_timezone,
-                "evidence": rules.timezone_evidence,
-            },
-            "source_layout": {
-                "sha256": rules.source_layout.sha256(),
-                "contract": rules.source_layout.to_dict(),
-            },
-            "measurement_registry": {
-                meter_id: asdict(rule)
-                for meter_id, rule in sorted(rules.measurements.items())
-            },
-            "brick": {
-                "sha256": brick.sha256,
-                "detected_namespace": brick.detected_brick_namespace,
-                "matched_meter_count": brick.report.matched_meter_count,
-                "brick_entity_count": brick.report.brick_entity_count,
-                "unmatched_meter_ids": sorted(unmatched),
-            },
-            "artifacts": {
-                "canonical_ndjson": {
-                    "file": "canonical.ndjson",
-                    "record_count": event_count,
-                    "byte_size": ndjson_path.stat().st_size,
-                    "sha256": _sha256(ndjson_path),
-                },
-                "canonical_parquet": {
-                    "file": "canonical.parquet",
-                    "record_count": event_count,
-                    "byte_size": parquet_path.stat().st_size,
-                    "sha256": _sha256(parquet_path),
-                },
-                "source_quality": {
-                    "file": "source-quality.ndjson",
-                    "record_count": quality_count,
-                    "byte_size": quality_path.stat().st_size,
-                    "sha256": _sha256(quality_path),
-                },
-            },
-        }
+        snapshot_manifest = _snapshot_manifest(
+            manifest, rules, brick, unmatched, stage, event_count, quality_count
+        )
         (stage / "snapshot-manifest.json").write_bytes(
             _canonical_json_bytes(snapshot_manifest, pretty=True)
         )

@@ -1,19 +1,13 @@
-# Course results
+﻿# Measured course results
 
-This tracked file is a publication boundary, not an empirical result. It
-remains free of measured claims until the complete designated-machine matrix
-has produced `experiment-results-v1` and sealed run directories.
+The completed report is [final/course-results.md](final/course-results.md).
+Its machine-readable companion is [final/final-results.json](final/final-results.json).
 
-Generate the measured report with:
+The final scope contains 15 runs: nine fixtures and three repetitions each at
+100K and 1M events. The original three 5M runs are excluded because of resource
+and time constraints. The final report preserves the recovery and configuration
+limits and does not claim completion of the original 18-run matrix.
 
-```text
-python -m iot_energy_pipeline.course_report \
-  --experiment-results <runtime>/experiment-results.json \
-  --runtime-root <runtime> \
-  --output reports/generated/course-results.md
-```
-
-The generator refuses incomplete results, altered run manifests, unverified
-decision reports, and pre-existing output. The generated report labels all
-monetary values as hypothetical scenarios and states that they are not HKUST
-financial results.
+See [the handover guide](../HANDOVER.md) for the artifact-verifying closure
+command. The older full-matrix report generator does not represent this revised
+scope or its unavailable full-workflow timings.

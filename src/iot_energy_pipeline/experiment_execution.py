@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -26,6 +27,33 @@ from iot_energy_pipeline.machine_metadata import validate_machine_metadata
 from iot_energy_pipeline.reports import load_experiment_matrix, summarize
 
 EXECUTION_CONFIRMATION = "RUN-DESIGNATED-MACHINE-EXPERIMENTS"
+WORKFLOW_TIMING_SCOPE = (
+    "run preparation through query benchmark; excludes sealing and post-seal validation"
+)
+
+
+def load_workflow_receipt(
+    run_dir: Path, *, run_id: str, bindings: dict[str, str] | None = None
+) -> dict[str, Any]:
+    receipt = _json_object(run_dir / "workflow-receipt.json", "workflow receipt")
+    seconds = receipt.get("workflow_seconds")
+    if (
+        set(receipt)
+        != {"schema_version", "run_id", "timing_scope", "workflow_seconds", "bindings"}
+        or receipt.get("schema_version") != "workflow-receipt-v1"
+        or receipt.get("run_id") != run_id
+        or receipt.get("timing_scope") != WORKFLOW_TIMING_SCOPE
+        or isinstance(seconds, bool)
+        or not isinstance(seconds, (int, float))
+        or not math.isfinite(seconds)
+        or seconds < 0
+        or not isinstance(receipt.get("bindings"), dict)
+        or (bindings is not None and receipt["bindings"] != bindings)
+    ):
+        raise ValueError(
+            "workflow receipt is invalid or has different evidence bindings"
+        )
+    return receipt
 
 
 def _safe_run_id(value: object) -> str:
@@ -109,7 +137,7 @@ def build_processing_commands(
         "--run-dir",
         str(run_dir),
         "--bootstrap-servers",
-        "localhost:29092",
+        "127.0.0.1:29092",
     )
     commands: list[CommandSpec] = []
     if interrupted_recovery:
@@ -135,6 +163,8 @@ def build_processing_commands(
         "/opt/spark/bin/spark-submit",
         "--master",
         "spark://spark:7077",
+        "--conf",
+        "spark.sql.shuffle.partitions=4",
     )
     canonical_container = f"{container_run}/snapshot/canonical.ndjson"
     commands.extend(
@@ -373,6 +403,19 @@ def _run_command(
 ) -> None:
     log_dir.mkdir(parents=True, exist_ok=True)
     prefix = f"{sequence:02d}-{command.stage}"
+    descriptor: dict[str, Any] = {
+        "stage": command.stage,
+        "argv": list(command.argv),
+        "cwd": str(command.cwd),
+    }
+    if command.stage in {"services_start", "services_stop"}:
+        descriptor["environment"] = {
+            "COMPOSE_PROJECT_NAME": environment["COMPOSE_PROJECT_NAME"]
+        }
+    _write_new(
+        log_dir / f"{prefix}.command.json",
+        descriptor,
+    )
     stdout_path = log_dir / f"{prefix}.stdout.log"
     stderr_path = log_dir / f"{prefix}.stderr.log"
     with stdout_path.open("xb") as stdout, stderr_path.open("xb") as stderr:
@@ -432,6 +475,7 @@ def _prepare_run(
         run_id=run_id,
         fault=fault,
         event_count=event_count,
+        repetition=run["repetition"],
         seed=seed,
         partition_count=partition_count,
         watermark=watermark,
@@ -461,7 +505,11 @@ def _performance_summary(
                 "end_to_end_verification_seconds": float(
                     decision["verification_seconds"]
                 ),
-                "workflow_seconds": float(item["workflow_seconds"]),
+                "workflow_seconds": float(
+                    load_workflow_receipt(run_dir, run_id=item["run_id"])[
+                        "workflow_seconds"
+                    ]
+                ),
             }
         )
     summaries: list[dict[str, Any]] = []
@@ -620,7 +668,8 @@ def execute_experiment_plan(
     if (
         not canonical_path.is_file()
         or canonical_path.is_symlink()
-        or plan.get("canonical_ndjson_sha256") != _sha256(canonical_path)
+        # _snapshot_artifact has just verified the canonical file's bytes.
+        or plan.get("canonical_ndjson_sha256") != canonical_descriptor.get("sha256")
     ):
         raise ValueError("experiment plan canonical snapshot binding mismatch")
     full_event_count = canonical_descriptor.get("record_count")
@@ -654,11 +703,33 @@ def execute_experiment_plan(
         raise FileExistsError(f"one or more planned run directories exist: {existing}")
 
     runtime_root.mkdir(parents=True, exist_ok=True)
+    evidence = runtime_root / "_experiment-evidence"
+    evidence.mkdir(exist_ok=True)
+    for source, name in (
+        (experiment_plan_path, "experiment-plan.json"),
+        (machine_metadata_path, "machine-metadata.json"),
+        (snapshot_manifest_path, "snapshot-manifest.json"),
+    ):
+        target = evidence / name
+        if target.exists():
+            if target.is_symlink() or _sha256(target) != _sha256(source):
+                raise ValueError("experiment execution evidence changed")
+        else:
+            with target.open("xb") as stream:
+                stream.write(source.read_bytes())
+    receipt_bindings = {
+        "experiment_plan_sha256": _sha256(experiment_plan_path),
+        "machine_metadata_sha256": _sha256(machine_metadata_path),
+        "snapshot_manifest_sha256": _sha256(snapshot_manifest_path),
+    }
     orchestration_logs = runtime_root / "_orchestration-logs"
     if orchestration_logs.exists():
         raise FileExistsError("experiment orchestration log directory already exists")
     environment = dict(os.environ)
     environment["PIPELINE_RUNTIME_DIR"] = str(runtime_root)
+    if not environment.get("COMPOSE_PROJECT_NAME"):
+        runtime_hash = hashlib.sha256(str(runtime_root).encode("utf-8")).hexdigest()
+        environment["COMPOSE_PROJECT_NAME"] = f"iot-energy-{runtime_hash[:16]}"
     start = CommandSpec(
         "services_start",
         (
@@ -667,6 +738,9 @@ def execute_experiment_plan(
             "up",
             "-d",
             "--build",
+            "--wait",
+            "--wait-timeout",
+            "300",
             "kafka",
             "spark",
             "spark-worker",
@@ -676,8 +750,9 @@ def execute_experiment_plan(
         repository,
     )
     stop = CommandSpec("services_stop", ("docker", "compose", "stop"), repository)
-    services_started = False
+    processing_error: BaseException | None = None
     completed: list[dict[str, Any]] = []
+    fixtures_accepted = False
     try:
         _run_command(
             start,
@@ -685,10 +760,13 @@ def execute_experiment_plan(
             log_dir=orchestration_logs / "services",
             sequence=1,
         )
-        services_started = True
         for run_number, raw_run in enumerate(runs, start=1):
             if not isinstance(raw_run, dict):
                 raise ValueError("experiment plan run is not an object")
+            if raw_run["experiment"] == "scale" and not fixtures_accepted:
+                evaluate_cross_run_acceptance(runtime_root)
+                _recovery_equivalence(runtime_root)
+                fixtures_accepted = True
             run_id = str(raw_run["run_id"])
             run_dir = runtime_root / run_id
             started = time.perf_counter()
@@ -706,6 +784,17 @@ def execute_experiment_plan(
                 interrupted_recovery=(raw_run.get("mode") == "interrupted_resumed"),
             )
             for sequence, command in enumerate(commands, start=1):
+                if command.stage == "run_seal":
+                    _write_new(
+                        run_dir / "workflow-receipt.json",
+                        {
+                            "schema_version": "workflow-receipt-v1",
+                            "run_id": run_id,
+                            "timing_scope": WORKFLOW_TIMING_SCOPE,
+                            "workflow_seconds": time.perf_counter() - started,
+                            "bindings": receipt_bindings,
+                        },
+                    )
                 _run_command(
                     command,
                     environment=environment,
@@ -720,19 +809,28 @@ def execute_experiment_plan(
                     "event_count": raw_run["event_count"],
                     "repetition": raw_run["repetition"],
                     "status": "finalized",
-                    "workflow_seconds": time.perf_counter() - started,
+                    "workflow_seconds": load_workflow_receipt(
+                        run_dir, run_id=run_id, bindings=receipt_bindings
+                    )["workflow_seconds"],
                     "run_manifest_sha256": _sha256(run_dir / "run-manifest.json"),
                     "artifact_count": len(finalized["artifacts"]),
                 }
             )
+    except BaseException as exc:
+        processing_error = exc
+        raise
     finally:
-        if services_started:
+        try:
             _run_command(
                 stop,
                 environment=environment,
                 log_dir=orchestration_logs / "services",
                 sequence=2,
             )
+        except BaseException as cleanup_error:
+            if processing_error is None:
+                raise
+            processing_error.add_note(f"Service cleanup also failed: {cleanup_error}")
     if len(completed) != len(runs):
         raise ValueError("not every planned experiment run finalized")
     cross_run = evaluate_cross_run_acceptance(runtime_root)

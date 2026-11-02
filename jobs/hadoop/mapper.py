@@ -7,7 +7,8 @@ import sys
 from datetime import datetime
 from typing import Any
 
-MIN_INT64, MAX_INT64 = -(2**63), 2**63 - 1
+MAX_SCALED_VALUE = 10**38 - 1
+MIN_SCALED_VALUE = -MAX_SCALED_VALUE
 
 
 def _required_text(record: dict[str, Any], field: str) -> str:
@@ -33,8 +34,8 @@ def map_record(record: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     scaled = record.get("scaled_value")
     if isinstance(scaled, bool) or not isinstance(scaled, int):
         raise TypeError("scaled_value must be an integer")
-    if not MIN_INT64 <= scaled <= MAX_INT64:
-        raise ValueError("scaled_value exceeds signed 64-bit bounds")
+    if not MIN_SCALED_VALUE <= scaled <= MAX_SCALED_VALUE:
+        raise ValueError("scaled_value exceeds 38-digit integer bounds")
     event_time = _required_text(record, "event_time_utc")
     try:
         parsed = datetime.fromisoformat(event_time.replace("Z", "+00:00"))

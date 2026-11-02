@@ -34,7 +34,9 @@ class DatasetManifest:
     _root: Path | None = field(default=None, compare=False, repr=False)
 
     def to_json(self, path: Path) -> None:
-        """Write manifest to JSON file atomically."""
+        """Write a new immutable manifest JSON file atomically."""
+        if os.path.lexists(path):
+            raise FileExistsError(f"immutable dataset manifest already exists: {path}")
         path.parent.mkdir(parents=True, exist_ok=True)
         data = {
             "dataset_version": self.dataset_version,
@@ -60,13 +62,18 @@ class DatasetManifest:
         try:
             with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
                 f.write(content)
-            os.replace(tmp_path, path)
-        except Exception:
+            # Publish the completed file without replacing a concurrent writer.
+            if os.name == "nt":
+                os.rename(tmp_path, path)
+            else:
+                # POSIX rename may replace the destination; fail if links fail.
+                os.link(tmp_path, path)
+        finally:
             try:
                 os.unlink(tmp_path)
             except OSError:
+                # Publication may have succeeded; retain any orphan temp name.
                 pass
-            raise
 
     @classmethod
     def from_json(cls, path: Path, root: Path | None = None) -> "DatasetManifest":
@@ -109,6 +116,8 @@ class DatasetManifest:
             # Check for empty path
             if not rel_path:
                 raise ValueError("Registered file has empty relative path")
+            if "\\" in rel_path or ":" in rel_path:
+                raise ValueError(f"Registered file has unsafe Windows path: {rel_path}")
 
             # Check for dot or dot-dot components in path string
             # Use string matching since PurePosixPath normalizes them away
@@ -145,6 +154,12 @@ class DatasetManifest:
 
             # Resolve the file path
             file_path = root / rel_path
+            try:
+                file_path.resolve(strict=False).relative_to(root.resolve(strict=True))
+            except (OSError, ValueError) as exc:
+                raise ValueError(
+                    f"Registered file escapes source root: {rel_path}"
+                ) from exc
 
             # Check file exists
             if not file_path.exists():
@@ -280,7 +295,11 @@ def register_dataset(
 
     Raises:
         ValueError: If validation fails.
+        FileExistsError: If the output already exists.
     """
+    if os.path.lexists(output):
+        raise FileExistsError(f"immutable dataset manifest already exists: {output}")
+
     # Validate root exists and is a directory
     if not root.exists():
         raise ValueError(f"Root path does not exist: {root}")

@@ -127,7 +127,7 @@ def compile_experiment_plan(
     descriptor = (
         artifacts.get("canonical_ndjson") if isinstance(artifacts, dict) else None
     )
-    canonical_path = _snapshot_artifact(snapshot_manifest_path, descriptor)
+    _snapshot_artifact(snapshot_manifest_path, descriptor)
     descriptor = cast(dict[str, Any], descriptor)
     full_count = descriptor.get("record_count")
     if isinstance(full_count, bool) or not isinstance(full_count, int):
@@ -139,7 +139,8 @@ def compile_experiment_plan(
         "execution_gate": "explicit execute command required",
         "matrix_sha256": _sha256(matrix_path),
         "snapshot_manifest_sha256": _sha256(snapshot_manifest_path),
-        "canonical_ndjson_sha256": _sha256(canonical_path),
+        # _snapshot_artifact already checked the actual bytes against this hash.
+        "canonical_ndjson_sha256": descriptor["sha256"],
         "machine_metadata_sha256": _sha256(machine_metadata_path),
         "full_event_count": full_count,
         "summary_statistics": ["median", "minimum", "maximum"],

@@ -42,10 +42,14 @@ def test_one_fixture_flow_reaches_every_semantic_acceptance_layer(
     )
     assert reconciliation["status"] == "passed"
     impact = json.loads((run_dir / "reports/decision-impact.json").read_text("utf-8"))
+    energy_view = manifest["views"]["energy_quality"]["rows"][0]
+    assert energy_view["comparison_scope"] == impact["comparison_scope"]
+    assert energy_view["tariff_scenarios"] == impact["tariff_scenarios"]
     assert impact["affected_meter_period_count"] > 0
-    assert impact["absolute_kwh_discrepancy"] != "0"
+    assert impact["incomparable_meter_period_count"] > 0
+    assert impact["absolute_kwh_discrepancy"] == "0"
     assert all(
-        row["residual_exposure_after_verification"] == "0"
+        row["residual_exposure_after_verification"] is None
         for row in impact["tariff_scenarios"]
     )
 

@@ -45,3 +45,21 @@ def test_distributed_fixture_preparation_is_immutable(tmp_path: Path) -> None:
 
     with pytest.raises(FileExistsError, match="already exists"):
         prepare_distributed_fixture(run_dir, run_id="docker-clean", fault="clean")
+
+
+def test_distributed_fixture_exercises_exact_values_beyond_int64(
+    tmp_path: Path,
+) -> None:
+    run_dir = tmp_path / "wide-fixture"
+    prepare_distributed_fixture(run_dir, run_id="wide-fixture", fault="clean")
+    events = [
+        json.loads(line)
+        for line in (run_dir / "snapshot/canonical.ndjson").read_text().splitlines()
+    ]
+    assert any(event["scaled_value"] > 2**63 - 1 for event in events)
+    assert any(
+        event["original_numeric_text"] == "26724.7"
+        and event["decimal_scale"] == 15
+        and event["scaled_value"] == 26724700000000000000
+        for event in events
+    )

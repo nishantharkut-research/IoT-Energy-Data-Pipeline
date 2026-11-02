@@ -81,17 +81,21 @@ def _create_fixture_source(root: Path) -> None:
     for index in range(48):
         timestamp = start + timedelta(minutes=15 * index)
         values = {
-            "meter-a": 100 + index,
+            "meter-a": 26724 + index,
             "meter-b": 200 + index - (1 if index >= 10 else 0),
             "meter-c": 300 + index,
         }
         for meter_id in ("meter-a", "meter-b", "meter-c"):
-            value: str | None = f"{values[meter_id]}.00"
+            value: str | None = (
+                f"{values[meter_id]}.7"
+                if meter_id == "meter-a"
+                else f"{values[meter_id]}.00"
+            )
             if meter_id == "meter-b" and index == 7:
                 value = None
             sheet.append([timestamp, meter_id, value])
         if index == 5:
-            sheet.append([timestamp, "meter-a", f"{values['meter-a']}.00"])
+            sheet.append([timestamp, "meter-a", f"{values['meter-a']}.7"])
     workbook.save(root / "readings.xlsx")
     (root / "metadata.ttl").write_text(
         """\
@@ -146,7 +150,15 @@ def _fixture_rules() -> CanonicalizationRules:
             evidence=evidence,
         ),
         measurements={
-            "meter-a": rule,
+            # Exercise the real-data representation limit without using source
+            # measurements: this synthetic series exceeds int64 at scale 15.
+            "meter-a": MeasurementRule(
+                measurement_kind="cumulative_energy",
+                unit="kWh",
+                decimal_scale=15,
+                evidence=evidence,
+                expected_brick_unit_suffix="KiloW-HR",
+            ),
             "meter-b": rule,
             "meter-c": MeasurementRule(
                 measurement_kind="cumulative_energy",
@@ -502,6 +514,25 @@ def run_local_fixture(
                             ],
                             "absolute_kwh_discrepancy": impact[
                                 "absolute_kwh_discrepancy"
+                            ],
+                            **{
+                                name: impact[name]
+                                for name in (
+                                    "candidate_interval_count",
+                                    "verified_interval_count",
+                                    "comparable_meter_period_count",
+                                    "incomparable_meter_period_count",
+                                    "numeric_discrepancy_meter_period_count",
+                                    "comparison_scope",
+                                    "coverage_limits",
+                                    "tariff_scenarios",
+                                )
+                            },
+                            "candidate_flagged_records": impact[
+                                "candidate_flagged_record_count"
+                            ],
+                            "verified_flagged_records": impact[
+                                "verified_flagged_record_count"
                             ],
                         }
                     ],

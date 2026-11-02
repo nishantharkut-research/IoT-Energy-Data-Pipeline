@@ -59,7 +59,10 @@
         "gold_manifest_sha256": {"$ref": "#/$defs/sha256"},
         "hadoop_manifest_sha256": {"$ref": "#/$defs/sha256"},
         "layer_audit_manifest_sha256": {"$ref": "#/$defs/sha256"},
-        "silver_candidate_events_sha256": {"$ref": "#/$defs/sha256"}
+        "silver_candidate_events_sha256": {"$ref": "#/$defs/sha256"},
+        "replay_schedule_sha256": {"$ref": "#/$defs/sha256"},
+        "replay_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "replay_acknowledgements_sha256": {"$ref": "#/$defs/sha256"}
       }
     },
     "reconciliation_seconds": {"type": "number", "minimum": 0}

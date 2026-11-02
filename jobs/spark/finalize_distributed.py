@@ -16,7 +16,7 @@ from iot_energy_pipeline.streaming_replay import (
     load_streaming_replay_receipt,
     load_streaming_schedule_metadata,
 )
-from jobs.spark.common import canonical_spark_schema
+from jobs.spark.common import canonical_spark_schema, json_shape_category
 
 
 def _load_plan(run_dir: Path) -> dict[str, Any]:
@@ -471,12 +471,15 @@ def finalize_distributed_gold(
     )
 
     candidates = joined.withColumn("event", functions.from_json("value", schema))
+    # PERMISSIVE from_json can return a non-null struct of null fields for
+    # truncated JSON. Validate syntax separately, as the streaming classifier does.
+    syntax_category = functions.udf(json_shape_category, StringType())
     _require_empty(
         candidates.where(
             (functions.col("injection_type") == "malformed")
-            & functions.col("event").isNotNull()
+            & syntax_category("value").isNull()
         ),
-        "scheduled malformed delivery contains a canonical event",
+        "scheduled malformed delivery contains a valid JSON object",
     )
     valid_candidates = candidates.where(functions.col("injection_type") != "malformed")
     _require_empty(

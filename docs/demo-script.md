@@ -1,67 +1,20 @@
-# 5–7 minute demonstration script
+﻿# Six-minute demonstration
 
-## Before the demonstration
+Use saved results. Start `scripts/show_completed_run.ps1`; the default is the
+small combined-fault fixture. Open the generated results report alongside it.
+Let initial integrity verification finish before presenting. No experiment
+services or large live workloads are needed.
 
-- Use one already sealed fixture or 100K run.
-- Keep 1M, 5M, and full-data results precomputed; never run them live.
-- Open the run directory, reconciliation JSON, generated course report, and
-  read-only dashboard before speaking.
-- Do not start Docker services from the dashboard.
+| Time | Show | Explain |
+| --- | --- | --- |
+| 0:00–0:45 | README architecture | A completed job alone does not establish delivery completeness. We preserve deliveries and independently check the final result. |
+| 0:45–1:30 | Run provenance | Public HKUST telemetry, stable physical-row identity, exact decimals, and separate source variants. Hong Kong timezone is an experimental assumption. |
+| 1:30–2:30 | Combined fixture: counts and fault disposition | 432 data deliveries: 144 unique valid records, 144 duplicates, and 144 quarantined deliveries. Terminal control records are separate. |
+| 2:30–3:20 | Reconciliation | Gold rebuilds from Bronze; Hadoop independently reads canonical NDJSON. Both record and aggregate comparisons have zero errors. |
+| 3:20–4:20 | Restrictive watermark fixture | Change the run directory to `watermark-restrictive-r01`. Silver has 143 records; Gold and Hadoop have 144. Two consumption periods are incomparable. Zero discrepancy on comparable periods is not zero total energy error. |
+| 4:20–5:20 | Generated verification, storage, and SQL results | Three repetitions each at 100K and 1M. Show timing ranges, compressed storage ratios, and five queries. Full 1M workflow timings are unavailable; query settings differ. |
+| 5:20–6:00 | Recovery and limits | Interrupted recovery reproduces four semantic outputs. 5M is excluded. Financial scenarios are hypothetical, and residual exposure is unknown. |
 
-## 0:00–0:45 — The problem
-
-“A Spark job finishing tells us that the program completed. It does not prove
-that no IoT event was lost, duplicated, changed, or silently discarded. This
-project makes every delivery auditable and checks the final result with an
-independent engine.”
-
-Show the architecture in the README. Point out the split between Kafka/Spark
-and canonical NDJSON/Hadoop.
-
-## 0:45–1:30 — Source and exact identity
-
-Show the dataset manifest, source-layout evidence, and canonical schema. Explain
-that a source event is a physical workbook row and that decimal text is stored
-as a scaled integer. Mention that raw and cleaned variants are separate.
-
-## 1:30–2:30 — Controlled replay and layers
-
-Show one deterministic replay manifest and schedule. Explain unique delivery
-IDs, fixed partitioning, injected duplicates/delays/malformed values, and
-terminal partition records. In the dashboard, show Bronze, Silver, duplicate,
-late, and quarantine counts conserving back to acknowledged deliveries.
-
-## 2:30–3:35 — Exact Gold and independent Hadoop verification
-
-Show that Gold is rebuilt from Bronze rather than Silver. Open the Hadoop
-manifest and briefly show that the oracle consumes canonical NDJSON, not Spark
-output. Display the reconciliation source-record and aggregate sections with
-empty error lists.
-
-## 3:35–4:35 — Why the watermark still matters
-
-Compare retaining and restrictive Silver candidates. Explain that a restrictive
-watermark may change the operational candidate while exact Gold remains
-complete. Show affected meter-periods and flagged records; do not describe late
-data as malformed data.
-
-## 4:35–5:25 — Decision impact and guardrails
-
-Show absolute kWh discrepancy and verification storage/time. State: “The 0.5,
-1.0, and 2.0 rates are hypothetical normalized scenarios. They are not HKUST
-tariffs or financial results.” Show residual scenario exposure after
-verification as zero only because the published decision uses reconciled Gold.
-
-## 5:25–6:15 — Scale, storage, queries, and recovery
-
-Use the generated report, not a live workload. Show median/minimum/maximum over
-three clean repetitions, NDJSON versus both Parquet layouts, and the five query
-timings. Show that interrupted/resumed and uninterrupted recovery produced
-identical semantic Gold and Hadoop records.
-
-## 6:15–6:45 — Close
-
-“The contribution is not another Spark pipeline. It is a reproducible evidence
-chain showing where every delivery ended and whether an independently
-implemented computation agrees. The limits are controlled replay, one declared
-machine, and hypothetical business scenarios.”
+The supported claim is delivery accounting, recovery from Bronze, and
+independent exact verification through 1M source records. The results do not
+demonstrate live deployment, a new algorithm, or actual billing savings.

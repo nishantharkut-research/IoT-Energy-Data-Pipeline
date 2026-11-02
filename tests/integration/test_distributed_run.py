@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
-from iot_energy_pipeline.distributed_run import prepare_distributed_run
+from iot_energy_pipeline.distributed_run import main, prepare_distributed_run
+from iot_energy_pipeline.replay import load_replay_manifest
 
 
 def _write_ndjson(path: Path, records: list[dict]) -> None:
@@ -96,6 +98,12 @@ def test_distributed_run_preparation_selects_a_deterministic_prefix(
         == hashlib.sha256((snapshot / "canonical.ndjson").read_bytes()).hexdigest()
     )
     assert plan["expected_delivery_count"] == 2
+    assert (
+        json.loads((output / "replay/replay-manifest.json").read_text("utf-8"))[
+            "repetition"
+        ]
+        == 1
+    )
     assert json.loads((output / "distributed-plan.json").read_text("utf-8")) == plan
 
 
@@ -128,3 +136,68 @@ def test_distributed_run_preparation_is_immutable(tmp_path: Path) -> None:
             fault="clean",
             event_count=2,
         )
+
+
+@pytest.mark.parametrize("repetition", [1, 2, 3])
+def test_distributed_run_binds_repetition(tmp_path: Path, repetition: int) -> None:
+    output = tmp_path / "run"
+    plan = prepare_distributed_run(
+        snapshot_dir=_snapshot(tmp_path),
+        output_dir=output,
+        run_id=f"scale-2-r{repetition:02d}",
+        fault="clean",
+        event_count=2,
+        repetition=repetition,
+    )
+    manifest = json.loads((output / "replay/replay-manifest.json").read_text("utf-8"))
+    assert manifest["repetition"] == repetition
+    assert (
+        load_replay_manifest(output / "replay/replay-manifest.json").sha256()
+        == (plan["replay_manifest_hash"])
+    )
+
+
+@pytest.mark.parametrize("repetition", [True, 0, -1, "2", 1.5, None])
+def test_distributed_run_rejects_invalid_repetition(
+    tmp_path: Path, repetition: object
+) -> None:
+    output = tmp_path / "run"
+    with pytest.raises(ValueError, match="repetition"):
+        prepare_distributed_run(
+            snapshot_dir=_snapshot(tmp_path),
+            output_dir=output,
+            run_id="scale-2-r01",
+            fault="clean",
+            event_count=2,
+            repetition=repetition,
+        )
+    assert not output.exists()
+
+
+def test_prepare_cli_passes_repetition(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    output = tmp_path / "run"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "distributed_run",
+            "prepare",
+            "--snapshot-dir",
+            str(_snapshot(tmp_path)),
+            "--output",
+            str(output),
+            "--run-id",
+            "scale-2-r03",
+            "--fault",
+            "clean",
+            "--event-count",
+            "2",
+            "--repetition",
+            "3",
+        ],
+    )
+    assert main() == 0
+    manifest = json.loads((output / "replay/replay-manifest.json").read_text("utf-8"))
+    assert manifest["repetition"] == 3

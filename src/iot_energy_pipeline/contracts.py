@@ -15,6 +15,8 @@ __all__ = [
     "CanonicalMeteredEntity",
     "MAX_INT64",
     "MIN_INT64",
+    "MAX_SCALED_VALUE",
+    "MIN_SCALED_VALUE",
     "SourceLocator",
     "canonicalize_time",
     "logical_measurement_key",
@@ -23,6 +25,8 @@ __all__ = [
 ]
 
 MIN_INT64, MAX_INT64 = -(2**63), 2**63 - 1
+MAX_SCALED_VALUE = 10**38 - 1
+MIN_SCALED_VALUE = -MAX_SCALED_VALUE
 
 
 @dataclass(frozen=True)
@@ -78,18 +82,44 @@ def logical_measurement_key(meter_id: str, event_time_utc: datetime) -> str:
     return f"{meter_id}|{event_time_utc.astimezone(ZoneInfo('UTC')).isoformat()}"
 
 
-def to_scaled_int(text: str, scale: int) -> int:
+def to_scaled_int(
+    text: str, scale: int, *, bounds: tuple[int, int] = (MIN_INT64, MAX_INT64)
+) -> int:
+    """Scale exactly using decimal digits, independent of the Decimal context.
+
+    The default retains the legacy int64 API. Canonical records explicitly use
+    MIN_SCALED_VALUE/MAX_SCALED_VALUE, matching decimal128(38, 0).
+    """
     if isinstance(scale, bool) or not isinstance(scale, int) or scale < 0:
         raise ValueError("scale must be a non-negative integer")
     try:
-        value = Decimal(str(text).strip()) * (Decimal(10) ** scale)
+        value = Decimal(str(text).strip())
     except (InvalidOperation, ValueError) as exc:
         raise ValueError(f"invalid decimal value: {text!r}") from exc
-    if not value.is_finite() or value != value.to_integral_value():
+    if not value.is_finite():
         raise ValueError("value cannot be represented at the requested scale")
-    result = int(value)
-    if not MIN_INT64 <= result <= MAX_INT64:
-        raise OverflowError("scaled value exceeds signed 64-bit range")
+    sign, digits, exponent = value.as_tuple()
+    assert isinstance(exponent, int)
+    shift = exponent + scale
+    if not any(digits):
+        result = 0
+    else:
+        if shift < 0:
+            places = -shift
+            if places >= len(digits) or any(digits[-places:]):
+                raise ValueError("value cannot be represented at the requested scale")
+            digits = digits[:-places]
+            shift = 0
+        # Reject huge exponents before constructing a huge power or integer.
+        max_digits = len(str(max(abs(bounds[0]), abs(bounds[1]))))
+        if len(digits) + shift > max_digits:
+            raise OverflowError("scaled value exceeds configured integer bounds")
+        coefficient = 0
+        for digit in digits:
+            coefficient = coefficient * 10 + digit
+        result = (-1 if sign else 1) * coefficient * 10**shift
+    if not bounds[0] <= result <= bounds[1]:
+        raise OverflowError("scaled value exceeds configured integer bounds")
     return result
 
 

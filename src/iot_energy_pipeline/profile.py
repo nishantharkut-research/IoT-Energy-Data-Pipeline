@@ -101,7 +101,9 @@ class DatasetProfile:
         return content
 
     def to_json(self, path: Path) -> None:
-        """Write profile to JSON file atomically."""
+        """Write a new immutable profile JSON file atomically."""
+        if os.path.lexists(path):
+            raise FileExistsError(f"immutable dataset profile already exists: {path}")
         path.parent.mkdir(parents=True, exist_ok=True)
         content = self.to_json_string()
 
@@ -113,13 +115,18 @@ class DatasetProfile:
         try:
             with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
                 f.write(content)
-            os.replace(tmp_path, path)
-        except Exception:
+            # Publish the completed file without replacing a concurrent writer.
+            if os.name == "nt":
+                os.rename(tmp_path, path)
+            else:
+                # POSIX rename may replace the destination; fail if links fail.
+                os.link(tmp_path, path)
+        finally:
             try:
                 os.unlink(tmp_path)
             except OSError:
+                # Publication may have succeeded; retain any orphan temp name.
                 pass
-            raise
 
 
 def _is_iso_timestamp_text(value: str) -> bool:
@@ -375,7 +382,11 @@ def profile_dataset(
     Raises:
         ValueError: If validation fails.
         RuntimeError: If workbook cannot be read.
+        FileExistsError: If the output already exists.
     """
+    if os.path.lexists(output):
+        raise FileExistsError(f"immutable dataset profile already exists: {output}")
+
     root = manifest._root
     if root is None:
         raise ValueError("Manifest has no root path for profiling")

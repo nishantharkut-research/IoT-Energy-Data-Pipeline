@@ -2,15 +2,21 @@
 
 ## Status
 
+The complete raw and clean structural profiles and both telemetry audits were
+executed on 27 October 2026. See
+[the source results](results/source-audit-2026-10-27.md) for measured counts,
+membership checks, repeat-profile reproducibility, and remaining gates.
+The observations below retain their original inspection dates.
+
 The documentary source audit was completed on 2026-08-25. On 2026-08-26, the
 downloaded DOI package was also inspected without running the data pipeline.
 The package contains the official `All_Data.zip` and `README.md`; the inner
 archive size and SHA-256 match Dryad version 5.
 
-Only the ZIP directory, both Turtle members, and representative workbooks were
-inspected. No all-workbook profile, canonical snapshot, Kafka replay, Spark
-job, Hadoop job, or experiment was run. Global row counts, timestamp ranges,
-and empirical quality results remain gated for the later data-run phase.
+That August inspection covered the ZIP directory, both Turtle members, and
+representative workbooks. At that date, no all-workbook profile or pipeline run
+had occurred. The October source results and execution record supersede that
+earlier status; the bounded observations below retain their original scope.
 
 ## Official Release
 

@@ -23,19 +23,26 @@
     "verification_storage_scope",
     "storage_overhead_bytes",
     "storage_overhead_ratio",
-    "tariff_scenarios"
+    "tariff_scenarios",
+    "candidate_interval_count",
+    "verified_interval_count",
+    "comparable_meter_period_count",
+    "incomparable_meter_period_count",
+    "numeric_discrepancy_meter_period_count",
+    "comparison_scope",
+    "coverage_limits"
   ],
   "properties": {
     "schema_version": {"const": "decision-impact-v1"},
     "status": {"const": "verified"},
     "run_id": {"type": "string", "minLength": 1, "maxLength": 128},
     "reconciliation_sha256": {"$ref": "#/$defs/sha256"},
-    "affected_meter_period_count": {"$ref": "#/$defs/count"},
+    "affected_meter_period_count": {"$ref": "#/$defs/count", "description": "Distinct meter/end periods with changed interval availability, unequal starts, or a nonzero comparable difference; unchanged exclusions are represented by source flags."},
     "affected_meter_periods": {
       "type": "array",
       "items": {"$ref": "#/$defs/affected_period"}
     },
-    "absolute_kwh_discrepancy": {"$ref": "#/$defs/decimal"},
+    "absolute_kwh_discrepancy": {"$ref": "#/$defs/decimal", "description": "Exact sum over identical supports only; zero is a subtotal, not evidence that unavailable consumption is zero."},
     "candidate_flagged_record_count": {"$ref": "#/$defs/count"},
     "candidate_flagged_records": {
       "type": "array",
@@ -89,6 +96,13 @@
     },
     "storage_overhead_bytes": {"$ref": "#/$defs/count"},
     "storage_overhead_ratio": {"type": ["number", "null"], "minimum": 0},
+    "candidate_interval_count": {"$ref": "#/$defs/count"},
+    "verified_interval_count": {"$ref": "#/$defs/count"},
+    "comparable_meter_period_count": {"$ref": "#/$defs/count"},
+    "incomparable_meter_period_count": {"$ref": "#/$defs/count"},
+    "numeric_discrepancy_meter_period_count": {"$ref": "#/$defs/count"},
+    "comparison_scope": {"const": "identical meter/start/end supports only"},
+    "coverage_limits": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
     "tariff_scenarios": {
       "type": "array",
       "minItems": 3,
@@ -100,6 +114,7 @@
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "count": {"type": "integer", "minimum": 0},
     "decimal": {"type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+)?$"},
+    "nullable_decimal": {"anyOf": [{"$ref": "#/$defs/decimal"}, {"type": "null"}]},
     "affected_period": {
       "type": "object",
       "additionalProperties": false,
@@ -108,15 +123,172 @@
         "period_end_utc",
         "candidate_kwh",
         "verified_kwh",
-        "absolute_kwh_discrepancy"
+        "absolute_kwh_discrepancy",
+        "candidate_interval_start_utc",
+        "verified_interval_start_utc",
+        "comparison_status"
       ],
       "properties": {
-        "meter_id": {"type": "string", "minLength": 1},
-        "period_end_utc": {"type": "string", "format": "date-time"},
-        "candidate_kwh": {"$ref": "#/$defs/decimal"},
-        "verified_kwh": {"$ref": "#/$defs/decimal"},
-        "absolute_kwh_discrepancy": {"$ref": "#/$defs/decimal"}
-      }
+        "meter_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "period_end_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "candidate_kwh": {
+          "$ref": "#/$defs/nullable_decimal"
+        },
+        "verified_kwh": {
+          "$ref": "#/$defs/nullable_decimal"
+        },
+        "absolute_kwh_discrepancy": {
+          "$ref": "#/$defs/nullable_decimal"
+        },
+        "candidate_interval_start_utc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "verified_interval_start_utc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "comparison_status": {
+          "enum": [
+            "candidate_unavailable",
+            "verified_unavailable",
+            "temporal_support_mismatch",
+            "comparable_difference"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "comparison_status": {
+                "const": "candidate_unavailable"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "candidate_kwh": {
+                "type": "null"
+              },
+              "candidate_interval_start_utc": {
+                "type": "null"
+              },
+              "verified_kwh": {
+                "$ref": "#/$defs/decimal"
+              },
+              "verified_interval_start_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "absolute_kwh_discrepancy": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "comparison_status": {
+                "const": "verified_unavailable"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "candidate_kwh": {
+                "$ref": "#/$defs/decimal"
+              },
+              "candidate_interval_start_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "verified_kwh": {
+                "type": "null"
+              },
+              "verified_interval_start_utc": {
+                "type": "null"
+              },
+              "absolute_kwh_discrepancy": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "comparison_status": {
+                "const": "temporal_support_mismatch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "candidate_kwh": {
+                "$ref": "#/$defs/decimal"
+              },
+              "candidate_interval_start_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "verified_kwh": {
+                "$ref": "#/$defs/decimal"
+              },
+              "verified_interval_start_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "absolute_kwh_discrepancy": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "comparison_status": {
+                "const": "comparable_difference"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "candidate_kwh": {
+                "$ref": "#/$defs/decimal"
+              },
+              "candidate_interval_start_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "verified_kwh": {
+                "$ref": "#/$defs/decimal"
+              },
+              "verified_interval_start_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "absolute_kwh_discrepancy": {
+                "$ref": "#/$defs/decimal"
+              }
+            }
+          }
+        }
+      ]
     },
     "flagged_record": {
       "type": "object",
@@ -152,7 +324,7 @@
         "normalized_rate": {"enum": ["0.5", "1.0", "2.0"]},
         "rate_unit": {"const": "scenario currency units per kWh"},
         "gross_exposure": {"$ref": "#/$defs/decimal"},
-        "residual_exposure_after_verification": {"const": "0"},
+        "residual_exposure_after_verification": {"type": "null", "description": "Unknown: source reconciliation does not prove measurement accuracy or completeness of temporal coverage."},
         "monetary_interpretation": {
           "const": "scenario only; not an HKUST financial result"
         }

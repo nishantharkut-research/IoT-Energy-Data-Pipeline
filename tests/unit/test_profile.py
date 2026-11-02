@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import tempfile
 from datetime import date, datetime, time
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -11,6 +12,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from typing import Any
 
 from openpyxl import Workbook
@@ -658,6 +660,51 @@ class TestProfileErrors:
 
 class TestProfileOutput:
     """Tests for profile JSON output format."""
+
+    @pytest.mark.parametrize("created_during_write", [False, True])
+    def test_to_json_preserves_existing_output(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        created_during_write: bool,
+    ) -> None:
+        output = tmp_path / "profile.json"
+        original = b"existing immutable profile\r\n"
+        profile = DatasetProfile("v1", "raw", ())
+        if created_during_write:
+            mkstemp = tempfile.mkstemp
+
+            def create_competing_output(*args: Any, **kwargs: Any) -> tuple[int, str]:
+                result = mkstemp(*args, **kwargs)
+                output.write_bytes(original)
+                return result
+
+            monkeypatch.setattr(tempfile, "mkstemp", create_competing_output)
+        else:
+            output.write_bytes(original)
+
+        with pytest.raises(FileExistsError):
+            profile.to_json(output)
+
+        assert output.read_bytes() == original
+        assert sorted(path.name for path in tmp_path.iterdir()) == [output.name]
+
+    def test_existing_output_rejected_before_file_iteration(
+        self, tmp_path: Path
+    ) -> None:
+        output = tmp_path / "profile.json"
+        original = b"existing immutable profile\n"
+        output.write_bytes(original)
+
+        class UnreadableFiles(tuple):
+            def __iter__(self) -> Iterator[FileManifest]:
+                pytest.fail("existing output must be rejected before file iteration")
+
+        manifest = DatasetManifest("v1", "raw", UnreadableFiles(), _root=tmp_path)
+        with pytest.raises(FileExistsError):
+            profile_dataset(manifest, output)
+
+        assert output.read_bytes() == original
 
     def test_profile_creates_output(self, tmp_path: Path) -> None:
         """profile_dataset writes output file."""

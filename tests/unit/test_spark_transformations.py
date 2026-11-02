@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import timedelta
+from decimal import localcontext
 
 import pytest
 
@@ -10,11 +11,90 @@ from iot_energy_pipeline.schedule import build_schedule
 from jobs.spark.common import (
     QUARANTINE_CATEGORIES,
     archive_kafka_record,
+    json_shape_category,
     parse_delivery,
 )
 from jobs.spark.stream import assert_retaining_watermark, process_deliveries
 
+
+@pytest.mark.parametrize("scaled", [26724700000000000000, 10**38 - 1, -(10**38 - 1)])
+def test_json_delivery_accepts_exact_wide_scaled_integers(scaled: int) -> None:
+    from jobs.spark.stream import _numeric_shape
+
+    event = {
+        **_event(1),
+        "scaled_value": scaled,
+        "decimal_scale": 0,
+        "original_numeric_text": str(scaled),
+    }
+    raw = json.dumps(event)
+    with localcontext() as context:
+        context.prec = 6
+        assert parse_delivery(
+            raw, {event["source_event_id"]: event}, MANIFEST_HASH, _headers()
+        ) == (event, None)
+    assert _numeric_shape(raw) is None
+
+
+@pytest.mark.parametrize(
+    ("scaled", "category"),
+    [
+        (10**38, "numeric_overflow"),
+        (-(10**38), "numeric_overflow"),
+        (True, "invalid_numeric_value"),
+        (1.0, "invalid_numeric_value"),
+        ("1", "invalid_numeric_value"),
+    ],
+)
+def test_json_numeric_range_and_integer_shape(scaled: object, category: str) -> None:
+    from jobs.spark.stream import _numeric_shape
+
+    event = {**_event(1), "scaled_value": scaled}
+    raw = json.dumps(event)
+    assert _numeric_shape(raw) == category
+    assert parse_delivery(
+        raw, {event["source_event_id"]: event}, MANIFEST_HASH, _headers()
+    ) == (None, category)
+
+
+def test_json_numeric_source_comparison_never_rounds() -> None:
+    event = {
+        **_event(1),
+        "scaled_value": 10**37,
+        "decimal_scale": 0,
+        "original_numeric_text": str(10**37) + ".1",
+    }
+    assert parse_delivery(
+        json.dumps(event), {event["source_event_id"]: event}, MANIFEST_HASH, _headers()
+    ) == (None, "invalid_numeric_value")
+
+
+def test_spark_scaled_value_schema_is_decimal38() -> None:
+    pytest.importorskip("pyspark")
+    from pyspark.sql.types import DecimalType
+
+    from jobs.spark.common import canonical_spark_schema
+
+    assert canonical_spark_schema()["scaled_value"].dataType == DecimalType(38, 0)
+
+
 MANIFEST_HASH = "f" * 64
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ('{"malformed":', "invalid_json"),
+        ('{"source_event_id":"known",', "invalid_json"),
+        ('{"source_event_id":"known","meter_id":"a"}', None),
+        ("[]", "schema_mismatch"),
+        ("null", "schema_mismatch"),
+    ],
+)
+def test_json_shape_does_not_treat_permissive_partial_structs_as_valid(
+    raw: str, expected: str | None
+) -> None:
+    assert json_shape_category(raw) == expected
 
 
 def _event(index: int, *, unit: str = "kWh", scale: int = 2) -> dict:
@@ -114,7 +194,7 @@ def test_bronze_record_preserves_complete_kafka_delivery_metadata() -> None:
             "invalid_numeric_value",
         ),
         (
-            json.dumps({**_event(1), "scaled_value": 2**63}),
+            json.dumps({**_event(1), "scaled_value": 10**38}),
             _headers(),
             {_event(1)["source_event_id"]: _event(1)},
             "numeric_overflow",

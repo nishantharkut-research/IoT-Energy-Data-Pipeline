@@ -212,7 +212,15 @@ class _WorkbookAudit:
             self.counts["missing_numeric_count"] += 1
         else:
             try:
-                parsed_numeric = _parse_decimal(row.numeric_value)
+                # Retained boolean <v> text looks numeric; validity follows the
+                # parsed source type, before choosing text for exact conversion.
+                if isinstance(row.numeric_value, bool):
+                    raise InvalidOperation("boolean is not a numeric reading")
+                parsed_numeric = _parse_decimal(
+                    row.numeric_text
+                    if row.numeric_text is not None
+                    else row.numeric_value
+                )
             except (InvalidOperation, ValueError):
                 self.counts["invalid_numeric_count"] += 1
             else:

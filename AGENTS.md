@@ -49,7 +49,8 @@ No dependency on or copying of prior research code, data, results, or artifacts.
 
 - Docker Compose allowed
 - Kubernetes not used
-- No full data run on this development system
+- Full data runs on the internal drive are authorized by the user as of
+  2026-10-27, after distributed fixture acceptance and source-evidence gates.
 
 ## Version control
 

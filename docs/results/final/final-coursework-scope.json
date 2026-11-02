@@ -1,0 +1,131 @@
+{
+  "schema_version": "final-coursework-scope-v1",
+  "recorded_at_utc": "2026-11-02T02:46:30.444720+00:00",
+  "status": "all_in_scope_runs_sealed",
+  "original_plan_sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09",
+  "scale_event_counts": [
+    100000,
+    1000000
+  ],
+  "scale_repetitions": 3,
+  "completed_runs": [
+    {
+      "run_id": "correctness-clean-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "460c47d775b01054904bec0802a87297daa8e9e0a1f8cca2f59ab9b530204bed",
+      "reconciliation_sha256": "3e9b11450e9fc0c5422f44a7038fae6453c73abdea3368a0018a73aecd42a53c"
+    },
+    {
+      "run_id": "correctness-duplicate-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "3eb7e7c229421d1164c319df614889b525d58260f964696ec959f395eea0e475",
+      "reconciliation_sha256": "05e9dc3ea0b18f861effc68ac4063212d4f2723811676337dbebb21368d4ee27"
+    },
+    {
+      "run_id": "correctness-delayed-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "6d9d552f6d4b7f1eaef11d63f0711259c273e0d70742848a2cf56c6a939aea42",
+      "reconciliation_sha256": "207525fd78ce7f7ebe89f28cb8446eaa59378d8e669ed9f7ce63965282256eb3"
+    },
+    {
+      "run_id": "correctness-malformed-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "4fc56636582df92ed9894f3897b861e22dd7f915d933481212b888195aa5726f",
+      "reconciliation_sha256": "18c3f29b16c628dbc647cdc15af0856ebc646c8050f21c6e52b2255a6760a563"
+    },
+    {
+      "run_id": "correctness-combined-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "c9cd50388b8e4a73fe1155345557cf48418f6cf8b3747e9cc3357936b8ee6279",
+      "reconciliation_sha256": "eb09065096208d4e2118ce65baf9a078a523c6021b388c31b5b5a1a7a31062a6"
+    },
+    {
+      "run_id": "recovery-uninterrupted-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "65bbe60ff44480d86f06f0070494cb6b40674b944152a1226375a59297f5f90d",
+      "reconciliation_sha256": "0a60235d2b71d89b5750201899ad2ee58c00d54a371f38c58b6113596eccfe44"
+    },
+    {
+      "run_id": "recovery-interrupted_resumed-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "9e59e7d515dfe6a23e19205a887f749335c7061b8c5eeced955a36f28d905153",
+      "reconciliation_sha256": "60099969e9e5d4661fa63aa463db077fd58441998a34c09a6bab60aa71128c7c"
+    },
+    {
+      "run_id": "watermark-retaining-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "9c78d4f0b8238d453c0acae33eb2872e26a1bc3a5f15e194ba95f44a6ef3dcfc",
+      "reconciliation_sha256": "715d8010b794474898dc5d167149666e651df0b02782e3476e563e6d95f48052"
+    },
+    {
+      "run_id": "watermark-restrictive-r01",
+      "event_count": "fixture",
+      "status": "finalized",
+      "run_manifest_sha256": "07952ebbd44f4e7b522ae3ea8b095dda629026d52dda61c92fb909117d53e85d",
+      "reconciliation_sha256": "8c5c0c86719e4642d80cc9d208287c3af52605002ea733bdfac1414ca8650afb"
+    },
+    {
+      "run_id": "scale-100000-r01",
+      "event_count": 100000,
+      "status": "finalized",
+      "run_manifest_sha256": "f68eca6f9a68ac714167cc0e0d37a9ccbcbc24d7e6056d6cdd137671546e1725",
+      "reconciliation_sha256": "c6d76737c946c25a9c34264e9f4aeeb4741782bec5c7ba15bfee5ebd4f4706fc"
+    },
+    {
+      "run_id": "scale-100000-r02",
+      "event_count": 100000,
+      "status": "finalized",
+      "run_manifest_sha256": "769710d1a902cb59c7a5058069ed0d420fc1bb2e010b516e86657b1c906b8dc3",
+      "reconciliation_sha256": "bff6e6bfb063469095f0aaefa6153ee2e7ae5f83c1124b3251347ea07180c4b0"
+    },
+    {
+      "run_id": "scale-100000-r03",
+      "event_count": 100000,
+      "status": "finalized",
+      "run_manifest_sha256": "df6d6733592200920f6271d228c0c0a162299ebbe9c28dcd23fc6697d0197dc1",
+      "reconciliation_sha256": "44fd3689fd2c85e65000db347b716fe35fbd7333d6e86c2cbcd88bf4a722db8b"
+    },
+    {
+      "run_id": "scale-1000000-r01",
+      "event_count": 1000000,
+      "status": "finalized",
+      "run_manifest_sha256": "7300b14bd73b42eeb745140e94f0a96988595781ae21f3d46829dde752349ba5",
+      "reconciliation_sha256": "5723a28f3d0f714cc469f64b4e60e2f3553226f0246fb61ffadbe6c07ae4c0b9"
+    },
+    {
+      "run_id": "scale-1000000-r02",
+      "event_count": 1000000,
+      "status": "finalized",
+      "run_manifest_sha256": "b417c76826ea327dbc0090a9917b4bc4a11d30b42a9435bb58925508f6fee865",
+      "reconciliation_sha256": "f251df8c6062460042076b9eff26b795ecfd8b53c7b3570d43f45fd56a050556"
+    },
+    {
+      "run_id": "scale-1000000-r03",
+      "event_count": 1000000,
+      "status": "finalized",
+      "run_manifest_sha256": "a5d87464e34ce3b22106ed760a558a1a91d7a3af4a52f156dae1720968605808",
+      "reconciliation_sha256": "51f211168d8c68fb3f0bad6d512519b7c4a095424997dd34f0cf531d6cc09e59"
+    }
+  ],
+  "excluded_runs": [
+    "scale-5000000-r01",
+    "scale-5000000-r02",
+    "scale-5000000-r03"
+  ],
+  "exclusion_reason": "User finalized the coursework scope without 5M experiments because of resource and time constraints.",
+  "verification_scope": "Fresh checks of manifest seals, finalized/reconciled/immutable flags, reconciliation and decision-impact report hashes, and empty aggregate comparison errors. Large data artifacts were not rehashed in this check.",
+  "limitations": [
+    "No performance or correctness claim beyond 1M events from these experiments.",
+    "All 1M workflows were interrupted; complete workflow timings are unavailable.",
+    "Query configurations differ between 100K and 1M; their query timings are not a controlled scaling comparison.",
+    "Asia/Hong_Kong is an experimental timezone assumption. Monetary values are hypothetical scenarios, not HKUST financial results."
+  ]
+}

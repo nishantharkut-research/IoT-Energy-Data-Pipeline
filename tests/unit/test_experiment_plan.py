@@ -119,3 +119,37 @@ def test_experiment_plan_is_immutable(tmp_path: Path) -> None:
             machine_metadata_path=machine,
             output=output,
         )
+
+
+def test_plan_checks_canonical_bytes_in_one_pass(tmp_path: Path, monkeypatch) -> None:
+    import iot_energy_pipeline.experiment_plan as module
+
+    snapshot, machine = _inputs(tmp_path)
+    original = module._sha256
+    reads = []
+
+    def counted(path):
+        if path.name == "canonical.ndjson":
+            reads.append(path)
+        return original(path)
+
+    monkeypatch.setattr(module, "_sha256", counted)
+    compile_experiment_plan(
+        matrix_path=Path("configs/experiments.toml"),
+        snapshot_manifest_path=snapshot,
+        machine_metadata_path=machine,
+        output=tmp_path / "plan.json",
+    )
+    assert len(reads) == 1
+
+
+def test_plan_still_rejects_corrupt_canonical_bytes(tmp_path: Path) -> None:
+    snapshot, machine = _inputs(tmp_path)
+    (snapshot.parent / "canonical.ndjson").write_bytes(b"changed\n")
+    with pytest.raises(ValueError, match="integrity"):
+        compile_experiment_plan(
+            matrix_path=Path("configs/experiments.toml"),
+            snapshot_manifest_path=snapshot,
+            machine_metadata_path=machine,
+            output=tmp_path / "plan.json",
+        )

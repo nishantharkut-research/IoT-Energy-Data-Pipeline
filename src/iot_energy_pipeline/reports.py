@@ -151,6 +151,33 @@ def _decimal_text(value: Decimal) -> str:
     return text or "0"
 
 
+def _scaled_text(value: int, scale: int) -> str:
+    """Format an integer coefficient without Decimal context arithmetic."""
+
+    parts = Decimal(value).as_tuple()
+    return _decimal_text(Decimal((parts.sign, parts.digits, -scale)))
+
+
+def _add_scaled(left: tuple[int, int], right: tuple[int, int]) -> tuple[int, int]:
+    """Align scales and add exactly, including totals across millions of rows."""
+
+    scale = max(left[1], right[1])
+    return (
+        left[0] * 10 ** (scale - left[1]) + right[0] * 10 ** (scale - right[1]),
+        scale,
+    )
+
+
+def _scaled_exposure(value: tuple[int, int], rate: Decimal) -> str:
+    """Multiply integer coefficients; the tariff exponent supplies its scale."""
+
+    parts = rate.as_tuple()
+    coefficient = int("".join(str(digit) for digit in parts.digits))
+    if parts.sign:
+        coefficient = -coefficient
+    return _scaled_text(value[0] * coefficient, value[1] - int(parts.exponent))
+
+
 def _flag(event: dict[str, Any], category: str, detail: str) -> dict[str, Any]:
     return {
         "source_event_id": event.get("source_event_id"),
@@ -296,7 +323,7 @@ def derive_interval_consumption(
                     "delta_scaled": delta,
                     "decimal_scale": scale,
                     "unit": "kWh",
-                    "delta_kwh": _decimal_text(Decimal(delta).scaleb(-scale)),
+                    "delta_kwh": _scaled_text(delta, scale),
                 }
             )
             baseline = (timestamp, reading)
@@ -311,6 +338,93 @@ def derive_interval_consumption(
         )
     )
     return IntervalDerivation(tuple(intervals), tuple(flagged))
+
+
+def _compare_interval_periods(
+    periods: Iterable[tuple[Any, ...]], rates: tuple[Decimal, ...]
+) -> dict[str, Any]:
+    """Compare exact supports; absent or differently supported energy is unknown.
+
+    Input is ordered by meter/end, with start/coefficient/scale for each series.
+    SQLite coefficients remain TEXT until converted to Python integers here.
+    Affected periods count changed coverage as well as numeric discrepancies.
+    """
+    affected: list[dict[str, Any]] = []
+    total = (0, 0)
+    comparable = incomparable = numeric = 0
+    candidate_count = verified_count = 0
+    for meter, end, c_start, c_delta, c_scale, v_start, v_delta, v_scale in periods:
+        candidate = None if c_delta is None else (int(c_delta), int(c_scale))
+        verified = None if v_delta is None else (int(v_delta), int(v_scale))
+        candidate_count += candidate is not None
+        verified_count += verified is not None
+        difference = None
+        if candidate is None:
+            status = "candidate_unavailable"
+        elif verified is None:
+            status = "verified_unavailable"
+        elif c_start != v_start:
+            status = "temporal_support_mismatch"
+        else:
+            comparable += 1
+            delta, scale = _add_scaled(candidate, (-verified[0], verified[1]))
+            if delta == 0:
+                continue
+            numeric += 1
+            status = "comparable_difference"
+            difference = (abs(delta), scale)
+            total = _add_scaled(total, difference)
+        if difference is None:
+            incomparable += 1
+        affected.append(
+            {
+                "meter_id": meter,
+                "period_end_utc": end,
+                "candidate_interval_start_utc": c_start,
+                "verified_interval_start_utc": v_start,
+                "comparison_status": status,
+                "candidate_kwh": None
+                if candidate is None
+                else _scaled_text(*candidate),
+                "verified_kwh": None if verified is None else _scaled_text(*verified),
+                "absolute_kwh_discrepancy": (
+                    None if difference is None else _scaled_text(*difference)
+                ),
+            }
+        )
+    return {
+        "affected_meter_period_count": len(affected),
+        "affected_meter_periods": affected,
+        "candidate_interval_count": candidate_count,
+        "verified_interval_count": verified_count,
+        "comparable_meter_period_count": comparable,
+        "incomparable_meter_period_count": incomparable,
+        "numeric_discrepancy_meter_period_count": numeric,
+        "absolute_kwh_discrepancy": _scaled_text(*total),
+        "comparison_scope": "identical meter/start/end supports only",
+        "coverage_limits": [
+            "Discrepancy and gross exposure sum comparable intervals only; "
+            "zero subtotal does not establish zero total energy error.",
+            "Unavailable and unequal supports are excluded without allocating "
+            "energy across intervals. Flagged records retain derivation exclusions, "
+            "including periods unavailable in both series and initial baselines.",
+            "Reconciliation verifies source records, not measurement accuracy or "
+            "complete temporal coverage; residual exposure is unknown.",
+        ],
+        "tariff_scenarios": [
+            {
+                "label": "hypothetical normalized tariff scenario",
+                "normalized_rate": format(rate, "f"),
+                "rate_unit": "scenario currency units per kWh",
+                "gross_exposure": _scaled_exposure(total, rate),
+                "residual_exposure_after_verification": None,
+                "monetary_interpretation": (
+                    "scenario only; not an HKUST financial result"
+                ),
+            }
+            for rate in rates
+        ],
+    }
 
 
 def build_decision_impact_report(
@@ -340,44 +454,31 @@ def build_decision_impact_report(
     candidate = derive_interval_consumption(candidate_events)
     verified = derive_interval_consumption(verified_events)
 
-    def period_map(rows: tuple[dict[str, Any], ...]) -> dict[tuple[str, str], Decimal]:
+    def period_map(
+        rows: tuple[dict[str, Any], ...],
+    ) -> dict[tuple[str, str], tuple[str, int, int]]:
         return {
-            (row["meter_id"], row["interval_end_utc"]): Decimal(row["delta_kwh"])
+            (row["meter_id"], row["interval_end_utc"]): (
+                row["interval_start_utc"],
+                row["delta_scaled"],
+                row["decimal_scale"],
+            )
             for row in rows
         }
 
     candidate_periods = period_map(candidate.intervals)
     verified_periods = period_map(verified.intervals)
-    affected: list[dict[str, str]] = []
-    absolute_discrepancy = Decimal(0)
-    for key in sorted(set(candidate_periods) | set(verified_periods)):
-        candidate_value = candidate_periods.get(key, Decimal(0))
-        verified_value = verified_periods.get(key, Decimal(0))
-        difference = abs(candidate_value - verified_value)
-        if difference == 0:
-            continue
-        absolute_discrepancy += difference
-        affected.append(
-            {
-                "meter_id": key[0],
-                "period_end_utc": key[1],
-                "candidate_kwh": _decimal_text(candidate_value),
-                "verified_kwh": _decimal_text(verified_value),
-                "absolute_kwh_discrepancy": _decimal_text(difference),
-            }
-        )
-
-    scenarios = [
-        {
-            "label": "hypothetical normalized tariff scenario",
-            "normalized_rate": format(rate, "f"),
-            "rate_unit": "scenario currency units per kWh",
-            "gross_exposure": _decimal_text(absolute_discrepancy * rate),
-            "residual_exposure_after_verification": "0",
-            "monetary_interpretation": "scenario only; not an HKUST financial result",
-        }
-        for rate in rates
-    ]
+    comparison = _compare_interval_periods(
+        (
+            (
+                *key,
+                *candidate_periods.get(key, (None, None, None)),
+                *verified_periods.get(key, (None, None, None)),
+            )
+            for key in sorted(set(candidate_periods) | set(verified_periods))
+        ),
+        rates,
+    )
     ratio = (
         verification_storage_bytes / candidate_storage_bytes
         if candidate_storage_bytes
@@ -386,9 +487,7 @@ def build_decision_impact_report(
     return {
         "schema_version": "decision-impact-v1",
         "status": "verified",
-        "affected_meter_period_count": len(affected),
-        "affected_meter_periods": affected,
-        "absolute_kwh_discrepancy": _decimal_text(absolute_discrepancy),
+        **comparison,
         "candidate_flagged_record_count": len(candidate.flagged_records),
         "candidate_flagged_records": list(candidate.flagged_records),
         "verified_flagged_record_count": len(verified.flagged_records),
@@ -398,7 +497,6 @@ def build_decision_impact_report(
         "verification_storage_bytes": verification_storage_bytes,
         "storage_overhead_bytes": verification_storage_bytes,
         "storage_overhead_ratio": ratio,
-        "tariff_scenarios": scenarios,
     }
 
 
@@ -457,7 +555,7 @@ def build_decision_impact_report_from_ndjson(
             "CREATE TABLE events ("
             "series TEXT NOT NULL, row_sequence INTEGER NOT NULL, "
             "source_event_id TEXT, meter_id TEXT NOT NULL, "
-            "event_time_utc TEXT NOT NULL, scaled_value INTEGER, "
+            "event_time_utc TEXT NOT NULL, scaled_value TEXT, "
             "decimal_scale INTEGER, measurement_kind TEXT, unit TEXT, "
             "valid_reading INTEGER NOT NULL, "
             "PRIMARY KEY (series, row_sequence)) WITHOUT ROWID"
@@ -465,7 +563,8 @@ def build_decision_impact_report_from_ndjson(
         connection.execute(
             "CREATE TABLE intervals ("
             "series TEXT NOT NULL, meter_id TEXT NOT NULL, "
-            "period_end_utc TEXT NOT NULL, delta_scaled INTEGER NOT NULL, "
+            "period_end_utc TEXT NOT NULL, interval_start_utc TEXT NOT NULL, "
+            "delta_scaled TEXT NOT NULL, "
             "decimal_scale INTEGER NOT NULL, "
             "PRIMARY KEY (series, meter_id, period_end_utc)) WITHOUT ROWID"
         )
@@ -527,7 +626,7 @@ def build_decision_impact_report_from_ndjson(
                             event.get("source_event_id"),
                             meter_id,
                             event_time if isinstance(event_time, str) else "",
-                            scaled
+                            str(scaled)
                             if isinstance(scaled, int) and not isinstance(scaled, bool)
                             else None,
                             event.get("decimal_scale"),
@@ -644,8 +743,8 @@ def build_decision_impact_report_from_ndjson(
                     baseline = reading
                     return
                 connection.execute(
-                    "INSERT INTO intervals VALUES (?, ?, ?, ?, ?)",
-                    (series, current_meter, reading[2], delta, scale),
+                    "INSERT INTO intervals VALUES (?, ?, ?, ?, ?, ?)",
+                    (series, current_meter, reading[2], baseline[2], str(delta), scale),
                 )
                 baseline = reading
 
@@ -685,48 +784,20 @@ def build_decision_impact_report_from_ndjson(
 
         derive("candidate")
         derive("verified")
-        affected: list[dict[str, str]] = []
-        absolute_discrepancy = Decimal(0)
-        comparison = connection.execute(
-            "SELECT meter_id, period_end_utc, "
-            "MAX(CASE WHEN series = 'candidate' THEN delta_scaled END), "
-            "MAX(CASE WHEN series = 'candidate' THEN decimal_scale END), "
-            "MAX(CASE WHEN series = 'verified' THEN delta_scaled END), "
-            "MAX(CASE WHEN series = 'verified' THEN decimal_scale END) "
-            "FROM intervals GROUP BY meter_id, period_end_utc "
-            "ORDER BY meter_id, period_end_utc"
+        comparison = _compare_interval_periods(
+            connection.execute(
+                "SELECT meter_id, period_end_utc, "
+                "MAX(CASE WHEN series = 'candidate' THEN interval_start_utc END), "
+                "MAX(CASE WHEN series = 'candidate' THEN delta_scaled END), "
+                "MAX(CASE WHEN series = 'candidate' THEN decimal_scale END), "
+                "MAX(CASE WHEN series = 'verified' THEN interval_start_utc END), "
+                "MAX(CASE WHEN series = 'verified' THEN delta_scaled END), "
+                "MAX(CASE WHEN series = 'verified' THEN decimal_scale END) "
+                "FROM intervals GROUP BY meter_id, period_end_utc "
+                "ORDER BY meter_id, period_end_utc"
+            ),
+            rates,
         )
-        for (
-            meter_id,
-            period_end,
-            candidate_delta,
-            candidate_scale,
-            verified_delta,
-            verified_scale,
-        ) in comparison:
-            candidate_value = (
-                Decimal(0)
-                if candidate_delta is None
-                else Decimal(int(candidate_delta)).scaleb(-int(candidate_scale))
-            )
-            verified_value = (
-                Decimal(0)
-                if verified_delta is None
-                else Decimal(int(verified_delta)).scaleb(-int(verified_scale))
-            )
-            difference = abs(candidate_value - verified_value)
-            if difference == 0:
-                continue
-            absolute_discrepancy += difference
-            affected.append(
-                {
-                    "meter_id": str(meter_id),
-                    "period_end_utc": str(period_end),
-                    "candidate_kwh": _decimal_text(candidate_value),
-                    "verified_kwh": _decimal_text(verified_value),
-                    "absolute_kwh_discrepancy": _decimal_text(difference),
-                }
-            )
         for rows in flagged.values():
             rows.sort(
                 key=lambda row: (
@@ -736,19 +807,6 @@ def build_decision_impact_report_from_ndjson(
                     row["category"],
                 )
             )
-        scenarios = [
-            {
-                "label": "hypothetical normalized tariff scenario",
-                "normalized_rate": format(rate, "f"),
-                "rate_unit": "scenario currency units per kWh",
-                "gross_exposure": _decimal_text(absolute_discrepancy * rate),
-                "residual_exposure_after_verification": "0",
-                "monetary_interpretation": (
-                    "scenario only; not an HKUST financial result"
-                ),
-            }
-            for rate in rates
-        ]
         ratio = (
             verification_storage_bytes / candidate_storage_bytes
             if candidate_storage_bytes
@@ -757,9 +815,7 @@ def build_decision_impact_report_from_ndjson(
         return {
             "schema_version": "decision-impact-v1",
             "status": "verified",
-            "affected_meter_period_count": len(affected),
-            "affected_meter_periods": affected,
-            "absolute_kwh_discrepancy": _decimal_text(absolute_discrepancy),
+            **comparison,
             "candidate_flagged_record_count": len(flagged["candidate"]),
             "candidate_flagged_records": flagged["candidate"],
             "verified_flagged_record_count": len(flagged["verified"]),
@@ -769,7 +825,6 @@ def build_decision_impact_report_from_ndjson(
             "verification_storage_bytes": verification_storage_bytes,
             "storage_overhead_bytes": verification_storage_bytes,
             "storage_overhead_ratio": ratio,
-            "tariff_scenarios": scenarios,
         }
     finally:
         connection.close()

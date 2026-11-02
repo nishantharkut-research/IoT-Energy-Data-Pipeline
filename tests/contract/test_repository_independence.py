@@ -43,6 +43,31 @@ def test_scan_text_forbidden_substring():
     assert any(x.rule == "forbidden_name" and x.matched == "cukd-xai" for x in v)
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://doi.org/10.5061/example",
+        "http://qudt.org/vocab/unit/",
+        "hdfs://hdfs:9000/input",
+        "spark://spark:7077",
+        "https://json-schema.org/draft/2020-12/schema",
+    ],
+)
+def test_scan_text_does_not_mistake_url_scheme_for_drive(url):
+    assert scan_text(url, "f", []) == []
+
+
+def test_scan_text_still_finds_drive_next_to_url():
+    violations = scan_text('https://example.test "C:/private/data"', "f", [])
+    assert len(violations) == 1
+    assert violations[0].matched == "C:/private/data"
+
+
+def test_scan_text_checks_forbidden_names_inside_urls():
+    violations = scan_text("https://example.test/CuKD-XAI", "f", FORBIDDEN)
+    assert any(v.rule == "forbidden_name" for v in violations)
+
+
 def test_scan_text_violation_attrs():
     v = scan_text("C:\\p", "f", [])[0]
     assert v.path == "f" and v.line == 1 and v.rule == "drive_letter_absolute_path"

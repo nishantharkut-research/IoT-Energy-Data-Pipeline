@@ -178,16 +178,27 @@ The canonical source event contains:
 - source timezone
 - event time in UTC
 - original numeric text
-- signed 64-bit scaled value
+- exact scaled integer with absolute value at most `10**38 - 1`
 - decimal scale
 - verified measurement kind
 - verified unit
 - source-quality flags
 
-The adapter uses `decimal.Decimal`. It converts source values into a signed
-64-bit integer at the smallest documented common decimal scale that preserves
-the source precision. It fails closed on overflow or unrepresentable values.
-Spark and Hadoop group by unit and scale before summation.
+The adapter parses `decimal.Decimal` digits and exponents without arithmetic
+that depends on the ambient Decimal context. Canonical scaled integers satisfy
+`abs(scaled_value) <= 10**38 - 1` at the per-meter scale that preserves source
+precision. NDJSON retains JSON integers; Parquet uses `decimal128(38, 0)` and
+Spark uses `DecimalType(38, 0)`. Only Parquet writers convert Python integers
+to Decimal objects. The independent Hadoop validators retain Python integers
+and enforce the same explicit range. Overflow and unrepresentable values fail
+closed. The D0779 witness `26724.7` at scale 15 becomes
+`26724700000000000000`, which is valid under this contract.
+
+The low-level `to_scaled_int` helper retains int64 bounds by default for
+compatibility; production canonicalization explicitly selects the wider range.
+Spark and Hadoop group by unit and scale before summation. This is a per-event
+bound: Spark decimal aggregate overflow still requires an explicit run failure;
+the per-event bound does not establish that every possible sum fits 38 digits.
 
 The snapshot manifest includes a scale registry keyed by measurement kind and
 unit. Each entry records the source evidence used for the assignment, decimal

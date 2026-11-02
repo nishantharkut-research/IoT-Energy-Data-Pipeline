@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import pytest
 
+from iot_energy_pipeline import experiment_execution as execution
 from iot_energy_pipeline.experiment_execution import (
     EXECUTION_CONFIRMATION,
     _safe_run_id,
@@ -22,6 +24,43 @@ from iot_energy_pipeline.reports import load_experiment_matrix
 def _write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+@pytest.mark.parametrize("seconds", [True, -1, float("nan"), float("inf")])
+def test_workflow_receipt_refuses_invalid_measurements(tmp_path: Path, seconds) -> None:
+    receipt = {
+        "schema_version": "workflow-receipt-v1",
+        "run_id": "run",
+        "timing_scope": execution.WORKFLOW_TIMING_SCOPE,
+        "workflow_seconds": seconds,
+        "bindings": {"plan": "a" * 64},
+    }
+    _write(tmp_path / "workflow-receipt.json", json.dumps(receipt))
+    with pytest.raises(ValueError, match="workflow receipt"):
+        execution.load_workflow_receipt(
+            tmp_path, run_id="run", bindings=receipt["bindings"]
+        )
+
+
+def test_workflow_receipt_is_bound_to_executed_plan(tmp_path: Path) -> None:
+    receipt = {
+        "schema_version": "workflow-receipt-v1",
+        "run_id": "run",
+        "timing_scope": execution.WORKFLOW_TIMING_SCOPE,
+        "workflow_seconds": 1.25,
+        "bindings": {"plan": "a" * 64},
+    }
+    _write(tmp_path / "workflow-receipt.json", json.dumps(receipt))
+    assert (
+        execution.load_workflow_receipt(
+            tmp_path, run_id="run", bindings=receipt["bindings"]
+        )
+        == receipt
+    )
+    with pytest.raises(ValueError, match="bindings"):
+        execution.load_workflow_receipt(
+            tmp_path, run_id="run", bindings={"plan": "b" * 64}
+        )
 
 
 def _plan() -> dict:
@@ -142,11 +181,44 @@ def test_processing_commands_cover_every_fail_closed_stage(tmp_path: Path) -> No
         >= 5
     )
     assert "available" not in rendered[0]
+    assert commands[0].argv[-1] == "127.0.0.1:29092"
     assert "iot_energy_pipeline.run_finalization" in rendered[-1]
     decision = next(
         command for command in commands if command.stage == "decision_impact"
     )
     assert decision.argv.count("--oracle-dir") == 1
+    spark_commands = [
+        command for command in commands if "/opt/spark/bin/spark-submit" in command.argv
+    ]
+    assert len(spark_commands) == 5
+    for command in spark_commands:
+        index = command.argv.index("--conf")
+        assert command.argv[index + 1] == "spark.sql.shuffle.partitions=4"
+        assert index < next(
+            i for i, argument in enumerate(command.argv) if argument.endswith(".py")
+        )
+
+
+def test_run_command_records_exact_arguments(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    command = execution.CommandSpec(
+        "spark_stream",
+        ("spark-submit", "--conf", "spark.sql.shuffle.partitions=4", "stream.py"),
+        tmp_path,
+    )
+    monkeypatch.setattr(
+        execution.subprocess,
+        "run",
+        lambda argv, **kwargs: execution.subprocess.CompletedProcess(argv, 0),
+    )
+    execution._run_command(command, environment={}, log_dir=tmp_path, sequence=1)
+    recorded = json.loads((tmp_path / "01-spark_stream.command.json").read_text())
+    assert recorded == {
+        "stage": command.stage,
+        "argv": list(command.argv),
+        "cwd": str(tmp_path),
+    }
 
 
 def test_interrupted_recovery_has_interrupt_then_resume_replay(tmp_path: Path) -> None:
@@ -201,3 +273,315 @@ def test_cross_run_acceptance_requires_fault_equivalence_and_watermark_effect(
     assert result["correctness_semantic_equivalence"]["status"] == "identical"
     assert result["watermark_effect"]["gold_status"] == "identical"
     assert result["watermark_effect"]["candidate_difference_exposed"] is True
+
+
+def test_prepare_run_passes_compiled_repetition(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    captured = {}
+
+    def prepare(**kwargs):
+        captured.update(kwargs)
+        return {"status": "prepared"}
+
+    monkeypatch.setattr(execution, "prepare_distributed_run", prepare)
+    run = next(
+        run
+        for run in _fixed_execution_plan()["runs"]
+        if run["experiment"] == "scale" and run["repetition"] == 3
+    )
+    execution._prepare_run(run, tmp_path / "snapshot", tmp_path / run["run_id"])
+    assert captured["repetition"] == 3
+
+
+@pytest.fixture
+def executor_harness(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    matrix = repository / "configs/experiments.toml"
+    matrix.parent.mkdir()
+    shutil.copyfile("configs/experiments.toml", matrix)
+    snapshot = repository / "snapshot"
+    canonical = snapshot / "canonical.ndjson"
+    _write(canonical, "{}\n")
+    snapshot_manifest = snapshot / "snapshot-manifest.json"
+    _write(
+        snapshot_manifest,
+        json.dumps(
+            {
+                "artifacts": {
+                    "canonical_ndjson": {
+                        "file": "canonical.ndjson",
+                        "record_count": 1_000_000,
+                        "sha256": hashlib.sha256(canonical.read_bytes()).hexdigest(),
+                    }
+                }
+            }
+        ),
+    )
+    machine = repository / "machine.json"
+    _write(
+        machine,
+        json.dumps(
+            {
+                "schema_version": "machine-metadata-v1",
+                "captured_at_utc": "2026-10-27T00:00:00Z",
+                "execution_context": "designated_machine",
+                "hostname": "test-host",
+                "operating_system": "test-os",
+                "processor": "test-cpu",
+                "logical_cpu_count": 2,
+                "memory_bytes": 1024,
+                "software": dict.fromkeys(
+                    ("python", "docker", "kafka", "spark", "hadoop"), "test-version"
+                ),
+            }
+        ),
+    )
+    plan = _fixed_execution_plan(1_000_000)
+    plan.update(
+        {
+            "canonical_ndjson_sha256": hashlib.sha256(
+                canonical.read_bytes()
+            ).hexdigest(),
+            "snapshot_manifest_sha256": hashlib.sha256(
+                snapshot_manifest.read_bytes()
+            ).hexdigest(),
+            "machine_metadata_sha256": hashlib.sha256(machine.read_bytes()).hexdigest(),
+        }
+    )
+    plan_path = repository / "plan.json"
+    _write(plan_path, json.dumps(plan))
+    events = []
+    commands = []
+
+    def prepare(run, snapshot_dir, run_dir):
+        events.append(("prepare", run["experiment"]))
+        if run["experiment"] == "scale":
+            raise RuntimeError("scale reached")
+        _write(run_dir / "run-manifest.json", "{}")
+        return {**_plan(), "run_id": run["run_id"]}
+
+    def run_command(command, **kwargs):
+        commands.append(command)
+
+    def load_run(run_dir):
+        events.append(("sealed", run_dir.name))
+        return {"artifacts": []}
+
+    monkeypatch.setattr(execution, "_prepare_run", prepare)
+    monkeypatch.setattr(execution, "_run_command", run_command)
+    monkeypatch.setattr(execution, "load_finalized_run", load_run)
+    return (
+        {
+            "experiment_plan_path": plan_path,
+            "snapshot_dir": snapshot,
+            "machine_metadata_path": machine,
+            "runtime_root": repository / "runtime",
+            "repository": repository,
+            "python_executable": Path("python"),
+            "confirmation": EXECUTION_CONFIRMATION,
+        },
+        events,
+        commands,
+    )
+
+
+@pytest.mark.parametrize("failure", [None, "cross_run", "recovery"])
+def test_executor_gates_scale_after_all_fixtures(
+    executor_harness, monkeypatch: pytest.MonkeyPatch, failure: str | None
+) -> None:
+    arguments, events, commands = executor_harness
+
+    def cross_run(root):
+        events.append(("gate", "cross_run"))
+        if failure == "cross_run":
+            raise ValueError("cross_run rejected")
+        return {}
+
+    def recovery(root):
+        events.append(("gate", "recovery"))
+        if failure == "recovery":
+            raise ValueError("recovery rejected")
+        return {}
+
+    monkeypatch.setattr(execution, "evaluate_cross_run_acceptance", cross_run)
+    monkeypatch.setattr(execution, "_recovery_equivalence", recovery)
+    error = ValueError if failure else RuntimeError
+    message = f"{failure} rejected" if failure else "scale reached"
+    with pytest.raises(error, match=message):
+        execute_experiment_plan(**arguments)
+    gate_index = events.index(("gate", "cross_run"))
+    assert sum(event[0] == "sealed" for event in events[:gate_index]) == 9
+    expected = [("gate", "cross_run")]
+    if failure != "cross_run":
+        expected.append(("gate", "recovery"))
+    if failure is None:
+        expected.append(("prepare", "scale"))
+    assert events[gate_index:] == expected
+    assert commands[-1].stage == "services_stop"
+    assert not (arguments["runtime_root"] / "experiment-results.json").exists()
+
+
+def test_executor_waits_for_healthy_services(executor_harness) -> None:
+    arguments, events, commands = executor_harness
+    with pytest.raises((RuntimeError, FileNotFoundError)):
+        execute_experiment_plan(**arguments)
+    assert commands[0].stage == "services_start"
+    argv = commands[0].argv
+    assert "--wait" in argv
+    assert argv[argv.index("--wait-timeout") + 1] == "300"
+
+
+def test_executor_checks_canonical_bytes_in_one_pass(executor_harness, monkeypatch):
+    import iot_energy_pipeline.experiment_plan as module
+
+    arguments, _, _ = executor_harness
+    original = module._sha256
+    reads = []
+
+    def counted(path):
+        if path.name == "canonical.ndjson":
+            reads.append(path)
+        return original(path)
+
+    monkeypatch.setattr(module, "_sha256", counted)
+    monkeypatch.setattr(execution, "_sha256", counted)
+
+    def stop(command, **kwargs):
+        if command.stage == "services_start":
+            raise RuntimeError("validation completed")
+
+    monkeypatch.setattr(execution, "_run_command", stop)
+    with pytest.raises(RuntimeError, match="validation completed"):
+        execute_experiment_plan(**arguments)
+    assert len(reads) == 1
+
+
+def test_executor_rejects_plan_hash_disagreement(executor_harness):
+    arguments, _, commands = executor_harness
+    path = arguments["experiment_plan_path"]
+    plan = json.loads(path.read_text())
+    plan["canonical_ndjson_sha256"] = "0" * 64
+    path.write_text(json.dumps(plan))
+    with pytest.raises(ValueError, match="canonical snapshot binding"):
+        execute_experiment_plan(**arguments)
+    assert not commands
+
+
+@pytest.mark.parametrize("stage", ["services_start", "services_stop"])
+def test_service_command_logs_only_project_environment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, stage: str
+) -> None:
+    environment = {
+        "COMPOSE_PROJECT_NAME": "explicit-project",
+        "PIPELINE_RUNTIME_DIR": str(tmp_path),
+        "AWS_SECRET_ACCESS_KEY": "never-log-this",
+    }
+    captured = {}
+
+    def run(argv, **kwargs):
+        captured.update(kwargs["env"])
+        return execution.subprocess.CompletedProcess(argv, 0)
+
+    monkeypatch.setattr(execution.subprocess, "run", run)
+    command = execution.CommandSpec(stage, ("docker", "compose", "stop"), tmp_path)
+    execution._run_command(
+        command, environment=environment, log_dir=tmp_path, sequence=1
+    )
+    log_path = tmp_path / f"01-{stage}.command.json"
+    recorded = json.loads(log_path.read_text())
+    assert recorded["environment"] == {"COMPOSE_PROJECT_NAME": "explicit-project"}
+    assert "never-log-this" not in log_path.read_text()
+    assert captured == environment
+
+
+@pytest.mark.parametrize("explicit_project", [None, "user-chosen-project"])
+def test_executor_isolates_resolved_roots_and_honors_explicit_project(
+    executor_harness, monkeypatch: pytest.MonkeyPatch, explicit_project: str | None
+) -> None:
+    arguments, _, _ = executor_harness
+    monkeypatch.delenv("COMPOSE_PROJECT_NAME", raising=False)
+    if explicit_project is not None:
+        monkeypatch.setenv("COMPOSE_PROJECT_NAME", explicit_project)
+    calls = []
+
+    def run(command, *, environment, **kwargs):
+        calls.append((command.stage, dict(environment)))
+        if command.stage == "services_start":
+            raise RuntimeError("startup failed")
+
+    monkeypatch.setattr(execution, "_run_command", run)
+    root = arguments["runtime_root"]
+    roots = [root, root / ".." / root.name, root.with_name("fresh-attempt")]
+    for runtime_root in roots:
+        with pytest.raises(RuntimeError, match="startup failed"):
+            execute_experiment_plan(**{**arguments, "runtime_root": runtime_root})
+    starts = [env for stage, env in calls if stage == "services_start"]
+    projects = [env["COMPOSE_PROJECT_NAME"] for env in starts]
+    if explicit_project is not None:
+        assert projects == [explicit_project] * 3
+    else:
+        assert projects[0] == projects[1]
+        assert projects[0] != projects[2]
+        for project, runtime_root in zip(projects, roots, strict=True):
+            digest = hashlib.sha256(str(runtime_root.resolve()).encode()).hexdigest()
+            assert digest[:16] in project
+            assert project.startswith("iot-energy-")
+    assert execution.os.environ.get("COMPOSE_PROJECT_NAME") == explicit_project
+    assert [stage for stage, _ in calls] == ["services_start", "services_stop"] * 3
+    stops = [env for stage, env in calls if stage == "services_stop"]
+    assert [env["COMPOSE_PROJECT_NAME"] for env in stops] == projects
+
+
+@pytest.mark.parametrize("stage", ["services_start", "spark_stream"])
+@pytest.mark.parametrize("cleanup_fails", [False, True])
+def test_executor_cleans_up_partial_start_and_preserves_original_error(
+    executor_harness, monkeypatch: pytest.MonkeyPatch, stage: str, cleanup_fails: bool
+) -> None:
+    arguments, _, _ = executor_harness
+    monkeypatch.delenv("COMPOSE_PROJECT_NAME", raising=False)
+    original = RuntimeError("original stage failure")
+    calls = []
+
+    def run(command, *, environment, **kwargs):
+        calls.append((command, dict(environment)))
+        if command.stage == stage:
+            raise original
+        if command.stage == "services_stop" and cleanup_fails:
+            raise RuntimeError("cleanup failed")
+
+    monkeypatch.setattr(execution, "_run_command", run)
+    with pytest.raises(RuntimeError) as caught:
+        execute_experiment_plan(**arguments)
+    assert caught.value is original
+    assert calls[-1][0].stage == "services_stop"
+    assert calls[-1][0].argv == ("docker", "compose", "stop")
+    assert calls[0][1]["COMPOSE_PROJECT_NAME"] == calls[-1][1]["COMPOSE_PROJECT_NAME"]
+    assert not (arguments["runtime_root"] / "experiment-results.json").exists()
+    if cleanup_fails:
+        assert any("cleanup failed" in note for note in original.__notes__)
+
+
+def test_executor_propagates_cleanup_failure_after_successful_processing(
+    executor_harness, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    arguments, _, _ = executor_harness
+    cleanup_error = RuntimeError("cleanup failed after processing")
+
+    def prepare(run, snapshot_dir, run_dir):
+        _write(run_dir / "run-manifest.json", "{}")
+        return {**_plan(), "run_id": run["run_id"]}
+
+    def run(command, **kwargs):
+        if command.stage == "services_stop":
+            raise cleanup_error
+
+    monkeypatch.setattr(execution, "_prepare_run", prepare)
+    monkeypatch.setattr(execution, "_run_command", run)
+    monkeypatch.setattr(execution, "evaluate_cross_run_acceptance", lambda root: {})
+    monkeypatch.setattr(execution, "_recovery_equivalence", lambda root: {})
+    with pytest.raises(RuntimeError) as caught:
+        execute_experiment_plan(**arguments)
+    assert caught.value is cleanup_error
+    assert not (arguments["runtime_root"] / "experiment-results.json").exists()

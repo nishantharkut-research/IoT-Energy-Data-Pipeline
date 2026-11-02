@@ -10,6 +10,10 @@ import os
 from pathlib import Path
 from typing import Any
 
+from iot_energy_pipeline.artifact_integrity import (
+    verify_export_artifacts,
+    verify_replay_evidence,
+)
 from iot_energy_pipeline.machine_metadata import validate_machine_metadata
 
 QUERY_NAMES = ("meter", "building", "time_window", "quality", "exposure")
@@ -112,6 +116,7 @@ def _validate_query_benchmark(
         "gold_manifest_sha256",
         "decision_impact_sha256",
         "parameters",
+        "execution_policy",
         "results",
     }:
         raise ValueError("query benchmark has an incomplete or open contract")
@@ -136,7 +141,15 @@ def _validate_query_benchmark(
         if (
             not isinstance(result, dict)
             or set(result)
-            != {"query", "repetitions", "row_count", "seconds", "sql_sha256"}
+            != {
+                "query",
+                "repetitions",
+                "row_count",
+                "seconds",
+                "sql_sha256",
+                "result_sha256",
+                "timings_seconds",
+            }
             or result.get("query") != expected_name
             or result.get("repetitions") != 3
             or isinstance(result.get("row_count"), bool)
@@ -144,10 +157,27 @@ def _validate_query_benchmark(
             or result["row_count"] < 0
             or not _valid_summary(result.get("seconds"))
             or not _is_sha256(result.get("sql_sha256"))
+            or not _is_sha256(result.get("result_sha256"))
         ):
             raise ValueError(f"query benchmark result {expected_name!r} is invalid")
+        timings = result.get("timings_seconds")
+        if (
+            not isinstance(timings, list)
+            or len(timings) != 3
+            or not all(_is_nonnegative_number(value) for value in timings)
+        ):
+            raise ValueError("query benchmark timings are invalid")
+        ordered = sorted(timings)
+        if result["seconds"] != {
+            "minimum": ordered[0],
+            "median": ordered[1],
+            "maximum": ordered[2],
+        }:
+            raise ValueError("query benchmark timing summary mismatch")
     if (
-        benchmark.get("schema_version") != "query-benchmark-v1"
+        benchmark.get("execution_policy")
+        != "cached_input_full_ordered_json_result_sha256"
+        or benchmark.get("schema_version") != "query-benchmark-v1"
         or benchmark.get("status") != "complete"
         or benchmark.get("run_id") != run_id
         or benchmark.get("gold_manifest_sha256") != _sha256(gold_manifest_path)
@@ -316,6 +346,18 @@ def _views(
             "title": "Verified energy and decision impact",
             "rows": [
                 {
+                    **{
+                        field: decision.get(field)
+                        for field in (
+                            "candidate_interval_count",
+                            "verified_interval_count",
+                            "comparable_meter_period_count",
+                            "incomparable_meter_period_count",
+                            "numeric_discrepancy_meter_period_count",
+                            "comparison_scope",
+                            "coverage_limits",
+                        )
+                    },
                     "affected_meter_periods": decision.get(
                         "affected_meter_period_count"
                     ),
@@ -502,15 +544,21 @@ def seal_distributed_run(
 
     query_benchmark: dict[str, Any] | None = None
     storage_benchmark: dict[str, Any] | None = None
-    if machine["execution_context"] == "designated_machine":
-        query_path = run_dir / "reports/query-benchmark.json"
-        storage_path = run_dir / "storage/storage-benchmark.json"
+    query_path = run_dir / "reports/query-benchmark.json"
+    storage_path = run_dir / "storage/storage-benchmark.json"
+    if (
+        machine["execution_context"] == "designated_machine"
+        or query_path.exists()
+        or query_path.is_symlink()
+        or storage_path.exists()
+        or storage_path.is_symlink()
+    ):
         try:
             _inside(run_dir, query_path, "query benchmark")
             _inside(run_dir, storage_path, "storage benchmark")
         except ValueError as exc:
             raise ValueError(
-                "designated-machine finalization requires query and storage benchmarks"
+                "finalization requires query and storage benchmarks together"
             ) from exc
         query_benchmark = _json_object(query_path, "query benchmark")
         storage_benchmark = _json_object(storage_path, "storage benchmark")
@@ -521,6 +569,24 @@ def seal_distributed_run(
             decision_report_path=decision_report_path,
         )
         _validate_storage_benchmark(storage_benchmark, run_id=run_id, plan=plan)
+
+    # Establish identity with the originating evidence before capturing a baseline.
+    replay_bindings = verify_replay_evidence(run_dir, plan)
+    for field, expected in replay_bindings.items():
+        if bindings.get(field) != expected:
+            raise ValueError(f"{field} reconciliation binding mismatch")
+    oracle_input = oracle.get("input")
+    if (
+        not isinstance(oracle_input, dict)
+        or oracle_input.get("local_sha256")
+        != replay_bindings["canonical_ndjson_sha256"]
+    ):
+        raise ValueError("Hadoop canonical input binding mismatch")
+    candidate_hash = verify_export_artifacts(
+        run_dir, oracle_dir, layer_audit_dir, gold, oracle, layers
+    )
+    if bindings.get("silver_candidate_events_sha256") != candidate_hash:
+        raise ValueError("Silver candidate events reconciliation binding mismatch")
 
     manifest: dict[str, Any] = {
         "schema_version": "finalized-run-v1",

@@ -73,8 +73,8 @@
     "original_numeric_text": {"type": "string", "minLength": 1},
     "scaled_value": {
       "type": "integer",
-      "minimum": -9223372036854775808,
-      "maximum": 9223372036854775807
+      "minimum": -99999999999999999999999999999999999999,
+      "maximum": 99999999999999999999999999999999999999
     },
     "decimal_scale": {"type": "integer", "minimum": 0},
     "measurement_kind": {"type": "string", "minLength": 1},

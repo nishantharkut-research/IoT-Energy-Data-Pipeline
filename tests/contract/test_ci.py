@@ -18,3 +18,14 @@ def test_fixture_acceptance_workflow_is_manual_only() -> None:
     assert "pull_request" not in workflow
     assert "push:" not in workflow
     assert "test_fixture_acceptance.py" in workflow
+
+
+def test_normal_ci_checks_repository_independence() -> None:
+    workflow = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+
+    assert "python -m scripts.scan_independence" in workflow
+
+
+def test_ci_installs_workbook_dependencies_used_by_unit_tests() -> None:
+    workflow = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+    assert ".[dev,dataset]" in workflow
