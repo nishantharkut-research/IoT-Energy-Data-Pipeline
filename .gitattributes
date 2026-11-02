@@ -3,3 +3,5 @@
 *.png binary
 *.jpg binary
 *.jpeg binary
+# Published evidence is bound by byte-level SHA-256, including line endings.
+docs/results/final/*.json -text
