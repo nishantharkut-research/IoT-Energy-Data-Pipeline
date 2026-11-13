@@ -135,7 +135,7 @@ export default function App() {
       <AppShell.Navbar className="sidebar">
         <a className="brand" href="#overview" onClick={() => navigate('Overview')}>
           <span>
-            <strong>Energy Pipeline</strong>
+            <strong>MeterTrace</strong>
           </span>
         </a>
         <ScrollArea className="nav-scroll" type="auto">

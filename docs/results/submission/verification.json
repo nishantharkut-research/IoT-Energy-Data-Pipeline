@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-13T14:08:13.929739+00:00",
+  "verified_at_utc": "2026-11-13T17:44:57.139840+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -32,14 +32,14 @@
     "vector_diagrams": 2,
     "unresolved_references": false,
     "overfull_boxes": false,
-    "visual_review": "All 21 pages rendered and inspected, including cover, captions, tables, vector diagrams and actual desktop workspace captures",
-    "standalone_source_build": "Passed: independently compiled 21 pages from 15 required assets; extracted page text agrees",
+    "visual_review": "All 21 final portrait pages rendered and inspected for layout, readable figures and borders",
+    "standalone_source_build": "Passed: 21 portrait pages from 15 required assets; extracted text agrees on every page",
     "diagram_text_containment": "Passed for both vector diagrams",
     "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment",
     "cover": "Separate institutional cover with the supplied IIITM logo; abstract on page 2",
     "screenshot_index_page": 3,
     "screenshot_pages": [
-      5,
+      6,
       8,
       11,
       14,
@@ -47,13 +47,16 @@
       15,
       16,
       18,
-      19
+      20
     ],
-    "screenshot_placement": "One landscape application overview and eight readable workspace captures within their corresponding discussions",
+    "screenshot_placement": "Nine readable portrait workspace captures within corresponding sections; floats constrained to their section",
     "diagram_sizing": "Both vector diagrams use full text width and a common label size",
     "supplied_logo_sha256": "17b60b0a9107fc5f17860023c77d4ab54a588a7913eab279eca44c72cf2ffa69",
     "workspace_capture_viewport": "1024x1200 desktop; application workspace clipped to relevant panel bounds",
-    "typography": "11 pt TeX Gyre Termes body; consistent full-width vector diagrams and short figure captions"
+    "typography": "10.5 pt TeX Gyre Termes body with 13.2 pt leading",
+    "title": "MeterTrace: Smart-Meter Data Verification and Review",
+    "orientation": "All pages A4 portrait; no rotated or landscape pages",
+    "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all nine screenshots and two vector diagrams"
   },
   "browser": {
     "page_errors": [],
@@ -191,7 +194,7 @@
       "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
     }
   },
-  "ui_revision": "Accepted desktop application preserved; report reorganized around problem, architecture, implementation and measured results",
+  "ui_revision": "MeterTrace title in report, README, dashboard navigation and browser title; desktop behaviour preserved",
   "desktop_layout": {
     "path": "docs/results/submission/desktop-layout-checks.json",
     "cases": 74,
@@ -244,7 +247,7 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "f73f10fe96f4d6cf00c128819c5850d7af717e402af1d17ab84e4904511ab9e9"
+    "report_sha256": "ea6f1e762a401264371148226f632a8e7b110b173e84f5ef056a948fb1134c2c"
   },
   "report_author": {
     "name": "Nishant Harkut",

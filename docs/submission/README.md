@@ -1,6 +1,6 @@
 # Project report
 
-**Auditable IoT Energy Data Pipeline**
+**MeterTrace: Smart-Meter Data Verification and Review**
 
 - Author: Nishant Harkut
 - Enrollment number: 2023IMG-040
@@ -9,19 +9,19 @@
 
 Submit [project-report.pdf](project-report.pdf) and the repository link. The editable report is [project-report.tex](project-report.tex).
 
-The 21-page report explains the problem, technology choices, implementation and measured results in that order. It includes a separate IIITM cover using the supplied logo, two vector pipeline diagrams, an application overview and eight desktop workspace captures placed with their discussion. The contents page also indexes the dashboard views.
+The 21-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all nine application captures and both vector diagrams have a consistent thin border. The contents page indexes the dashboard views.
 
 | Dashboard view | Report page |
 | --- | ---: |
-| Overview and experiment register | 5 |
+| Overview and selected-run accounting | 6 |
 | Source audit | 8 |
 | Delivery inspector | 11 |
-| Independent verification | 12 |
 | Fault comparison | 14 |
+| Independent verification | 12 |
 | Watermark and consumption review | 15 |
 | Recovery | 16 |
 | Storage and SQL | 18 |
-| Indian utility-review workflow | 19 |
+| Indian utility-review workflow | 20 |
 
 Full desktop screenshots and the run-inspector capture are in `figures/dashboard/`. The readable report workspace captures are in `figures/report/`. Both sets come from the running application.
 

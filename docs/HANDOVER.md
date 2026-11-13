@@ -52,7 +52,7 @@ python -m scripts.close_coursework \
 
 Use a separate output directory to preserve the submitted closure bytes. `--full-artifact-check` additionally verifies the entire registered artifact set and can take substantially longer. It is unnecessary for opening the portable viewer.
 
-## Rebuild the submission PDF
+## Rebuild the MeterTrace report PDF
 
 Install LaTeX and `python -m pip install -e ".[dashboard,report]"`. With Chrome/Chromium available:
 
@@ -64,7 +64,7 @@ cd docs/submission
 latexmk -pdf -interaction=nonstopmode -halt-on-error project-report.tex
 ```
 
-Screenshots are actual captures of the running React dashboard on port 5173. `figures/dashboard/report-*.png` preserve the full desktop viewport, including navigation. Full-page captures are retained beside them. The report uses one landscape application overview and eight readable workspace captures from `figures/report/`, positioned with their discussion. Longer content remains accessible in the live viewer and full-page PNGs. No synthetic measurements or fabricated finalized runs are used.
+Screenshots are actual captures of the running React dashboard on port 5173. `figures/dashboard/report-*.png` preserve the full desktop viewport, including navigation. Full-page captures are retained beside them. The report uses nine portrait workspace captures from `figures/report/`, positioned with their discussion. Longer content remains accessible in the live viewer and full-page PNGs. No synthetic measurements or fabricated finalized runs are used.
 
 ## Interpretation checklist
 

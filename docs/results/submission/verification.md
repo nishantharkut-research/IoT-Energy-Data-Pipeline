@@ -16,7 +16,7 @@
 | Report download | Served PDF digest matches the current tracked report |
 | Standalone LaTeX source | Compiles independently with 15 logo/figure/table assets to 21 pages |
 | Vector figures | All box labels have internal clearance; repeated PDF/SVG generation is byte-identical in the checked environment |
-| PDF | 21 pages: separate cover, abstract and technical report with one landscape overview and eight section-local desktop workspace captures; two vector diagrams; no unresolved references or overfull boxes |
+| PDF | 21 pages: separate cover, abstract and technical report with nine section-local portrait desktop workspace captures; two vector diagrams; no unresolved references or overfull boxes |
 | Additional independent reviewer | Unavailable because of usage limit; no successful review claimed for this revision |
 
 The regression check reproduced the old watermark defect as a 0.125 px gap between neighbouring text. The corrected production build passes the spacing check. The forced table minimum was removed, metric labels now reserve a consistent height, and 1M conservation equations use full width on smaller desktop windows. Mobile-specific changes explored during investigation were discarded.
@@ -29,6 +29,8 @@ Original final-results, scope, plan and published source-audit bytes remain unch
 
 The Indian connection is a sourced proposed DISCOM review role alongside HES/MDM. It is not an evaluated Indian deployment, billing-saving result or replacement for commercial VEE.
 
-The supplied IIITM logo is preserved byte for byte. The dashboard index is on page 3. Captures appear on pages 5, 8, 11, 12, 14, 15, 16, 18 and 19. The source archive compiles independently to the same page count and extracted page text. Both pipeline diagrams use the same full-width rendering rule.
+The supplied IIITM logo is preserved byte for byte. The dashboard index is on page 3. Captures appear on pages 6, 8, 11, 12, 14, 15, 16, 18 and 20. The source archive compiles independently to the same page count and extracted page text. Both pipeline diagrams use the same full-width rendering rule.
 
-The report was reorganized around the user task, design choices, implementation and outcomes after comparison with the supplied example report. Eight new workspace captures improve printed readability while full application views remain available separately. All numerical results remain bound to the original saved inputs.
+The report was reorganized around the user task, design choices, implementation and outcomes after comparison with the supplied example report. Nine workspace captures improve printed readability while full application views remain available separately. All numerical results remain bound to the original saved inputs.
+
+The project is titled **MeterTrace: Smart-Meter Data Verification and Review**. All 21 pages are A4 portrait. Every numbered figure has a uniform thin border; screenshots use readable desktop workspace crops. The new name is reflected in the running dashboard and repository README.

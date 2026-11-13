@@ -1,4 +1,6 @@
-# IoT Energy Data Pipeline
+# MeterTrace
+
+Smart-Meter Data Verification and Review
 
 ABV-IIITM IoT Big Data Management coursework using public HKUST smart-meter telemetry.
 

@@ -21,7 +21,7 @@ def capture(url: str, output: Path) -> None:
         page = browser.new_page(viewport={"width": 1024, "height": 1200})
         errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))
-        for number, (slug, title) in enumerate(PAGES[1:], 2):
+        for number, (slug, title) in enumerate(PAGES, 1):
             page.goto(f"{url}/#{slug}", wait_until="networkidle")
             page.get_by_role("heading", name=title, exact=True).wait_for()
             page.evaluate("window.scrollTo(0,0)")
@@ -53,7 +53,7 @@ def capture(url: str, output: Path) -> None:
             )
         assert not errors, errors
         browser.close()
-    print("Captured eight desktop workspaces from the running application")
+    print("Captured nine desktop workspaces from the running application")
 
 
 if __name__ == "__main__":

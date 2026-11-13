@@ -4,10 +4,10 @@
 \usepackage{tgtermes,newtxmath,microtype,graphicx,booktabs,tabularx,array,amsmath}
 \renewcommand{\ttdefault}{lmtt}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{enumitem,float,placeins,fancyhdr,caption,pdflscape}
+\usepackage{enumitem,float,placeins,fancyhdr,caption}
 \captionsetup{hypcap=false}
 \usepackage[hidelinks]{hyperref}
-\hypersetup{pdftitle={Auditable IoT Energy Data Pipeline},
+\hypersetup{pdftitle={MeterTrace: Smart-Meter Data Verification and Review},
 pdfauthor={Nishant Harkut},
 pdfsubject={IoT Big Data Management project report},
 pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
@@ -30,25 +30,21 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \setlist{nosep,leftmargin=1.4em}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small IoT Energy Data Pipeline}
+\fancyhead[L]{\small MeterTrace}
 \fancyhead[R]{\small Project report}
 \fancyfoot[C]{\thepage}
 \newcommand{\repo}{\url{https://github.com/nishantharkut-research/IoT-Energy-Data-Pipeline}}
+\newcommand{\framedfigure}[1]{%
+\begingroup\setlength{\fboxsep}{4pt}\setlength{\fboxrule}{.5pt}%
+\fcolorbox{black!60}{white}{\includegraphics[width=\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax]{#1}}%
+\endgroup}
 \newcommand{\reportshot}[3]{%
 \begin{figure}[!htbp]\centering
-\includegraphics[width=\linewidth]{#1}
+\framedfigure{#1}
 \caption{#2}\label{#3}
 \end{figure}}
-\newcommand{\overviewpage}{%
-\clearpage\newgeometry{margin=12mm}
-\begin{landscape}\thispagestyle{empty}
-{\large\bfseries Dashboard overview}\hfill{\small\thepage}\par\vspace{5pt}
-\begin{minipage}{\linewidth}\centering
-\includegraphics[width=.91\linewidth,height=150mm,keepaspectratio]{figures/dashboard/report-01-overview.png}
-\captionof{figure}{Experiment register and selected-run accounting in the desktop application.}\label{fig:overview}
-\end{minipage}
-\end{landscape}\restoregeometry}
 \begin{document}
+\fontsize{10.5}{13.2}\selectfont
 \begin{titlepage}
 \centering
 \vspace*{3mm}
@@ -58,7 +54,9 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \vspace{9mm}
 \includegraphics[height=52mm]{figures/iiitm-logo.png}\par
 \vspace{9mm}
-{\Huge\bfseries\color{ink}Auditable IoT Energy\par Data Pipeline\par}
+{\Huge\bfseries\color{ink}MeterTrace\par}
+\vspace{4mm}
+{\Large\bfseries Smart-Meter Data\par Verification and Review\par}
 \vspace{6mm}
 {\large Project report\par}
 {\large IoT Big Data Management\par}
@@ -94,7 +92,7 @@ A read-only dashboard presents source quality, delivery dispositions, verificati
 \subsection*{Dashboard views in this report}
 \begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule
 \textbf{View} & \textbf{Page}\\\midrule
-Overview and experiment register & \pageref{fig:overview}\\
+Overview and selected-run accounting & \pageref{fig:overview}\\
 Source audit & \pageref{fig:source}\\
 Delivery inspector & \pageref{fig:layers}\\
 Fault comparison & \pageref{fig:faults}\\
@@ -105,6 +103,7 @@ Storage and SQL & \pageref{fig:storage}\\
 Indian utility-review workflow & \pageref{fig:india}\\\bottomrule
 \end{tabularx}
 \clearpage
+\FloatBarrier
 \section{Introduction}
 \subsection{Problem and motivation}
 Smart-meter analytics depends on more than the value recorded by a meter. The platform must also establish which readings arrived, which were rejected, which were repeated and which contributed to the final result. A retry creates another delivery of the same source event. A delayed reading may arrive after an operational stream has released its state. A malformed message must remain traceable even when it is excluded from analysis.
@@ -130,11 +129,12 @@ The implementation has five objectives:
 The evaluation contains 15 completed runs through 1M selected source records. The 5M experiments were excluded because of resource and time constraints. The Indian application is a proposed workflow, supported by public-source motivation and tested mechanisms. Field billing savings and live utility reliability are outside the evaluation.
 
 
-\overviewpage
+
+\FloatBarrier
 \section{System architecture and technology choices}
 Figure~\ref{fig:architecture} shows the two computation paths. Source registration and canonicalization are shared. Kafka and Spark form the delivery path. Canonical NDJSON also enters HDFS for Hadoop Streaming. Both outputs are checked before finalization. The comparison is independent in implementation after canonicalization, not independent in physical measurement or source preparation.
-\begin{figure}[!htbp]\centering
-\includegraphics[width=\linewidth]{figures/architecture.pdf}
+\begin{figure}[H]\centering
+\framedfigure{figures/architecture.pdf}
 \caption{Processing path and independent reference computation share a declared canonical input.}\label{fig:architecture}
 \end{figure}
 
@@ -152,7 +152,7 @@ JSON manifests & Bind source, configuration, completed outputs and presentation 
 \end{tabularx}\end{table}
 
 \subsection{Review workflow and storage decisions}
-The reviewer begins with the source population, selects a completed experiment, checks delivery conservation and exact comparisons, then interprets consumption coverage and execution cost. Figure~\ref{fig:overview} shows the application entry point. Its experiment register links these review tasks to the same selected run.
+The reviewer begins with the source population, selects a completed experiment, checks delivery conservation and exact comparisons, then interprets consumption coverage and execution cost. Figure~\ref{fig:overview} shows the application entry point and selected-run accounting. The experiment register below this view links the remaining review tasks to the same selected run.
 
 The workload is historical replay and read-only analysis. Files provide the durable experiment outputs, while SQLite supports local ordered processing. A separate serving database such as HBase would add operational complexity without answering a measured random-access requirement in this project. Parquet and Spark SQL provide the implemented analytical path.
 
@@ -161,6 +161,9 @@ Docker Compose provides Kafka, Spark and Hadoop services for the original experi
 
 
 
+\reportshot{figures/report/01-overview.png}{Completed-run overview and selected delivery path in MeterTrace.}{fig:overview}
+
+\FloatBarrier
 \section{Dataset and source preparation}
 \subsection{Public telemetry and metadata}
 The source is the HKUST campus smart-meter collection deposited on Dryad under DOI \path{10.5061/dryad.k3j9kd5h6}, with a companion data descriptor~\cite{hkust,dryad}. The project registered the deposited version-5 files. Its counts describe those files, rather than substituting headline meter totals from the article. The package contains raw and publisher-resampled variants. Brick metadata provides semantic relationships and recorded units~\cite{brick}. Raw and resampled records remain separate throughout preparation.
@@ -231,6 +234,7 @@ The resumable preparation path creates sorted workbook units, writes checkpoints
 
 
 
+\FloatBarrier
 \section{Delivery processing and finalization}
 \subsection{Replay records and terminal evidence}
 A deterministic replay schedule fixes the seed, source selections, partition assignments and injection types. Delivery records retain source identity and delivery identity. Producer receipts record acknowledgement information. Terminal partition records establish that the planned replay has ended for each partition. A quiet Kafka topic alone is insufficient proof of completion.
@@ -241,8 +245,8 @@ Bronze archives data deliveries with their transport evidence. Terminal controls
 Silver is an operational candidate. Its event-time watermark bounds state and the period over which duplicate suppression can be maintained. Late valid deliveries are accounted for separately from invalid deliveries. Spark's documented watermark and deduplication semantics motivate this distinction~\cite{spark}. Silver can therefore be useful while still being unsuitable as the sole source for an exact completed result.
 
 Gold is a batch reconstruction from Bronze after completion checks. It parses valid deliveries, deduplicates exact source identities, and computes finalized source records and aggregates. This path retains received valid records that Silver omitted because of the operational watermark. It cannot recover a physical reading that was never supplied to the pipeline. Figure~\ref{fig:finalization} shows the control and data paths.
-\begin{figure}[!htbp]\centering
-\includegraphics[width=\linewidth]{figures/finalization.pdf}
+\begin{figure}[H]\centering
+\framedfigure{figures/finalization.pdf}
 \caption{Delivery dispositions and exact finalization. Gold uses Bronze rather than inheriting Silver's omissions.}\label{fig:finalization}
 \end{figure}
 
@@ -262,6 +266,7 @@ Finalization requires the replay manifests, delivery totals, terminal offsets, l
 
 
 
+\FloatBarrier
 \section{Independent Hadoop verification}
 The Hadoop path reads canonical NDJSON rather than Spark's Gold result. Its standalone source-record program emits the declared exact representation, while the mapper/reducer path produces grouped counts, exact scaled-value sums, timestamp bounds and quality counts. Python integer arithmetic supports exact checksum accumulation within the declared contract. Group dimensions include the meter, unit, measurement kind and decimal scale, avoiding addition of incompatible representations.
 
@@ -276,6 +281,7 @@ Figure~\ref{fig:verification} exposes the exact-field contract and selected-run 
 
 
 
+\FloatBarrier
 \section{Experiment design and controlled-fault results}
 The final matrix contains five correctness schedules, two recovery executions, two watermark configurations and six real-data scale executions. Each correctness schedule uses a 144-source-event fixture. The clean scale workloads use 100K or 1M selected canonical numeric records, with three repetitions at each scale. The originally planned 5M repetitions are explicitly excluded for resource and time constraints.
 
@@ -307,6 +313,7 @@ The source and aggregate error lists are empty for all 15 completed runs. These 
 
 
 
+\FloatBarrier
 \section{Watermark behaviour and consumption interpretation}
 The retaining watermark fixture preserves 144 source records in Silver. The restrictive configuration preserves 143, with the remaining valid record classified as late. Both executions produce identical finalized Gold and Hadoop source records. Thus the observed difference is an operational candidate omission, not a failure of exact Gold reconstruction.
 
@@ -342,6 +349,7 @@ Scenario rates of 0.5, 1.0 and 2.0 currency units per kWh are declared hypotheti
 
 
 
+\FloatBarrier
 \section{Recovery and reproducibility of the finalized answer}
 Figure~\ref{fig:recovery} presents the saved output comparisons. The recovery fixture compares uninterrupted execution with an interrupted-and-resumed execution. For each semantic artifact, its full SHA-256 digest is compared across the two executions. The four pairs agree. Transport offsets, timing files and physical Parquet layouts are not required to match, because they describe execution details rather than the declared semantic output.
 
@@ -354,6 +362,7 @@ The portable submission checks committed summary bytes against an evidence index
 
 
 
+\FloatBarrier
 \section{Scale, storage and SQL measurements}
 \subsection{Verification cost}
 Verification time includes Gold finalization, layer auditing, Hadoop computation and reconciliation. It excludes the streaming stage and subsequent storage/query benchmarking. Verification storage covers the declared finalized verification artifacts, not every checkpoint, log or service volume on disk. Table~\ref{tab:cost} reports the three repetitions at each scale.
@@ -386,6 +395,7 @@ The 100K runs use the original settings. Smaller query partitions were used at 1
 
 
 
+\FloatBarrier
 \section{Dashboard implementation and utility-review workflow}
 \subsection{From experiment results to a review interface}
 The dashboard has nine task-based views: overview, source audit, delivery inspector, fault comparison, verification, watermark review, recovery, storage/SQL and India use case. The interface uses a consistent light theme, readable metric rows, local table scrolling and visible units. The overview establishes the experiment context. The remaining views answer one review question at a time.
@@ -427,6 +437,7 @@ The seven Python skips comprise four Windows-specific rename checks, one inappli
 The repository includes code, configurations, tests, committed summaries, report source, figures and a six-minute demonstration guide. The portable bundle includes the compiled report, standalone LaTeX assets, source snapshot and full dashboard captures. Raw workbooks and original large runtime directories are separate. The README documents both the lightweight viewer launch and the experiment environment. A demonstration can follow source audit, combined faults, independent verification, watermark coverage and recovery without a live large-scale replay.
 
 
+\FloatBarrier
 \section{Discussion and conclusion}
 \subsection{What the project establishes}
 The implemented contribution is an evidence-preserving pipeline that combines deterministic delivery schedules, an operational stream, exact batch reconstruction, independent computation, recovery checks and a read-only evidence presentation. Its value is demonstrated by concrete distinctions: deliveries differ from source events, Silver differs from exact Gold, and computation agreement differs from source adequacy.
