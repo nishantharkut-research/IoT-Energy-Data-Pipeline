@@ -3,7 +3,8 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern,microtype,graphicx,booktabs,tabularx,array,amsmath}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{enumitem,float,placeins,fancyhdr,caption}
+\usepackage{enumitem,float,placeins,fancyhdr,caption,pdflscape}
+\captionsetup{hypcap=false}
 \usepackage[hidelinks]{hyperref}
 \hypersetup{pdftitle={Auditable IoT Energy Data Pipeline},
 pdfsubject={IoT Big Data Management coursework report},
@@ -65,10 +66,31 @@ A meter-data platform must distinguish the physical reading, its source row, eac
 
 The project asks a practical question: \emph{what evidence supports the completeness and correctness of a finalized result when the operational delivery path contains controlled faults?} Completing a Spark job answers only part of that question. The implementation therefore records deliveries, classifies their outcomes, reconstructs a finalized source result, and compares that result with a separately implemented computation.
 
-\subsection{Practical relevance}
-Smart-meter data supports consumption analysis, energy accounting and reporting. In an Indian utility setting, a distribution company may need to review outputs supplied by a metering service provider. MSEDCL's 2022 AMISP procurement document already requires retention of original received raw data alongside validated, estimated and edited data, together with change trails~\cite{msedcl}. This supports the relevance of inspectable data processing. It does not imply that the prototype satisfies a utility's operational or regulatory requirements.
+\subsection{Indian smart-meter data-review use case}
+The intended user is a distribution-company (DISCOM) analyst reviewing meter-data outputs supplied through an advanced metering infrastructure service provider (AMISP). A head-end system (HES) collects readings, while meter-data management (MDM) systems apply validation, estimation and editing (VEE). The review question is whether a reported result is adequately supported by the received data and its processing history.
 
-Industry systems already provide substantial quality management. Oracle documents quality, timeliness and estimation metrics~\cite{oracle}. Garrison and New examine AMI data-quality problems such as missing and pathological values~\cite{garrison}. The project therefore makes no claim that quality checking or a dashboard is new. Its coursework contribution is the concrete integration of delivery-level accounting, exact source reconstruction, independent Hadoop comparison, recovery evidence and a bounded presentation of the results.
+A 30 October 2026 CSIS survey of TNPDCL and Tata Power-operated Odisha utilities reports communication failures and data-integration limitations~\cite{csis}. These two environments motivate the use case; they do not establish a national failure rate. A CAG report published in 2025 also documents historical communication and missing reporting problems in a Tripura smart-grid project during 2018--2021~\cite{cag}. The distinction matters: installation counts alone do not establish that the data needed for analysis are available.
+
+MSEDCL's 2022 procurement document already requires original received raw data, VEE data and change trails~\cite{msedcl}. Commercial systems also provide quality and timeliness monitoring~\cite{oracle}. The proposed role is an inspectable review alongside this established infrastructure. The prototype is not a replacement for HES, MDM or VEE.
+
+\begin{table}[htbp]\centering\small
+\caption{How the Indian review use case connects to the implemented evaluation.}
+\label{tab:india}
+\begin{tabularx}{\linewidth}{@{}p{.24\linewidth}XX@{}}
+\toprule
+\textbf{Analyst's question} & \textbf{Implemented mechanism} & \textbf{Available evidence}\\
+\midrule
+Was source data unavailable? & Profile published rows and retain quality exclusions. & The HKUST resampled grid has 19.04M missing numeric cells.\\
+Did delivery behaviour alter the operational view? & Preserve Bronze, classify dispositions, rebuild exact Gold. & Combined fixture: 432 deliveries; restrictive Silver: 143 versus 144 in Gold.\\
+Does a second implementation agree? & Compare independent Hadoop records and aggregates with Spark Gold. & All 15 saved runs agree on the declared exact fields.\\
+Is a reported zero sufficiently supported? & Compare only matching consumption intervals and retain unknown exposure. & Two incomparable periods prevent a total energy-loss estimate.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The connection is about data accountability rather than a claim of measured Indian billing savings. The pipeline can reconstruct a valid reading that reached Bronze but was omitted by bounded Silver. It cannot recover a physical reading that never arrived. An Indian deployment would require authorized utility inputs, adapters for the actual HES/MDM exports, verified units and time conventions, agreed review rules, and field evaluation.
+
+The coursework contribution is the reproducible integration of delivery accounting, exact source reconstruction, separately implemented computation, recovery evidence and explicit comparison coverage. Quality checking itself is established work~\cite{garrison}. This evaluation demonstrates the integration using public HKUST telemetry and controlled delivery faults, without claiming a new streaming algorithm or superiority over commercial MDM systems.
 
 \subsection{Questions evaluated}
 \begin{enumerate}
@@ -108,7 +130,7 @@ For the published resampled grid, the numeric-cell availability is
 A_{\mathrm{numeric}}=\frac{44{,}238{,}638}{63{,}273{,}828}\times100\%=69.916\%.
 \end{equation}
 The denominator is the number of published rows. It is not an independently expected reading schedule. In particular, zero missing numeric cells in raw workbooks does not prove continuous temporal coverage. Negative values and ordered decreases are review observations, not confirmed meter failures or resets. Figure~\ref{fig:source} presents these distinctions in the portable dashboard.
-\screen{report-02-source-quality.png}{Source-quality view with published-row denominators and separate raw/resampled observations.}{fig:source}
+
 
 \subsection{Registration and preservation}
 Registration records relative paths, byte sizes and SHA-256 hashes. Structural profiling examines workbook sheets and cells. The exhaustive telemetry audit records value, timestamp and ordering observations. Numeric canonical events and source-quality exclusions are retained separately. Source-quality exclusions are not Kafka quarantine: the former concern preparation, while the latter concerns delivered messages.
@@ -158,7 +180,7 @@ Kafka supplies ordered partition logs, offsets and producer acknowledgements~\ci
 
 Parquet is used for columnar storage and Spark SQL. NDJSON is the explicit interchange format for independent processing and exact exported records. SQLite supplies disk-backed ordering and interval-processing support where needed. JSON manifests and reports supply bounded presentation inputs. No HBase service or application database is required for this historical replay and reporting workload. Adding one would require a separate serving use case and evaluation rather than improve the current evidence by itself.
 
-Docker Compose provides Kafka, Spark and Hadoop services for the original experiments. The portable dashboard uses Python, Streamlit and Plotly to read saved summaries. It starts no experiment services. The software roles are different, and the report does not describe the portable viewer as a running distributed cluster.
+Docker Compose provides Kafka, Spark and Hadoop services for the original experiments. The portable dashboard uses React and TypeScript, Mantine interface components, Recharts plots and Lucide icons to present saved summaries. A Python export step preserves the exact evidence bytes; the browser checks their SHA-256 bindings. The original Streamlit sealed-run viewer remains available for inspecting original local artifacts. It starts no experiment services. The software roles are different, and the report does not describe the portable viewer as a running distributed cluster.
 
 \section{Delivery processing and finalization}
 \subsection{Replay records and terminal evidence}
@@ -182,7 +204,7 @@ V &= S+D+L.
 \end{align}
 The completion check separately binds acknowledged data deliveries to Bronze and verifies terminal partition coverage. The exact Gold count is a source-event count, not another delivery-disposition category.
 
-\screen{report-03-delivery-accounting.png}{Combined-fixture accounting separates delivery multiplicity from unique finalized source records.}{fig:layers}
+
 
 \subsection{Fail-closed publication of completed runs}
 Finalization requires the replay manifests, delivery totals, terminal offsets, layer dispositions and exact comparisons to reconcile. Decision, query and storage reports must bind to the corresponding finalized artifacts. A run manifest registers the artifacts and is sealed with a SHA-256 binding. The original sealed-run dashboard checks both this manifest and its registered files and rejects incomplete, altered or unreconciled runs. These checks establish byte bindings and declared processing consistency, not adversarial authenticity or physical accuracy.
@@ -203,7 +225,7 @@ Fixture & Bronze & Silver & Dup. & Late & Quar. & Gold\\\midrule
 The duplicate schedule repeats unchanged valid deliveries. The malformed schedule adds rejected messages alongside valid originals. The combined schedule includes both effects. Consequently, these schedules test delivery preservation and disposition under declared faults. They do not simulate arbitrary physical-meter corruption or guarantee a nonzero consumption error.
 
 In the combined fixture, 432 Bronze deliveries split into 288 parsed-valid and 144 quarantined deliveries. The valid deliveries split into 144 Silver records and 144 duplicate dispositions. Gold contains the same 144 source records as the clean execution. The five correctness schedules have identical hashes for each of the four corresponding semantic outputs: Gold source records, Gold aggregates, Hadoop source records and Hadoop aggregates. This is stronger than merely reporting equal row totals.
-\screen{report-04-fault-handling.png}{Five controlled schedules preserve the finalized source result while delivery dispositions change.}{fig:faults}
+
 
 The source and aggregate error lists are empty for all 15 completed runs. These results support the implemented fault-accounting and reconstruction behaviour under the selected schedules. They do not estimate the frequency of such faults in HKUST infrastructure or Indian AMI deployments.
 
@@ -211,7 +233,7 @@ The source and aggregate error lists are empty for all 15 completed runs. These 
 The Hadoop path reads canonical NDJSON rather than Spark's Gold result. Its standalone source-record program emits the declared exact representation, while the mapper/reducer path produces grouped counts, exact scaled-value sums, timestamp bounds and quality counts. Python integer arithmetic supports exact checksum accumulation within the declared contract. Group dimensions include the meter, unit, measurement kind and decimal scale, avoiding addition of incompatible representations.
 
 Reconciliation sorts and compares exported source records by their declared identities and fields. It also compares aggregate records field by field. The source comparison covers 23 exact fields, including source location, original text, event time, scale, value, units, quality flags and Brick relationships. The aggregate comparison covers 10 fields. This makes the comparison contract inspectable rather than reducing it to an unqualified ``passed'' label.
-\screen{report-05-independent-verification.png}{Recorded exact comparisons for all 15 finalized runs. The current viewer validates summaries, not original runtime files.}{fig:verification}
+
 
 Checksums of cumulative readings in aggregate records are useful exact processing checks. They are not energy-consumption totals. Consumption is computed separately from valid differences between supported successive readings. This prevents interpreting a large sum of meter-register values as electricity delivered during a period.
 
@@ -232,7 +254,7 @@ D_{\mathcal C}=\sum_{(m,a,b)\in\mathcal C}
 \left|\Delta E^{\mathrm{Silver}}_{m,a,b}-\Delta E^{\mathrm{Gold}}_{m,a,b}\right|.
 \end{equation}
 It is a subtotal over $\mathcal C$, not an error estimate for intervals outside it.
-\screen{report-06-watermark-consumption.png}{Restrictive watermark results retain a zero comparable subtotal and explicitly unknown total exposure.}{fig:watermark}
+
 
 The restrictive execution has 140 candidate intervals and 138 verified intervals. There are 138 comparable periods and two incomparable periods. Candidate and verified flagged-record counts are three and six, respectively. The numeric discrepancy over comparable periods is zero. The two incomparable periods cannot be assigned a numeric error from these reports. The report therefore does not call them a 2~kWh loss or claim that verification saved that energy.
 
@@ -240,7 +262,7 @@ Scenario rates of 0.5, 1.0 and 2.0 currency units per kWh are declared hypotheti
 
 \section{Recovery and reproducibility of the finalized answer}
 The recovery fixture compares uninterrupted execution with an interrupted-and-resumed execution. For each semantic artifact, its full SHA-256 digest is compared across the two executions. The four pairs agree. Transport offsets, timing files and physical Parquet layouts are not required to match, because they describe execution details rather than the declared semantic output.
-\screen{report-07-recovery.png}{Fixture recovery preserves four semantic output artifacts; complete 1M workflow durations remain unavailable.}{fig:recovery}
+
 
 The scale executions also required recovery. Saved receipts document resumed stages and configuration bindings. All three 1M runs finalized, but their complete workflow durations are unavailable. The report preserves that distinction. A recovered result can still support the recorded exact comparison and the measured component costs without supplying an uninterrupted end-to-end latency measurement.
 
@@ -269,7 +291,7 @@ Events & NDJSON (MB) & Parquet/NDJSON & Partitioned/NDJSON\\\midrule
 \csname @@input\endcsname{figures/storage-table.tex}
 \bottomrule\end{tabular}
 \end{table}
-\screen{report-08-storage-sql.png}{SQL timing panel for the recorded first 100K repetition. Result rows and timing ranges are displayed together.}{fig:storage}
+
 
 \subsection{Query workloads and timing limits}
 Five read-only SQL workloads cover meter, building, time window, quality and exposure. Each runs three timing repetitions and records a complete ordered-result digest. The query policy uses cached Gold input and consumes projected JSON results, including serialization, transfer and hashing. These are complete cached-result workloads, not isolated SQL-operator latencies or cold-storage read measurements.
@@ -277,18 +299,19 @@ Five read-only SQL workloads cover meter, building, time window, quality and exp
 The 100K runs use the original settings. Smaller query partitions were used at 1M. Their timings therefore cannot be treated as a configuration-controlled scaling benchmark. A zero-row quality query in a selected numeric prefix also does not contradict full-source quality findings. Different populations and definitions require separate denominators. Per-run minimum, median and maximum timings and result digests remain available in the committed results instead of being replaced by a single favourable run.
 
 \section{Dashboard, evidence access and demonstration}
-\subsection{Eight views with distinct purposes}
-The dashboard provides an overview, source quality, delivery accounting, controlled faults, independent verification, watermark/consumption interpretation, recovery and storage/SQL. The report includes one actual capture from each view. The screenshots are generated from the running Streamlit application, with light backgrounds, readable labels and consistent units. Figure~\ref{fig:overview} is the entry view.
-\screen{report-01-overview.png}{Portable dashboard overview summarizing completed scope and the questions answered by the evidence.}{fig:overview}
+\subsection{Nine views organised around review tasks}
+The entry view combines a selected-run pipeline with an experiment register. An analyst can filter and search the register, inspect a run, export its saved summary, or download the original complete result JSON. Source audit, delivery inspector, fault comparison, verification, watermark review, recovery, storage/SQL and India use case provide the remaining views. The interface uses a consistent light theme, self-hosted fonts, visible units and local scrolling for wide tables. Figures~\ref{fig:overview}--\ref{fig:india} show actual browser captures with navigation and page context intact. They are grouped in Appendix~\ref{app:dashboard} to keep each capture large enough to read. Each landscape capture preserves a 1280 by 900 desktop viewport. Longer content continues below it; full-page PNGs and a run-inspector dialog capture are retained in \path{docs/submission/figures/dashboard/}.
+
+The controls operate on saved evidence. Switching source variants changes the displayed population; selecting a run changes its counts and contract; the watermark switch exposes the retaining/restrictive distinction. CSV and JSON exports contain the selected saved records. No control initiates a new experiment or invents a live meter feed.
 
 The portable mode loads only bounded files already in the repository. An evidence index binds the closure report, original scope, original experiment plan and published source-audit summary. Missing or altered inputs prevent the view from displaying affirmative results. The loader also checks count conservation and recorded comparison agreement. Its result is explicitly a validated saved-summary presentation. It is not a replacement for per-artifact verification of the original sealed experiment directories.
 
 The separate sealed-run mode retains the original strict artifact checks. A user who supplies a valid local run directory can inspect the original six sealed views. Opening an absent or incomplete run produces an error. The default portable mode avoids requiring a multi-gigabyte evidence tree merely to review the submitted results.
 
 \subsection{A short demonstration}
-A six-minute demonstration can begin with the overview, then show source quality and explain the published-row denominator. The combined-fault view demonstrates the delivery equations. Independent verification shows the declared comparison fields and experiment families. The watermark view explains the 143/144 distinction and unknown total exposure. Recovery and storage/SQL finish the demonstration with reproducibility and cost. No live 1M replay is needed.
+A six-minute demonstration can begin with the overview, then show source quality and explain the published-row denominator. The combined-fault view demonstrates the delivery equations. Independent verification shows the declared comparison fields and experiment families. The watermark view explains the 143/144 distinction and unknown total exposure. Recovery and storage/SQL show reproducibility and cost. The India view closes with the intended analyst, the supporting sources and the limits of the evaluation. No live 1M replay is needed.
 
-A fresh checkout can launch the portable viewer with the documented Python environment and Streamlit command. The README links this report, its LaTeX source, screenshots and machine-readable results. The original dataset is obtained from Dryad separately. It is unnecessary for reviewing the portable submission, but required for reproducing source preparation.
+A fresh checkout can launch the React viewer with Python 3.11 or newer for its standard-library evidence exporter and Node.js 24 for the locked frontend dependencies. Run \texttt{npm ci} and \texttt{npm run dev} from \path{dashboard/web/}. The separate strict viewer uses the documented Python/Streamlit environment. The README links this report, its LaTeX source, screenshots and machine-readable results. The original dataset is obtained from Dryad separately. It is unnecessary for reviewing the portable submission, but required for reproducing source preparation.
 
 \section{Limitations, contribution and conclusion}
 The implemented contribution is an evidence-preserving pipeline that combines deterministic delivery schedules, an operational stream, exact batch reconstruction, independent computation, recovery checks and a read-only evidence presentation. Its value is demonstrated by concrete distinctions: deliveries differ from source events, Silver differs from exact Gold, and computation agreement differs from source adequacy.
@@ -302,7 +325,7 @@ All 15 saved runs pass their declared source-record and aggregate comparisons. E
 Further work could evaluate realistic communication-loss histories, continuous-window consumption effects or cheaper selective verification. Such extensions would require new baselines and experiments. They are outside this submitted scope.
 
 \FloatBarrier
-\begin{thebibliography}{9}\small
+\begin{thebibliography}{99}\small
 \bibitem{hkust} M. Li, Z. Wang, Y. Qu, K. M. Chui and M. Leung-Shea, ``A multi-year campus-level smart meter database,'' \emph{Scientific Data}, vol. 11, article 1284, 2024. \href{https://doi.org/10.1038/s41597-024-04106-1}{doi:10.1038/s41597-024-04106-1}.
 \bibitem{dryad} HKUST smart-meter dataset, Dryad, deposited version 5, 1 August 2024. \href{https://doi.org/10.5061/dryad.k3j9kd5h6}{doi:10.5061/dryad.k3j9kd5h6}. Registration and package details: repository \path{docs/dataset-audit.md}.
 \bibitem{brick} Brick Schema, ``Brick ontology and documentation.'' \url{https://brickschema.org/}. Accessed 13 November 2026.
@@ -312,6 +335,104 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \bibitem{msedcl} Maharashtra State Electricity Distribution Co. Ltd., AMISP tender MMD/T-NSC-06/0922, 19 September 2022, section 2.4.4, PDF p. 185. \href{https://www.mahadiscom.in/supplier/wp-content/uploads/2022/09/FILE_MMD_T-NSC-06_0922_version_1_1663594929641-Package-1.pdf}{Tender document}.
 \bibitem{oracle} Oracle Utilities Analytics, ``Performance,'' Meter Data Management metric reference. \href{https://docs.oracle.com/en/industries/utilities/analytics/2.8.0.0/ouaw-mdm-metric/OUAW_MDM_Metric/MDM_BI_Content.2.6.html}{Quality, timeliness and estimation documentation}. Accessed 13 November 2026.
 \bibitem{garrison} E. Garrison and J. New, ``Quality control methods for advanced metering infrastructure data,'' \emph{Smart Cities}, vol. 4, no. 1, pp. 195--203, 2021. \href{https://doi.org/10.3390/smartcities4010012}{doi:10.3390/smartcities4010012}.
+\bibitem{csis} S. Kumar and A. Subramaniam, ``From Meters to Machine Learning: Building AI-Ready Utilities in India,'' CSIS, 30 October 2026. \href{https://www.csis.org/analysis/meters-machine-learning-building-ai-ready-utilities-india}{Original utility survey and analysis}.
+\bibitem{cag} Comptroller and Auditor General of India, Report No. 2 of 2025, Tripura, year ended 31 March 2024, chapter IV, printed p. 144. \href{https://cag.gov.in/uploads/download_audit_report/2025/6--Chapter-4-069ccbc5e407049.02992125.pdf}{Historical smart-grid project observations}.
 \end{thebibliography}
+
+
+\clearpage
+\appendix
+\refstepcounter{section}\label{app:dashboard}
+\addcontentsline{toc}{section}{A Dashboard walkthrough}
+\newgeometry{margin=12mm}
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Project overview}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-01-overview.png}
+\captionof{figure}{Select a recorded run, follow its delivery accounting, or search the completed experiment register below.}\label{fig:overview}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Source audit}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-02-source-audit.png}
+\captionof{figure}{Switch between raw and publisher-resampled populations. Numeric-cell availability uses published rows as its denominator.}\label{fig:source}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Delivery inspector}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-03-delivery-inspector.png}
+\captionof{figure}{Inspect one run. Pipeline, accounting and run-contract tabs separate the processing path from its recorded configuration.}\label{fig:layers}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Controlled-fault comparison}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-04-fault-comparison.png}
+\captionof{figure}{Compare five deterministic schedules. Duplicate and quarantined deliveries change while the exact finalized source result is preserved.}\label{fig:faults}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Independent verification}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-05-verification.png}
+\captionof{figure}{Review source and aggregate comparisons from independently implemented Spark and Hadoop transformations over shared canonical inputs.}\label{fig:verification}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Watermark and consumption review}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-06-watermark-review.png}
+\captionof{figure}{Switch watermark policies. The restrictive candidate omits one event; matching-interval energy and unknown total exposure remain distinct.}\label{fig:watermark}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Interrupted execution and recovery}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-07-recovery.png}
+\captionof{figure}{Inspect the four matching semantic output pairs and the separate timing limitations for recovered scale executions.}\label{fig:recovery}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Storage and SQL}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-08-storage-sql.png}
+\captionof{figure}{Choose a recorded scale repetition. Verification cost, storage ratios and ordered-result SQL bindings have explicit measurement scopes.}\label{fig:storage}
+\end{minipage}
+\end{landscape}
+\clearpage
+\begin{landscape}
+\thispagestyle{empty}
+{\large\bfseries\color{ink}Indian utility-review use case}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=.86\linewidth]{figures/dashboard/report-09-india-use-case.png}
+\captionof{figure}{Locate the proposed independent review alongside an existing HES/MDM. The full view includes problem-to-evidence mappings and dated sources.}\label{fig:india}
+\end{minipage}
+\end{landscape}
 
 \end{document}

@@ -9,20 +9,26 @@ The submitted scope is nine fixtures plus three clean repetitions each at 100K a
 
 ## Portable demonstration on Linux
 
-From the repository root:
+With Python 3.11+ and Node.js 24 installed:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+cd dashboard/web
+npm ci
+npm run dev
+```
+
+Open http://localhost:5173. The React/Mantine dashboard has nine views, a searchable experiment register, run inspection, source/run selectors, and CSV/JSON exports. `npm run build` creates a static bundle; `npm run preview` serves it locally. The prestart/prebuild step uses Python's standard library to export byte-exact saved summaries. No dataset, SSD or experiment services are needed.
+
+The browser validates the exported summary SHA-256 bindings, original plan/scope bindings, run membership, recorded comparison agreement and delivery equations. Original runtime verification was recorded on 2 November 2026; this checkout does not repeat it. Source-audit figures come from the published Markdown because original audit JSON is absent here. The [demo guide](demo-script.md) provides a six-minute route; the [India note](india-use-case.md) explains the proposed utility-review role and its limits.
+
+## Original sealed-run inspection
+
+Run the original Python viewer first:
+
+```bash
 python -m pip install -e ".[dashboard]"
 python -m streamlit run dashboard/app.py --server.headless true
 ```
-
-The default saved-results viewer works without an SSD, dataset or experiment services. Its eight views display the committed closure results and the published source audit. The input index is `docs/results/submission/evidence-index.json`. The loader validates the byte bindings, original plan/scope bindings, run membership, recorded comparison agreement and delivery equations.
-
-Those checks are bounded summary checks. Original runtime verification was recorded on 2 November 2026; this portable checkout does not repeat it. Source-audit figures come from a published Markdown summary because original audit JSON is absent here. [The demo guide](demo-script.md) gives a six-minute route through the evidence.
-
-## Original sealed-run inspection
 
 Choose **Sealed run files** in the sidebar and provide an original finalized run directory. `dashboard/data.py` verifies its manifest seal and all registered artifacts. It rejects missing, incomplete, altered and unreconciled runs. The historical PowerShell launcher remains available on Windows:
 
@@ -52,12 +58,12 @@ Install LaTeX and `python -m pip install -e ".[dashboard,report]"`. With Chrome/
 
 ```bash
 python -m scripts.build_submission_figures
-python -m scripts.capture_submission_screenshots
+python -m scripts.capture_operator_dashboard
 cd docs/submission
 latexmk -pdf -interaction=nonstopmode -halt-on-error project-report.tex
 ```
 
-Screenshots are actual captures of the running dashboard. Files prefixed `report-` are focused captures of the corresponding panels for readable report inclusion; full-view captures are retained beside them. No synthetic measurements or fabricated finalized runs are used.
+Screenshots are actual captures of the running React dashboard on port 5173. `figures/dashboard/report-*.png` preserve the full desktop viewport, including navigation. Full-page captures are retained beside them. The report includes nine large landscape captures; longer content remains accessible in the live viewer and full-page PNGs. No synthetic measurements or fabricated finalized runs are used.
 
 ## Interpretation checklist
 

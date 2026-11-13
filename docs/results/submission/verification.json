@@ -1,11 +1,11 @@
 {
-  "schema_version": "submission-verification-v1",
-  "verified_at_utc": "2026-11-13T06:32:39.238789+00:00",
-  "scope": "Non-distributed software checks and portable saved-results presentation",
+  "schema_version": "submission-verification-v2",
+  "verified_at_utc": "2026-11-13T12:09:16.907600+00:00",
+  "scope": "Non-distributed software checks; React saved-evidence presentation and coursework report",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
     "command": "python -m pytest tests/unit tests/contract tests/property -q -ra",
-    "passed": 580,
+    "passed": 582,
     "skipped": 7,
     "skip_reasons": [
       "4 Windows-specific rename checks",
@@ -14,47 +14,168 @@
       "1 PySpark-dependent check: PySpark not installed"
     ]
   },
+  "frontend": {
+    "command": "npm run check",
+    "unit_tests_passed": 8,
+    "typescript_build": "passed with strict and noUnusedLocals",
+    "production_build": "passed",
+    "prettier": "passed",
+    "known_build_advisory": "Single bundle exceeds Vite 500 kB advisory threshold; no build failure"
+  },
   "ruff": "passed",
   "repository_independence": "passed",
   "diff_whitespace": "passed",
   "pdf": {
     "path": "docs/submission/project-report.pdf",
-    "pages": 16,
-    "screenshots": 8,
+    "pages": 22,
+    "screenshots": 9,
     "vector_diagrams": 2,
-    "unresolved_references": false
+    "unresolved_references": false,
+    "overfull_boxes": false,
+    "visual_review": "All pages rendered; layout and full application captures inspected"
   },
   "browser": {
-    "views": 8,
     "page_errors": [],
-    "horizontal_overflow": false,
-    "additional_viewport_widths": [
-      1280,
-      720
+    "capture": "actual running React app",
+    "checks": [
+      {
+        "page": "overview",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "source-audit",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "delivery-inspector",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "fault-comparison",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "verification",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "watermark-review",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "recovery",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "storage-sql",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "page": "india-use-case",
+        "viewport": "1280x900",
+        "overflow": false
+      },
+      {
+        "interaction": "source-variant-switch",
+        "passed": true
+      },
+      {
+        "interaction": "search-pagination-run-export",
+        "passed": true
+      },
+      {
+        "interaction": "exact-results-download",
+        "sha256": "1e18dbfeae8e708ab31e60b468afb9bbe04dc788176af532e2bf66885326dfcc"
+      },
+      {
+        "interaction": "csv-export",
+        "rows": 15
+      },
+      {
+        "interaction": "provenance-and-delivery-tabs",
+        "passed": true
+      },
+      {
+        "interaction": "watermark-policy-switch",
+        "passed": true
+      },
+      {
+        "viewport_width": 1440,
+        "pages_checked": 9,
+        "overflow": false
+      },
+      {
+        "viewport_width": 720,
+        "pages_checked": 9,
+        "overflow": false
+      },
+      {
+        "viewport_width": 390,
+        "pages_checked": 9,
+        "overflow": false
+      },
+      {
+        "interaction": "tampered-evidence-rejected",
+        "passed": true
+      }
     ]
+  },
+  "fresh_checkout": {
+    "source": "staged fresh checkout",
+    "install": "npm ci",
+    "checks": "npm run check",
+    "production_views_rendered": 9,
+    "page_errors": [],
+    "report_sha256": "5d09212ef6d575728a797b0b95548abc70d2e5b978d81591f2b67ef1c9c468ab"
+  },
+  "additional_reviewer": {
+    "status": "unavailable",
+    "reason": "Usage limit; no independent-review success is claimed for this revision"
   },
   "new_distributed_runs": 0,
   "original_runtime_reverified": false,
   "source_audit_basis": "Committed Markdown summary; original audit JSON absent",
   "presentation_environment": {
-    "python": "3.14.4",
-    "streamlit": "1.67.0",
-    "plotly": "5.24.1",
-    "pandas": "3.1.1",
-    "matplotlib": "3.11.2",
-    "pyarrow": "26.0.1",
-    "pytest": "8.4.2",
-    "ruff": "0.10.0",
-    "playwright": "1.65.1",
-    "pypdf": "7.0.1"
+    "python": "Python 3.14.4",
+    "node": "v24.22.2",
+    "dependencies": {
+      "@fontsource-variable/inter": "^5.3.0",
+      "@mantine/core": "^9.8.0",
+      "@mantine/hooks": "^9.8.0",
+      "lucide-react": "^1.72.0",
+      "react": "^19.3.1",
+      "react-dom": "^19.3.1",
+      "recharts": "^3.10.1"
+    }
   },
-  "review": "Independent read-only review found no actionable factual or evidence-handling findings.",
-  "fresh_checkout": {
-    "separate_environment": true,
-    "installed_extra": "dashboard",
-    "saved_runs_loaded": 15,
-    "views_rendered": 8,
-    "missing_sealed_files_rejected": true,
-    "runtime_dataset_required": false
+  "preserved_original_inputs": {
+    "results": {
+      "path": "docs/results/final/final-results.json",
+      "byte_size": 179033,
+      "sha256": "1e18dbfeae8e708ab31e60b468afb9bbe04dc788176af532e2bf66885326dfcc"
+    },
+    "scope": {
+      "path": "docs/results/final/final-coursework-scope.json",
+      "byte_size": 6034,
+      "sha256": "6c875acb6e799807d2f83dc2de2843b1586b9ab7ef390fd7b6c47c40c315d666"
+    },
+    "plan": {
+      "path": "docs/results/final/experiment-plan.json",
+      "byte_size": 10533,
+      "sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09"
+    },
+    "source_audit": {
+      "path": "docs/results/source-audit-2026-10-27.md",
+      "byte_size": 3262,
+      "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
+    }
   }
 }

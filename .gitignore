@@ -112,3 +112,12 @@ project-report.out
 .caches/
 tmp/
 .playwright-cli/
+
+# React presentation build and validated runtime export
+node_modules/
+/dashboard/web/dist/
+/dashboard/web/public/evidence/*
+!/dashboard/web/public/evidence/.gitkeep
+/dashboard/web/public/project-report.pdf
+
+*.tsbuildinfo

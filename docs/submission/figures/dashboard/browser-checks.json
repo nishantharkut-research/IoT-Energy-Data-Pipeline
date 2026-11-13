@@ -1,0 +1,94 @@
+{
+  "page_errors": [],
+  "capture": "actual running React app",
+  "checks": [
+    {
+      "page": "overview",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "source-audit",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "delivery-inspector",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "fault-comparison",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "verification",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "watermark-review",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "recovery",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "storage-sql",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "page": "india-use-case",
+      "viewport": "1280x900",
+      "overflow": false
+    },
+    {
+      "interaction": "source-variant-switch",
+      "passed": true
+    },
+    {
+      "interaction": "search-pagination-run-export",
+      "passed": true
+    },
+    {
+      "interaction": "exact-results-download",
+      "sha256": "1e18dbfeae8e708ab31e60b468afb9bbe04dc788176af532e2bf66885326dfcc"
+    },
+    {
+      "interaction": "csv-export",
+      "rows": 15
+    },
+    {
+      "interaction": "provenance-and-delivery-tabs",
+      "passed": true
+    },
+    {
+      "interaction": "watermark-policy-switch",
+      "passed": true
+    },
+    {
+      "viewport_width": 1440,
+      "pages_checked": 9,
+      "overflow": false
+    },
+    {
+      "viewport_width": 720,
+      "pages_checked": 9,
+      "overflow": false
+    },
+    {
+      "viewport_width": 390,
+      "pages_checked": 9,
+      "overflow": false
+    },
+    {
+      "interaction": "tampered-evidence-rejected",
+      "passed": true
+    }
+  ]
+}

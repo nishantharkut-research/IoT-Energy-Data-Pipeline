@@ -24,33 +24,32 @@ Median verification cost was **13.88 minutes at 100K** and **165.30 minutes at 1
 
 ## Open the portable dashboard
 
-From a fresh checkout:
+From a fresh checkout, install **Python 3.11+ and Node.js 24**, then run:
 
 ```bash
 git clone https://github.com/nishantharkut-research/IoT-Energy-Data-Pipeline.git
-cd IoT-Energy-Data-Pipeline
-python3 -m venv .venv
-source .venv/bin/activate
+cd IoT-Energy-Data-Pipeline/dashboard/web
+npm ci
+npm run dev
+```
+
+Open **http://localhost:5173**. The React/TypeScript interface uses Mantine components, Recharts and Lucide icons with a consistent light theme. Its prestart command exports the original saved evidence with Python's standard library; no Python packages are needed for this viewer. If your platform names Python `python` instead of `python3`, run `python -m scripts.export_dashboard_evidence` from the repository root, then `npx vite --host 127.0.0.1 --port 5173` from `dashboard/web`.
+
+The nine views cover overview/run register, source audit, delivery inspection, fault comparison, independent verification, watermark review, recovery, storage/SQL and the India use case. Run selection, search, filters, pagination, evidence dialogs and CSV/JSON exports work on the saved results.
+
+![Dashboard overview](docs/submission/figures/dashboard/report-01-overview.png)
+
+This viewer needs no dataset, external SSD, Kafka, Spark or Hadoop service. It checks SHA-256 bindings of the committed summary inputs, original scope/plan bindings and delivery equations. It **does not reverify original runtime artifacts** or connect to live meters. The original verification date and its scope remain visible. Build a local static bundle with `npm run build`; serve it with `npm run preview`.
+
+The original strict sealed-run viewer remains separate:
+
+```bash
+# From the repository root, in a Python virtual environment:
 python -m pip install -e ".[dashboard]"
 python -m streamlit run dashboard/app.py --server.headless true
 ```
 
-Open the localhost URL printed by Streamlit. On Windows, activate with `.venv\Scripts\Activate.ps1` instead. Python 3.11 or newer is required. Original distributed-processing dependencies and versions are separate from the portable presentation environment.
-
-The default **Submission results** mode has eight views:
-
-1. Overview and completed scope.
-2. Source quality and published-row availability.
-3. Delivery conservation by recorded run.
-4. Controlled-fault dispositions.
-5. Independent source and aggregate comparisons.
-6. Watermark behaviour and consumption-comparison coverage.
-7. Recovery output hashes.
-8. Storage and SQL measurements.
-
-This mode reads small committed files. It needs no dataset, external SSD, Kafka, Spark or Hadoop service. Its loader validates the saved summary bindings and internal count equations. It does **not** reverify original runtime artifacts. The original verification timestamp and its scope remain visible.
-
-To inspect an original sealed run, choose **Sealed run files** and supply its local directory. That mode retains the strict artifact-registry checks and rejects missing, incomplete or altered evidence. Original sealed directories are excluded from Git and must be retained separately.
+Choose **Sealed run files** and supply an original local finalized directory. It rejects missing, incomplete or altered registered evidence. Original sealed directories are excluded from Git and must be retained separately.
 
 ## Architecture
 
@@ -93,7 +92,7 @@ The scale runs select source-ID-sorted prefixes from numeric canonical data. The
 
 The restrictive watermark changes two consumption periods that have incomparable supports. The comparable-interval discrepancy is zero; total energy error and residual financial exposure remain unknown. Rates of 0.5, 1.0 and 2.0 currency units/kWh are hypothetical scenarios. No actual bill, Indian tariff or demonstrated saving is claimed.
 
-The Indian utility connection is a data-review use case. Evaluation remains HKUST historical telemetry and controlled delivery faults. The coursework contribution is the implemented integration and its evidence, not a new streaming algorithm or a comparison proving superiority over commercial MDMS.
+The Indian utility connection is a proposed DISCOM review of metering-provider outputs: distinguish unavailable source readings, delivery exceptions and computation differences. [The use-case note](docs/india-use-case.md) maps Indian source evidence to the mechanisms and existing results. Commercial HES/MDM/VEE capabilities are acknowledged. Evaluation remains HKUST historical telemetry and controlled delivery faults. The coursework contribution is the implemented integration and its evidence, not a new streaming algorithm or a comparison proving superiority over commercial MDMS.
 
 ## Evidence and repository layout
 
@@ -103,7 +102,8 @@ The Indian utility connection is a data-review use case. Evaluation remains HKUS
 | `jobs/spark/` | Streaming layers, exact finalization, audits and benchmarks |
 | `jobs/hadoop/` | Independent mapper/reducer and source-record computation |
 | `schemas/`, `configs/`, `queries/` | Contracts, declared experiment settings and SQL |
-| `dashboard/` | Portable results viewer and strict sealed-run loader |
+| `dashboard/web/` | React/Mantine saved-evidence review workspace |
+| `dashboard/*.py` | Saved-summary validation and original strict sealed-run viewer |
 | `docs/results/final/` | Saved closure JSON, scope, original plan, tables and HTML report |
 | `docs/results/submission/` | Input bindings and submission verification records |
 | `docs/submission/` | LaTeX report, PDF, screenshots and vector diagrams |
@@ -125,9 +125,17 @@ The report is built with LaTeX. To regenerate figures and actual browser capture
 ```bash
 python -m scripts.build_submission_figures
 # Keep the dashboard running in another terminal.
-python -m scripts.capture_submission_screenshots
+python -m scripts.capture_operator_dashboard
 cd docs/submission
 latexmk -pdf -interaction=nonstopmode -halt-on-error project-report.tex
+```
+
+Frontend checks:
+
+```bash
+cd dashboard/web
+npm ci
+npm run check
 ```
 
 See [the handover guide](docs/HANDOVER.md) for original artifact verification and the distinction between summary review and full reproduction. Historical execution documents are retained for provenance; the final scope and report take precedence over earlier planned work.
