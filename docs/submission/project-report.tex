@@ -7,7 +7,8 @@
 \captionsetup{hypcap=false}
 \usepackage[hidelinks]{hyperref}
 \hypersetup{pdftitle={Auditable IoT Energy Data Pipeline},
-pdfsubject={IoT Big Data Management coursework report},
+pdfauthor={Nishant Harkut},
+pdfsubject={IoT Big Data Management project report},
 pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \definecolor{ink}{HTML}{18344A}
 \definecolor{accent}{HTML}{25669B}
@@ -22,12 +23,14 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \renewcommand{\textfraction}{.06}
 \renewcommand{\floatpagefraction}{.85}
 \setlength{\emergencystretch}{2em}
+\widowpenalty=10000
+\clubpenalty=10000
 \renewcommand{\arraystretch}{1.17}
 \setlist{nosep,leftmargin=1.4em}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small IoT Energy Data Pipeline}
-\fancyhead[R]{\small IoTBDM coursework}
+\fancyhead[R]{\small Project report}
 \fancyfoot[C]{\thepage}
 \newcommand{\repo}{\url{https://github.com/nishantharkut-research/IoT-Energy-Data-Pipeline}}
 \newcommand{\screen}[3]{\begin{figure}[htbp]\centering\includegraphics[width=\linewidth,height=.48\textheight,keepaspectratio]{figures/#1}\caption{#2}\label{#3}\end{figure}}
@@ -37,14 +40,20 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 {\small\color{accent}\textbf{ABV-IIITM Gwalior \quad / \quad IoT Big Data Management}}\\[14pt]
 {\Huge\bfseries\color{ink}Auditable IoT Energy\\[5pt]Data Pipeline}\\[12pt]
 {\Large Delivery accounting, exact finalization,\\and independent verification}\\[10pt]
-{\large Coursework project report \hfill 13 November 2026}
+{\large Project report \hfill 13 November 2026}
+\vspace{8pt}
+\begin{tabularx}{\linewidth}{@{}XX@{}}
+\textbf{Submitted by} & \textbf{Instructor}\\
+Nishant Harkut & Amandeep Kaur\\
+Enrollment number: 2023IMG-040 &\\
+\end{tabularx}
 \vspace{10pt}\hrule\vspace{10pt}
 \textbf{Submission repository}\\\repo
 
 \section*{Abstract}
-Distributed processing can complete without establishing that its output contains every intended record. Repeated deliveries, delayed events and malformed messages create different obligations for an operational stream and a finalized dataset. This project implements a reproducible smart-meter pipeline that preserves Kafka deliveries in Bronze, maintains a watermark-bounded Silver candidate, and rebuilds exact Gold from Bronze after replay-completion checks. Independently implemented Hadoop Streaming programs reproduce source records and aggregates from the canonical NDJSON input. Finalization requires delivery conservation, complete partition termination, exact comparison agreement, and bound result artifacts.
+Smart-meter reports depend on a delivery and processing history that can include retries, delayed readings and malformed messages. This project builds a reproducible pipeline that preserves Kafka deliveries in Bronze, maintains a watermark-bounded Silver candidate, and reconstructs exact Gold records from Bronze after replay-completion checks. Independently implemented Hadoop Streaming programs reproduce source records and aggregates from canonical NDJSON. Finalization requires delivery conservation, complete partition termination, exact comparison agreement and bound result artifacts.
 
-The evaluation uses public campus telemetry from the Hong Kong University of Science and Technology (HKUST) and controlled delivery fixtures. Fifteen runs are complete: nine correctness, recovery and watermark fixtures, and three clean repetitions each at 100,000 and 1,000,000 source records. All recorded source and aggregate comparisons agree. The combined fixture accounts for 432 deliveries as 144 unique valid records, 144 duplicate deliveries and 144 quarantined deliveries. Under a restrictive watermark, Silver retains 143 records while Gold and Hadoop retain 144. Four semantic output artifacts match between interrupted and uninterrupted fixture executions. Median recorded verification costs are 13.88 minutes at 100K and 165.30 minutes at 1M. Consumption comparisons retain explicit coverage limits, and total financial exposure remains unknown. The contribution is an implemented and evaluated engineering integration, with a portable dashboard and traceable evidence package.
+The evaluation uses public Hong Kong University of Science and Technology (HKUST) telemetry and controlled delivery fixtures. Fifteen runs are complete: nine correctness, recovery and watermark fixtures, with three clean repetitions each at 100K and 1M source records. All declared source and aggregate comparisons agree. A restrictive watermark leaves 143 records in Silver while Gold and Hadoop retain 144. Interrupted and uninterrupted fixture executions reproduce four semantic artifacts. Median verification costs are 13.88 minutes at 100K and 165.30 minutes at 1M. Consumption comparisons retain explicit coverage limits and unknown total exposure. A read-only dashboard presents the results and their provenance. The proposed Indian utility application is a review of metering-provider outputs; field effectiveness remains future work.
 
 \vfill
 \begin{tabularx}{\linewidth}{@{}lX@{}}
@@ -90,7 +99,7 @@ Is a reported zero sufficiently supported? & Compare only matching consumption i
 
 The connection is about data accountability rather than a claim of measured Indian billing savings. The pipeline can reconstruct a valid reading that reached Bronze but was omitted by bounded Silver. It cannot recover a physical reading that never arrived. An Indian deployment would require authorized utility inputs, adapters for the actual HES/MDM exports, verified units and time conventions, agreed review rules, and field evaluation.
 
-The coursework contribution is the reproducible integration of delivery accounting, exact source reconstruction, separately implemented computation, recovery evidence and explicit comparison coverage. Quality checking itself is established work~\cite{garrison}. This evaluation demonstrates the integration using public HKUST telemetry and controlled delivery faults, without claiming a new streaming algorithm or superiority over commercial MDM systems.
+The engineering contribution is the reproducible integration of delivery accounting, exact source reconstruction, independent computation, recovery checks and explicit comparison coverage. Quality checking is established practice~\cite{garrison}; this project evaluates the integration with public HKUST telemetry and controlled delivery faults.
 
 \subsection{Questions evaluated}
 \begin{enumerate}
@@ -101,7 +110,7 @@ The coursework contribution is the reproducible integration of delivery accounti
 \item What verification, storage and SQL costs were recorded for the completed 100K and 1M workloads?
 \end{enumerate}
 
-These questions have direct saved evidence. They do not require the report to claim actual billing savings, physical meter calibration, live deployment, or a new streaming algorithm. A proposed additional gate for report claims was discussed after the experiments but is outside this submitted implementation.
+The completed evaluation addresses these questions through controlled fixtures and selected real-data workloads. Its scope ends at exact processing of the received canonical records and the recorded verification, storage and query costs.
 
 \section{Dataset and source preparation}
 \subsection{Public telemetry and metadata}
@@ -178,9 +187,9 @@ Figure~\ref{fig:architecture} shows the two computation paths. Source registrati
 
 Kafka supplies ordered partition logs, offsets and producer acknowledgements~\cite{kafka}. Spark Structured Streaming supplies event-time processing and bounded state~\cite{spark}. Hadoop Streaming allows standalone mapper and reducer programs to consume and emit records through standard input and output~\cite{hadoop}. The independent programs do not import Spark transformations.
 
-Parquet is used for columnar storage and Spark SQL. NDJSON is the explicit interchange format for independent processing and exact exported records. SQLite supplies disk-backed ordering and interval-processing support where needed. JSON manifests and reports supply bounded presentation inputs. No HBase service or application database is required for this historical replay and reporting workload. Adding one would require a separate serving use case and evaluation rather than improve the current evidence by itself.
+Parquet is used for columnar storage and Spark SQL. NDJSON is the explicit interchange format for independent processing and exact exported records. SQLite supplies disk-backed ordering and interval-processing support where needed. JSON manifests and reports supply bounded presentation inputs. These storage choices support historical replay and read-only reporting without introducing a separate application-serving database.
 
-Docker Compose provides Kafka, Spark and Hadoop services for the original experiments. The portable dashboard uses React and TypeScript, Mantine interface components, Recharts plots and Lucide icons to present saved summaries. A Python export step preserves the exact evidence bytes; the browser checks their SHA-256 bindings. The original Streamlit sealed-run viewer remains available for inspecting original local artifacts. It starts no experiment services. The software roles are different, and the report does not describe the portable viewer as a running distributed cluster.
+Docker Compose provides Kafka, Spark and Hadoop services for the original experiments. The portable dashboard uses React and TypeScript, Mantine interface components, Recharts plots and Lucide icons to present saved summaries. A Python export step preserves the exact evidence bytes; the browser checks their SHA-256 bindings. The original Streamlit sealed-run viewer remains available for inspecting original local artifacts. The portable viewer runs separately from the original experiment services.
 
 \section{Delivery processing and finalization}
 \subsection{Replay records and terminal evidence}
@@ -316,11 +325,11 @@ A fresh checkout can launch the React viewer with Python 3.11 or newer for its s
 \section{Limitations, contribution and conclusion}
 The implemented contribution is an evidence-preserving pipeline that combines deterministic delivery schedules, an operational stream, exact batch reconstruction, independent computation, recovery checks and a read-only evidence presentation. Its value is demonstrated by concrete distinctions: deliveries differ from source events, Silver differs from exact Gold, and computation agreement differs from source adequacy.
 
-Several limits determine how the results can be used. The workloads are historical replay on one physical machine. Fault schedules are controlled rather than estimated from an Indian utility network. The scale selections are source-identifier prefixes rather than continuous meter-days. Canonicalization is shared by both engines. Absolute timestamps depend on an unconfirmed timezone assumption. Physical measurement accuracy, tariff correctness, live-system reliability and actual financial savings were not evaluated. The absence of new 5M runs is a declared scope decision, not an unreported failure.
+Several limits determine how the results can be used. The workloads are historical replay on one physical machine. Fault schedules are controlled rather than estimated from an Indian utility network. The scale selections are source-identifier prefixes rather than continuous meter-days. Canonicalization is shared by both engines. Absolute timestamps depend on an unconfirmed timezone assumption. Physical measurement accuracy, tariff correctness, live-system reliability and actual financial savings were not evaluated. The final scale evaluation ends at 1M selected source records.
 
-The zero comparable-energy subtotal is a valid scoped result. It also reflects the chosen experiment and comparison definition: duplicate deliveries retain unchanged values, malformed deliveries accompany valid originals, and unmatched interval supports are not priced. A cumulative-register series can lose an intermediate observation without changing the energy difference between unchanged endpoints. The project therefore reports the observable accounting and coverage effects instead of manufacturing a nonzero billing impact.
+The zero comparable-energy subtotal is a valid scoped result. It also reflects the chosen experiment and comparison definition: duplicate deliveries retain unchanged values, malformed deliveries accompany valid originals, and unmatched interval supports are not priced. A cumulative-register series can lose an intermediate observation without changing the energy difference between unchanged endpoints. The project therefore reports the observable accounting and coverage effects with their comparison coverage.
 
-All 15 saved runs pass their declared source-record and aggregate comparisons. Exact Gold retains the valid source event omitted by restrictive Silver, and the interrupted fixture reproduces four semantic artifacts. These findings support the implemented recovery and independent-verification design through 1M selected source records. They provide a complete coursework submission without claiming an unevaluated new algorithm or production deployment.
+All 15 saved runs pass their declared source-record and aggregate comparisons. Exact Gold retains the valid source event omitted by restrictive Silver, and the interrupted fixture reproduces four semantic artifacts. These findings support the implemented recovery and independent-verification design through 1M selected source records. The proposed utility-review workflow requires further evaluation on authorized utility data before operational adoption.
 
 Further work could evaluate realistic communication-loss histories, continuous-window consumption effects or cheaper selective verification. Such extensions would require new baselines and experiments. They are outside this submitted scope.
 
@@ -347,7 +356,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \newgeometry{margin=12mm}
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Project overview}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Overview}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-01-overview.png}
@@ -357,7 +366,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Source audit}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Source audit}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-02-source-audit.png}
@@ -367,7 +376,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Delivery inspector}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Delivery inspector}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-03-delivery-inspector.png}
@@ -377,7 +386,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Controlled-fault comparison}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Controlled-fault comparison}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-04-fault-comparison.png}
@@ -387,7 +396,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Independent verification}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Independent verification}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-05-verification.png}
@@ -397,7 +406,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Watermark and consumption review}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Watermark and consumption review}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-06-watermark-review.png}
@@ -407,7 +416,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Interrupted execution and recovery}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Interrupted execution and recovery}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-07-recovery.png}
@@ -417,7 +426,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Storage and SQL}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Storage and SQL}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-08-storage-sql.png}
@@ -427,7 +436,7 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \clearpage
 \begin{landscape}
 \thispagestyle{empty}
-{\large\bfseries\color{ink}Indian utility-review use case}\hfill{\small IoTBDM / saved-evidence dashboard}\par\vspace{5pt}
+{\large\bfseries\color{ink}Indian utility-review use case}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=.86\linewidth]{figures/dashboard/report-09-india-use-case.png}

@@ -1,7 +1,7 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-13T13:04:50.862163+00:00",
-  "scope": "Non-distributed software checks; React saved-evidence presentation and coursework report",
+  "verified_at_utc": "2026-11-13T13:27:52.887891+00:00",
+  "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
     "command": "python -m pytest tests/unit tests/contract tests/property -q -ra",
@@ -32,7 +32,10 @@
     "vector_diagrams": 2,
     "unresolved_references": false,
     "overfull_boxes": false,
-    "visual_review": "All pages rendered; layout and full application captures inspected"
+    "visual_review": "All pages rendered; layout and full application captures inspected",
+    "standalone_source_build": "Passed: 22 pages from LaTeX and 14 required figure/table assets",
+    "diagram_text_containment": "Passed for both vector diagrams",
+    "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment"
   },
   "browser": {
     "page_errors": [],
@@ -170,7 +173,7 @@
       "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
     }
   },
-  "ui_revision": "Desktop layout fixes and removal of course/institution branding",
+  "ui_revision": "Accepted desktop dashboard; final report and cover details completed",
   "desktop_layout": {
     "path": "docs/results/submission/desktop-layout-checks.json",
     "cases": 74,
@@ -223,6 +226,11 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "4790ecff679292954fd9b9a091fabdffd5745071f7041ce522b02d97cc78fc4d"
+    "report_sha256": "5d9ce3813e129aa154f9d08c50b29ebcabf33be2ec92d33988703bf0aac34987"
+  },
+  "report_author": {
+    "name": "Nishant Harkut",
+    "enrollment_number": "2023IMG-040",
+    "instructor": "Amandeep Kaur"
   }
 }

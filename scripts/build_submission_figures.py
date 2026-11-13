@@ -12,6 +12,8 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 from dashboard.submission_data import load_submission_evidence
 
+matplotlib.rcParams["svg.hashsalt"] = "iot-energy-pipeline-report"
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/submission/figures"
 NAVY = "#18344a"
@@ -41,7 +43,14 @@ def box(ax, x, y, w, h, text, fill=BLUE):
     )
     ax.add_patch(patch)
     ax.text(
-        x, y, text, ha="center", va="center", fontsize=13, color=NAVY, linespacing=1.35
+        x,
+        y,
+        text,
+        ha="center",
+        va="center",
+        fontsize=14,
+        color=NAVY,
+        linespacing=1.35,
     )
 
 
@@ -70,7 +79,14 @@ def arrow(ax, start, end, points=None):
 def save(fig, name):
     for extension in ("pdf", "svg"):
         target = OUT / f"{name}.{extension}"
-        fig.savefig(target, bbox_inches="tight", pad_inches=0.07)
+        fig.savefig(
+            target,
+            bbox_inches="tight",
+            pad_inches=0.07,
+            metadata={"Date": None}
+            if extension == "svg"
+            else {"CreationDate": None, "ModDate": None},
+        )
         if extension == "svg":
             target.write_text(
                 "\n".join(line.rstrip() for line in target.read_text().splitlines())
@@ -107,7 +123,8 @@ def diagrams():
         3.8,
         4.1,
         0.85,
-        "Deterministic Kafka replay\nSchedules · acknowledgements · terminals",
+        "Deterministic Kafka replay\n"
+        "Schedule and acknowledgements\nTerminal partition records",
     )
     box(ax, 7.6, 3.8, 4.1, 0.85, "HDFS input\nCanonical NDJSON", TEAL)
     arrow(ax, (3.4, 4.7), (2.4, 4.25))
@@ -137,7 +154,7 @@ def diagrams():
         1.15,
         4.1,
         0.75,
-        "Completion checks → batch Gold\nRebuild exact source events from Bronze",
+        "Completion checks → batch Gold\nRebuild from Bronze by source ID",
     )
     arrow(ax, (2.4, 2.0), (2.4, 1.55))
     box(
@@ -158,7 +175,7 @@ def diagrams():
         "comparison coverage and recorded costs",
         ha="center",
         color=NAVY,
-        fontsize=12.5,
+        fontsize=13,
     )
     save(fig, "architecture")
 
@@ -172,7 +189,7 @@ def diagrams():
         6.1,
         3.9,
         0.8,
-        "Acknowledgements + terminal offsets\nReplay completion evidence",
+        "Replay completion evidence\nReceipts and terminal offsets",
         TEAL,
     )
     box(
@@ -229,7 +246,7 @@ def diagrams():
         "Late valid records are not quarantine.",
         ha="center",
         color=NAVY,
-        fontsize=12,
+        fontsize=13,
     )
     save(fig, "finalization")
 

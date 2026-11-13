@@ -69,6 +69,7 @@ def capture(url: str, output: Path) -> None:
         payload = json.loads(Path(downloaded.value.path()).read_text())
         assert payload["run"]["run_id"] == "watermark-restrictive-r01"
         assert payload["runtime_reverified"] is False
+        page.wait_for_timeout(250)
         page.screenshot(path=str(output / "run-inspector-dialog.png"))
         page.get_by_role("button", name="Done", exact=True).click()
         search.fill("")

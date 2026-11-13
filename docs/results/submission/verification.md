@@ -1,6 +1,6 @@
 # Submission verification
 
-13 November 2026. This record covers the desktop layout corrections, removal of course/institution branding from the interface, refreshed report captures and supporting code. The current layout scope is desktop. No new distributed experiment was executed. Commands, input bindings and exact check results are in [verification.json](verification.json); presentation asset hashes are in [asset-manifest.json](asset-manifest.json).
+13 November 2026. This record covers the final report, desktop presentation and supporting code. The report cover identifies Nishant Harkut (2023IMG-040) and instructor Amandeep Kaur. The current layout scope is desktop. No new distributed experiment was executed. Commands, input bindings and exact check results are in [verification.json](verification.json); presentation asset hashes are in [asset-manifest.json](asset-manifest.json).
 
 | Check | Result |
 | --- | --- |
@@ -14,6 +14,8 @@
 | Mutated summary input | Viewer rejected it before displaying affirmative results |
 | Production build | All nine views, metric alignment, watermark spacing, count-table fit, menus, dialogs and selected 1M results passed; the prior fresh-install record is retained with its revision |
 | Report download | Served PDF digest matches the current tracked report |
+| Standalone LaTeX source | Compiles independently with 14 figure/table assets to 22 pages |
+| Vector figures | All box labels have internal clearance; repeated PDF/SVG generation is byte-identical in the checked environment |
 | PDF | 22 pages: technical report plus nine landscape application captures; two vector diagrams; no unresolved references or overfull boxes |
 | Additional independent reviewer | Unavailable because of usage limit; no successful review claimed for this revision |
 
