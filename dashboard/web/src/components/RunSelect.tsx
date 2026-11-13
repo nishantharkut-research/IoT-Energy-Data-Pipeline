@@ -14,6 +14,7 @@ export function RunSelect({
 }) {
   return (
     <Select
+      spellCheck={false}
       label="Recorded experiment"
       description={
         typeof run.event_count === 'number'

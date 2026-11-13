@@ -1,0 +1,447 @@
+{
+  "page_errors": [],
+  "checks": [
+    {
+      "page": "overview",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1920,
+      "height": 1080,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1600,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1536,
+      "height": 864,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1440,
+      "height": 900,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1366,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1280,
+      "height": 720,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1100,
+      "height": 800,
+      "passed": true
+    },
+    {
+      "page": "overview",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "source-audit",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "delivery-inspector",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "fault-comparison",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "verification",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "watermark-review",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "recovery",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "storage-sql",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "page": "india-use-case",
+      "width": 1024,
+      "height": 768,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "state": "menus-dialogs-1M",
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "state": "menus-dialogs-1M",
+      "passed": true
+    }
+  ]
+}

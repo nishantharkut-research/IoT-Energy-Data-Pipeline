@@ -1,6 +1,6 @@
 # Submission verification
 
-13 November 2026. This record covers the compact dashboard revision, refreshed report captures and supporting code. Decorative cards, all-caps panel labels, repeated success badges and redundant illustrations were removed. No new distributed experiment was executed. Commands, input bindings and exact check results are in [verification.json](verification.json); presentation asset hashes are in [asset-manifest.json](asset-manifest.json).
+13 November 2026. This record covers the desktop layout corrections, removal of course/institution branding from the interface, refreshed report captures and supporting code. The current layout scope is desktop. No new distributed experiment was executed. Commands, input bindings and exact check results are in [verification.json](verification.json); presentation asset hashes are in [asset-manifest.json](asset-manifest.json).
 
 | Check | Result |
 | --- | --- |
@@ -9,13 +9,15 @@
 | TypeScript and Vite production build | Passed, including strict unused-import checking |
 | Prettier and Ruff | Passed |
 | Repository independence and Git whitespace | Passed |
-| Nine real browser views | No page errors or page-level horizontal overflow at 1280, 1440, 720 and 390 pixels |
+| Desktop layout | 74 rendered layout/state cases passed across eight desktop sizes, from 1024×768 to 1920×1080 |
 | Browser interactions | Source and watermark switching, register search/pagination, run inspection, delivery tabs, provenance, exact original JSON download and CSV export passed |
 | Mutated summary input | Viewer rejected it before displaying affirmative results |
-| Fresh staged checkout | `npm ci` and `npm run check` passed; all nine production views rendered without a dataset or Python packages |
+| Production build | All nine views, metric alignment, watermark spacing, count-table fit, menus, dialogs and selected 1M results passed; the prior fresh-install record is retained with its revision |
 | Report download | Served PDF digest matches the current tracked report |
 | PDF | 22 pages: technical report plus nine landscape application captures; two vector diagrams; no unresolved references or overfull boxes |
 | Additional independent reviewer | Unavailable because of usage limit; no successful review claimed for this revision |
+
+The regression check reproduced the old watermark defect as a 0.125 px gap between neighbouring text. The corrected production build passes the spacing check. The forced table minimum was removed, metric labels now reserve a consistent height, and 1M conservation equations use full width on smaller desktop windows. Mobile-specific changes explored during investigation were discarded.
 
 The seven Python skips are four Windows-specific rename cases, one mutation fixture whose size condition is not applicable, one duplicate-sheet case openpyxl cannot construct, and one PySpark-dependent check because PySpark is absent. Docker/Kafka/Spark/Hadoop integration workloads were not rerun.
 

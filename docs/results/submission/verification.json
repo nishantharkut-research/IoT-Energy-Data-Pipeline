@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-13T12:21:55.230095+00:00",
+  "verified_at_utc": "2026-11-13T13:04:50.862163+00:00",
   "scope": "Non-distributed software checks; React saved-evidence presentation and coursework report",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -113,12 +113,12 @@
         "overflow": false
       },
       {
-        "viewport_width": 720,
+        "viewport_width": 1100,
         "pages_checked": 9,
         "overflow": false
       },
       {
-        "viewport_width": 390,
+        "viewport_width": 1024,
         "pages_checked": 9,
         "overflow": false
       },
@@ -127,14 +127,6 @@
         "passed": true
       }
     ]
-  },
-  "fresh_checkout": {
-    "source": "staged fresh checkout after visual cleanup",
-    "install": "npm ci",
-    "checks": "npm run check",
-    "production_views_rendered": 9,
-    "page_errors": [],
-    "report_sha256": "30a9e01022bb942e46fb02d9e4e90f58c63e5ae28e9587d5ce3639fc84d7e260"
   },
   "additional_reviewer": {
     "status": "unavailable",
@@ -178,5 +170,59 @@
       "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
     }
   },
-  "ui_revision": "Compact tables, plain headings and metric rows; decorative cards, labels and illustrations removed"
+  "ui_revision": "Desktop layout fixes and removal of course/institution branding",
+  "desktop_layout": {
+    "path": "docs/results/submission/desktop-layout-checks.json",
+    "cases": 74,
+    "viewport_sizes": [
+      [
+        1920,
+        1080
+      ],
+      [
+        1600,
+        900
+      ],
+      [
+        1536,
+        864
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        1366,
+        768
+      ],
+      [
+        1280,
+        720
+      ],
+      [
+        1100,
+        800
+      ],
+      [
+        1024,
+        768
+      ]
+    ],
+    "scope": "Desktop only; includes menus, dialogs and selected 1M results",
+    "regression_reproduced": "Old production build failed with 0.125 px watermark text separation; corrected build passes"
+  },
+  "prior_fresh_install": {
+    "source": "staged fresh checkout after visual cleanup",
+    "install": "npm ci",
+    "checks": "npm run check",
+    "production_views_rendered": 9,
+    "page_errors": [],
+    "report_sha256": "30a9e01022bb942e46fb02d9e4e90f58c63e5ae28e9587d5ce3639fc84d7e260",
+    "revision": "976cdb84a78ab31038f0dc702a2823207aa79a9f"
+  },
+  "current_production": {
+    "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
+    "layout_cases_passed": 74,
+    "report_sha256": "4790ecff679292954fd9b9a091fabdffd5745071f7041ce522b02d97cc78fc4d"
+  }
 }

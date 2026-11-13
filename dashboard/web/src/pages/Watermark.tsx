@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Accordion, SegmentedControl, Text } from '@mantine/core';
-import { GitCompare } from 'lucide-react';
 import { DataTable, Note, Panel, Status } from '../components/Workspace';
 
 import { number } from '../evidence';
@@ -44,14 +43,6 @@ export function Watermark({ evidence }: { evidence: Evidence }) {
               : `Candidate retains all ${run.source_records}`}
           </Status>
         </Panel>
-        <div className="watermark-transfer">
-          <GitCompare size={22} />
-          <span>
-            Gold rebuilt
-            <br />
-            from Bronze
-          </span>
-        </div>
         <Panel title="Finalized source result">
           <div className="large-count">
             {number(run.source_records)}

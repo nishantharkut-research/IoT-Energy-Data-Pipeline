@@ -199,7 +199,8 @@ a:focus-visible {
   font-size: 13px;
   font-weight: 500;
   color: #424e59;
-  min-height: 20px;
+  min-height: 39px;
+  line-height: 1.5;
 }
 .stat-card > strong {
   display: block;
@@ -320,7 +321,8 @@ a:focus-visible {
   width: 215px;
 }
 .data-table {
-  min-width: 500px;
+  width: 100%;
+  min-width: 0;
   font-size: 14px;
   color: #283640;
 }
@@ -581,22 +583,9 @@ a:focus-visible {
 }
 .watermark-grid {
   display: grid;
-  grid-template-columns: 1fr 70px 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
   align-items: stretch;
-}
-.watermark-transfer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding-bottom: 20px;
-  color: #566270;
-}
-.watermark-transfer span {
-  text-align: center;
-  font-size: 12px;
-  line-height: 1.6;
 }
 .large-count {
   font-size: 36px;
@@ -838,10 +827,8 @@ a:focus-visible {
     gap: 10px;
   }
   .watermark-grid {
-    grid-template-columns: 1fr 40px 1fr;
-  }
-  .watermark-transfer span {
-    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
   }
   .source-list h3 {
     flex-direction: column;
@@ -920,9 +907,7 @@ a:focus-visible {
   }
   .watermark-grid {
     grid-template-columns: 1fr;
-  }
-  .watermark-transfer {
-    display: none;
+    gap: 0;
   }
   .utility-flow {
     grid-template-columns: 1fr;
@@ -943,5 +928,15 @@ a:focus-visible {
   * {
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+.sidebar-foot button {
+  margin-top: 10px;
+}
+
+@media (min-width: 992px) and (max-width: 1180px) {
+  .equation-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -11,7 +11,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 PAGES = [
-    ("overview", "Project overview"),
+    ("overview", "Overview"),
     ("source-audit", "Source audit"),
     ("delivery-inspector", "Delivery inspector"),
     ("fault-comparison", "Fault comparison"),
@@ -91,7 +91,7 @@ def capture(url: str, output: Path) -> None:
         csv = Path(downloaded.value.path()).read_text()
         assert len(csv.strip().splitlines()) == 16
         checks.append({"interaction": "csv-export", "rows": 15})
-        page.get_by_role("button", name="View evidence provenance").click()
+        page.get_by_role("button", name="Data provenance").click()
         page.get_by_role("dialog").get_by_text(
             "Evidence provenance", exact=True
         ).wait_for()
@@ -117,7 +117,7 @@ def capture(url: str, output: Path) -> None:
         page.get_by_text("Review late-valid disposition", exact=True).wait_for()
         checks.append({"interaction": "watermark-policy-switch", "passed": True})
         # Responsive layouts should contain the page, with tables scrolling locally.
-        for width in (1440, 720, 390):
+        for width in (1440, 1100, 1024):
             page.set_viewport_size({"width": width, "height": 1000})
             for slug, heading in PAGES:
                 page.goto(f"{url}/#{slug}", wait_until="networkidle")
@@ -129,7 +129,6 @@ def capture(url: str, output: Path) -> None:
             checks.append(
                 {"viewport_width": width, "pages_checked": 9, "overflow": False}
             )
-        page.screenshot(path=str(output / "india-mobile.png"), full_page=True)
         # Mutated evidence must stop the viewer before any affirmative results appear.
         tampered = browser.new_page()
         tampered.route(

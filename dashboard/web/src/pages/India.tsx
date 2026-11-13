@@ -84,8 +84,8 @@ export function India({ evidence }: { evidence: Evidence }) {
       <Panel title="Scope">
         <p>
           Commercial MDM systems already provide VEE, quality monitoring, raw retention and audit
-          trails. The coursework contribution is the reproducible integration of delivery
-          accounting, exact finalization and a separately implemented computation.
+          trails. The pipeline combines delivery accounting, exact finalization and a separately
+          implemented computation.
         </p>
         <p>
           Gold can recover a received valid event omitted by Silver. A reading that never arrived

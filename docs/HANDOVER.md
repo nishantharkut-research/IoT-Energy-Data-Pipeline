@@ -74,3 +74,14 @@ Screenshots are actual captures of the running React dashboard on port 5173. `fi
 - All 1M workflows recovered. Complete workflow times are unavailable.
 - SQL uses cached-result workloads, including result serialization and hashing; settings differ by scale.
 - The timezone is assumed. Monetary rates are hypothetical. Indian deployment effectiveness was not evaluated.
+
+## Desktop layout verification
+
+With the report extra's Playwright dependency installed and Chrome/Chromium available:
+
+```bash
+npm --prefix dashboard/web run build
+python -m scripts.check_dashboard_layout --serve dashboard/web/dist
+```
+
+This serves the production build locally and checks nine pages at eight desktop sizes, metric alignment, comparison spacing, count-table fit, visible branding, menus, dialogs and selected 1M results. The same check runs in CI. The current review scope is desktop.

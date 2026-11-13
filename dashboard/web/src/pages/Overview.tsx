@@ -66,6 +66,7 @@ export function Overview({
         }
       >
         <Select
+          spellCheck={false}
           label="Selected experiment"
           value={selected.run_id}
           onChange={(v) => v && setSelected(v)}
@@ -98,6 +99,7 @@ export function Overview({
             ]}
           />
           <TextInput
+            spellCheck={false}
             placeholder="Find a run…"
             aria-label="Search completed runs"
             leftSection={<Search size={16} />}

@@ -4,7 +4,6 @@ import {
   AppShell,
   Burger,
   Button,
-  Divider,
   Group,
   Loader,
   Menu,
@@ -16,7 +15,6 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  ArrowUpRight,
   Building2,
   ChartColumn,
   ChevronDown,
@@ -137,8 +135,7 @@ export default function App() {
       <AppShell.Navbar className="sidebar">
         <a className="brand" href="#overview" onClick={() => navigate('Overview')}>
           <span>
-            <strong>IoT Energy</strong>
-            <small>IoTBDM coursework</small>
+            <strong>Energy Pipeline</strong>
           </span>
         </a>
         <ScrollArea className="nav-scroll" type="auto">
@@ -166,23 +163,12 @@ export default function App() {
         <div className="sidebar-foot">
           <div className="evidence-status">
             <strong>
-              {error
-                ? 'Evidence unavailable'
-                : evidence
-                  ? 'Summary files checked'
-                  : 'Checking saved evidence'}
+              {error ? 'Evidence unavailable' : evidence ? 'Saved results' : 'Loading data'}
             </strong>
           </div>
-          <p>Saved experiment results.</p>
           <button onClick={openEvidence} disabled={!evidence}>
-            View evidence provenance <ArrowUpRight size={14} />
+            Data provenance
           </button>
-          <Divider my="md" />
-          <span className="course-label">
-            ABV-IIITM · IoTBDM
-            <br />
-            Coursework / November 2026
-          </span>
         </div>
       </AppShell.Navbar>
       <AppShell.Header className="topbar">
@@ -249,7 +235,7 @@ export default function App() {
               <>
                 <div className="page-header">
                   <div>
-                    <h1>{page === 'Overview' ? 'Project overview' : page}</h1>
+                    <h1>{page}</h1>
                     <p>{current.subtitle}</p>
                   </div>
                   <Menu shadow="md" width={215} position="bottom-end">
