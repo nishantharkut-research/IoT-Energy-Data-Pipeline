@@ -1,4 +1,6 @@
-﻿# Auditable IoT Energy Data Pipeline
+> Submission document: [the complete project report PDF](submission/project-report.pdf). The text below is the earlier short project overview.
+
+# Auditable IoT Energy Data Pipeline
 
 ## Problem and purpose
 

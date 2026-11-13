@@ -104,6 +104,8 @@ logs/
 *.aux
 *.fls
 *.fdb_latexmk
+project-report.toc
+project-report.out
 
 # Caches
 *.cache

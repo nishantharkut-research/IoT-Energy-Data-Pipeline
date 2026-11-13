@@ -229,8 +229,38 @@ def _show_view(streamlit: Any, name: str, view: dict[str, Any]) -> None:
 def main() -> None:
     import streamlit as st
 
-    st.set_page_config(page_title="Auditable IoT Energy Pipeline", layout="wide")
-    st.title("Auditable IoT Energy Data Pipeline")
+    st.set_page_config(page_title="IoT Energy Pipeline", layout="wide")
+    st.markdown(
+        """<style>
+        .block-container {padding-top: 4.2rem; max-width: 1300px;}
+        h1 {font-size: 2.3rem !important; color: #18344a;}
+        h2, h3 {color: #18344a;}
+        [data-testid="stMarkdownContainer"] p {font-size: 1.1rem;}
+        .evidence-table {width: 100%; border-collapse: collapse;
+                         font-size: 17px; color: #18344a; margin: .5rem 0 1.2rem;}
+        .evidence-table th {background: #eef3f7; text-align: left; font-weight: 600;}
+        .evidence-table th, .evidence-table td {padding: 10px 12px;
+                         border: 1px solid #dce5ec; vertical-align: top;}
+        .evidence-table tbody tr:nth-child(even) {background: #f8fafc;}
+        [data-testid="stMetricValue"] {font-size: 1.9rem; color: #18344a;}
+        [data-testid="stMetricLabel"] p {font-size: 1rem;}
+        [data-testid="stMetricValue"] p {font-size: 1.8rem !important;}
+        .eyebrow {color: #526779; font-size: .9rem; font-weight: 600;
+                   letter-spacing: .06em; margin-bottom: .5rem;}
+        [data-testid="stSidebar"] {border-right: 1px solid #dce5ec;}
+        [data-testid="stSidebar"] label p {font-size: 1rem;}
+        </style>""",
+        unsafe_allow_html=True,
+    )
+    mode = st.sidebar.selectbox(
+        "Evidence source", ["Submission results", "Sealed run files"]
+    )
+    if mode == "Submission results":
+        from dashboard.submission import main as submission_main
+
+        submission_main(st)
+        return
+    st.title("Sealed finalized run")
     run_path = Path(
         st.sidebar.text_input(
             "Sealed finalized run directory",

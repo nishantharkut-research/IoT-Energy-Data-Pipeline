@@ -251,9 +251,11 @@ def _collect_all_files(root: Path) -> list[Path]:
 
     def scan_directory(directory: Path) -> None:
         for item in directory.iterdir():
-            # Skip directory symlinks (do not follow)
-            if item.is_symlink() and item.is_dir():
-                continue
+            # Check before is_file(): dangling links are not regular files.
+            if item.is_symlink():
+                if item.is_dir():
+                    continue
+                raise ValueError(f"File is a symlink: {item}")
 
             if item.is_dir():
                 # Recurse into real directories only

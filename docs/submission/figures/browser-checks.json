@@ -1,0 +1,61 @@
+{
+  "page_errors": [],
+  "checks": [
+    {
+      "view": "Overview",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Source quality",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Delivery accounting",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Fault handling",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Independent verification",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Watermark & consumption",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Recovery",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "view": "Storage & SQL",
+      "horizontal_overflow": false,
+      "streamlit_exception": false,
+      "capture": "actual running app"
+    },
+    {
+      "viewport": "1280x900",
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": "720x1000",
+      "horizontal_overflow": false
+    }
+  ]
+}

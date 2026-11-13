@@ -18,7 +18,7 @@ An isolated 40,000-record synthetic insertion benchmark produced:
 | Current layout, 128 MiB cache | 19.84 | 46,129,168 | 187,572,224 |
 | Ordinary rowid table, 128 MiB cache | 13.82 | 16 | 167,559,168 |
 
-Sorted payload hashes matched across all three. Timings exclude subsequent sorted-output iteration, use synthetic payloads, and were collected while the original job remained active. The runs are a diagnostic experiment, not a replicated end-to-end performance result or a guaranteed 3.3x full-data speedup. Scripts and results are in `D:/IoTBDM/diagnostics/`.
+Sorted payload hashes matched across all three. Timings exclude subsequent sorted-output iteration, use synthetic payloads, and were collected while the original job remained active. The runs are a diagnostic experiment, not a replicated end-to-end performance result or a guaranteed 3.3x full-data speedup. Scripts and results were retained in the original local `diagnostics/` directory outside this repository.
 
 ## Findings from primary sources
 

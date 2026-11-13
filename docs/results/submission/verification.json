@@ -1,0 +1,52 @@
+{
+  "schema_version": "submission-verification-v1",
+  "verified_at_utc": "2026-11-13T06:32:39.238789+00:00",
+  "scope": "Non-distributed software checks and portable saved-results presentation",
+  "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
+  "tests": {
+    "command": "python -m pytest tests/unit tests/contract tests/property -q -ra",
+    "passed": 580,
+    "skipped": 7,
+    "skip_reasons": [
+      "4 Windows-specific rename checks",
+      "1 mutation fixture not applicable",
+      "1 duplicate-sheet fixture not constructible with openpyxl",
+      "1 PySpark-dependent check: PySpark not installed"
+    ]
+  },
+  "ruff": "passed",
+  "repository_independence": "passed",
+  "diff_whitespace": "passed",
+  "pdf": {
+    "path": "docs/submission/project-report.pdf",
+    "pages": 16,
+    "screenshots": 8,
+    "vector_diagrams": 2,
+    "unresolved_references": false
+  },
+  "browser": {
+    "views": 8,
+    "page_errors": [],
+    "horizontal_overflow": false,
+    "additional_viewport_widths": [
+      1280,
+      720
+    ]
+  },
+  "new_distributed_runs": 0,
+  "original_runtime_reverified": false,
+  "source_audit_basis": "Committed Markdown summary; original audit JSON absent",
+  "presentation_environment": {
+    "python": "3.14.4",
+    "streamlit": "1.67.0",
+    "plotly": "5.24.1",
+    "pandas": "3.1.1",
+    "matplotlib": "3.11.2",
+    "pyarrow": "26.0.1",
+    "pytest": "8.4.2",
+    "ruff": "0.10.0",
+    "playwright": "1.65.1",
+    "pypdf": "7.0.1"
+  },
+  "review": "Independent read-only review found no actionable factual or evidence-handling findings."
+}

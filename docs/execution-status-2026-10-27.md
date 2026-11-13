@@ -95,7 +95,7 @@ quarantine, and the complete values/digests of all five SQL queries.
 | Combined | 432 | 144 | 144 | 144 |
 | Combined interrupted/resumed | 432 | 144 | 144 | 144 |
 
-Evidence: `D:/IoTBDM/IoT-Energy-Data-Pipeline/reports/runtime/production-v2-audit-20261027-002/`.
+Evidence: `reports/runtime/production-v2-audit-20261027-002/` (relative to the project root).
 `production-v2-acceptance.json` binds the executed source revision and seals;
 `independent-checks.json` records the independent reconstruction. The first SSD
 attempt stopped at startup because its YARN cache could not retain Unix modes.

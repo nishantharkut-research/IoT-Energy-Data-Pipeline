@@ -1,20 +1,18 @@
-﻿# Six-minute demonstration
+# Six-minute saved-results demonstration
 
-Use saved results. Start `scripts/show_completed_run.ps1`; the default is the
-small combined-fault fixture. Open the generated results report alongside it.
-Let initial integrity verification finish before presenting. No experiment
-services or large live workloads are needed.
+Start the dashboard with `python -m streamlit run dashboard/app.py`. Keep the default **Submission results** mode. No experiment services, attached dataset or large workload are needed. Open the [report PDF](submission/project-report.pdf) alongside it.
 
-| Time | Show | Explain |
+| Time | Dashboard view | Explain |
 | --- | --- | --- |
-| 0:00–0:45 | README architecture | A completed job alone does not establish delivery completeness. We preserve deliveries and independently check the final result. |
-| 0:45–1:30 | Run provenance | Public HKUST telemetry, stable physical-row identity, exact decimals, and separate source variants. Hong Kong timezone is an experimental assumption. |
-| 1:30–2:30 | Combined fixture: counts and fault disposition | 432 data deliveries: 144 unique valid records, 144 duplicates, and 144 quarantined deliveries. Terminal control records are separate. |
-| 2:30–3:20 | Reconciliation | Gold rebuilds from Bronze; Hadoop independently reads canonical NDJSON. Both record and aggregate comparisons have zero errors. |
-| 3:20–4:20 | Restrictive watermark fixture | Change the run directory to `watermark-restrictive-r01`. Silver has 143 records; Gold and Hadoop have 144. Two consumption periods are incomparable. Zero discrepancy on comparable periods is not zero total energy error. |
-| 4:20–5:20 | Generated verification, storage, and SQL results | Three repetitions each at 100K and 1M. Show timing ranges, compressed storage ratios, and five queries. Full 1M workflow timings are unavailable; query settings differ. |
-| 5:20–6:00 | Recovery and limits | Interrupted recovery reproduces four semantic outputs. 5M is excluded. Financial scenarios are hypothetical, and residual exposure is unknown. |
+| 0:00–0:40 | Overview | We account for deliveries and independently check finalized results. Fifteen saved runs cover correctness, recovery, watermark behaviour and two scales. |
+| 0:40–1:20 | Source quality | The published resampled source has 63.27M rows and 19.04M missing numeric cells. Numeric-cell availability is not temporal coverage. Selected-run agreement answers a different question. |
+| 1:20–2:00 | Delivery accounting | The default combined fixture has 432 Bronze deliveries: 288 valid and 144 quarantine. The 288 valid deliveries split into 144 Silver and 144 duplicates. Terminals are separate. |
+| 2:00–2:30 | Fault handling | Five controlled schedules produce the same finalized semantic result. Injected delivery faults are not observed utility-network fault rates. |
+| 2:30–3:15 | Independent verification | Spark and independent Hadoop programs agree on 23 source fields and 10 aggregate fields. Both share canonical input, so this is not physical truth verification. |
+| 3:15–4:10 | Watermark & consumption | Restrictive Silver has 143 records; Gold/Hadoop have 144. Two consumption periods are incomparable. The comparable subtotal is zero and total exposure is unknown. |
+| 4:10–4:50 | Recovery | Four interrupted/uninterrupted output-hash pairs match. The 1M runs also recovered; full workflow durations are unavailable. |
+| 4:50–6:00 | Storage & SQL | Show measured verification costs, compressed storage ratios and five query workloads. Explain the cost scope, cached-result timing and different query configurations. Close with the report and GitHub link. |
 
-The supported claim is delivery accounting, recovery from Bronze, and
-independent exact verification through 1M source records. The results do not
-demonstrate live deployment, a new algorithm, or actual billing savings.
+If asked about novelty, explain the engineering integration: exact source reconstruction after bounded streaming, delivery conservation, independent exact comparison and inspectable evidence. Do not claim a new streaming algorithm, actual billing savings or an Indian field deployment.
+
+If asked to inspect original artifacts, select **Sealed run files** only when the original finalized directory is available. The default viewer checks saved summary bindings; it does not silently recreate or rehash missing runtime evidence.

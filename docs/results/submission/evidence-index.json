@@ -1,0 +1,28 @@
+{
+  "schema_version": "submission-evidence-index-v1",
+  "purpose": "Portable saved-results presentation; not a new experiment or runtime verification",
+  "inputs": {
+    "results": {
+      "path": "docs/results/final/final-results.json",
+      "byte_size": 179033,
+      "sha256": "1e18dbfeae8e708ab31e60b468afb9bbe04dc788176af532e2bf66885326dfcc"
+    },
+    "scope": {
+      "path": "docs/results/final/final-coursework-scope.json",
+      "byte_size": 6034,
+      "sha256": "6c875acb6e799807d2f83dc2de2843b1586b9ab7ef390fd7b6c47c40c315d666"
+    },
+    "plan": {
+      "path": "docs/results/final/experiment-plan.json",
+      "byte_size": 10533,
+      "sha256": "f4655fbe410f0a97fc58df7ff71f1f817f47f0a1d284dad8c4f64d198bccbe09"
+    },
+    "source_audit": {
+      "path": "docs/results/source-audit-2026-10-27.md",
+      "byte_size": 3262,
+      "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
+    }
+  },
+  "source_audit_basis": "Published audit Markdown; original audit JSON is not in this checkout",
+  "runtime_basis": "Recorded verification in closure JSON; original runtime files are not reverified here"
+}

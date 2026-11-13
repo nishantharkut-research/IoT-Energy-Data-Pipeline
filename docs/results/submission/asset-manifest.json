@@ -1,0 +1,145 @@
+{
+  "schema_version": "submission-assets-v1",
+  "assets": [
+    {
+      "path": "docs/submission/README.md",
+      "byte_size": 1416,
+      "sha256": "1c12be7ee17b50bf0bf260f9763f2dcd2dc7829e6484376bc41fd3bbc502c363"
+    },
+    {
+      "path": "docs/submission/figures/01-overview.png",
+      "byte_size": 119870,
+      "sha256": "cbf4775db4d119bddc3fd29c38d40e839278e21927daf0d616e0721ba66e35b4"
+    },
+    {
+      "path": "docs/submission/figures/02-source-quality.png",
+      "byte_size": 114935,
+      "sha256": "b1bfef934ff9f0325e0135a21dda7d58ce5fa0dd5197c1d4eb13c55c672d6535"
+    },
+    {
+      "path": "docs/submission/figures/03-delivery-accounting.png",
+      "byte_size": 73571,
+      "sha256": "558b197758169ac4a6cf96b99cea7dd53103af9f35d7944868a3a18725d22fbf"
+    },
+    {
+      "path": "docs/submission/figures/04-fault-handling.png",
+      "byte_size": 72266,
+      "sha256": "34ca0d0fe65d7310946f526375fc521dded2306a30d9c5c82b8175042a900129"
+    },
+    {
+      "path": "docs/submission/figures/05-independent-verification.png",
+      "byte_size": 83980,
+      "sha256": "899ae396bee702fdf9ffc70e419063eb53eb25024140b9d2f406759cca14128b"
+    },
+    {
+      "path": "docs/submission/figures/06-watermark-consumption.png",
+      "byte_size": 85504,
+      "sha256": "3c3c90d97ac7ad94fce0007de24d37f58c1c1f96c7f8bc03b9c71b8f73079e49"
+    },
+    {
+      "path": "docs/submission/figures/07-recovery.png",
+      "byte_size": 130398,
+      "sha256": "f2cc8ab32c7ea40597a1254464e3671d2969c7edde3404da1f83a03bc8f90157"
+    },
+    {
+      "path": "docs/submission/figures/08-storage-sql.png",
+      "byte_size": 100617,
+      "sha256": "3159a79e907afcd6c4b9e926510c77ed2aca8fe74bcfc10c85e2a90355bcf6f8"
+    },
+    {
+      "path": "docs/submission/figures/architecture.pdf",
+      "byte_size": 19822,
+      "sha256": "b8a9d3348510f29cb2554192deff50f4c8c9203a890e54b081478eff7e6aa005"
+    },
+    {
+      "path": "docs/submission/figures/architecture.svg",
+      "byte_size": 71312,
+      "sha256": "e73ebd663e2b64062cf3526d9e6559c3921c98c28429d4c9a147b5ab3f2f100b"
+    },
+    {
+      "path": "docs/submission/figures/browser-checks.json",
+      "byte_size": 1449,
+      "sha256": "9484063d19e67f1237c7e66874ef1c143165b0c15cedce82e4f720288ee6e195"
+    },
+    {
+      "path": "docs/submission/figures/finalization.pdf",
+      "byte_size": 19774,
+      "sha256": "7d4bccb0863980ee9501520d00a80bfe56dee2a5eb91a8963b0ad52a146a1f6d"
+    },
+    {
+      "path": "docs/submission/figures/finalization.svg",
+      "byte_size": 67053,
+      "sha256": "1dae5765acea449407bbc27a5c4d0c4e6a00dfd7840cc7e11024d5fa49e50599"
+    },
+    {
+      "path": "docs/submission/figures/fixture-table.tex",
+      "byte_size": 443,
+      "sha256": "c7d0e1340b2bc1eda9eb8fdcda0e9b7a804f218e2351a8fb3827e28b250a6723"
+    },
+    {
+      "path": "docs/submission/figures/overview-desktop.png",
+      "byte_size": 150567,
+      "sha256": "22d09b30bf3e7d3661ff3e9610fd41b1e185aff32e4437fc674b82ce9b2db1c9"
+    },
+    {
+      "path": "docs/submission/figures/performance-table.tex",
+      "byte_size": 94,
+      "sha256": "a88c8621e3da982309327275b38615382894f5a44f7dbdd79306f3e2d3e3a43b"
+    },
+    {
+      "path": "docs/submission/figures/report-01-overview.png",
+      "byte_size": 73133,
+      "sha256": "a9b2694dd688c9dc9ac85b7771e7495031f8e5714f988530146371d263fd2467"
+    },
+    {
+      "path": "docs/submission/figures/report-02-source-quality.png",
+      "byte_size": 44033,
+      "sha256": "5bf3ec31210fa594fbd56ed5dae7d77e63a1dc3c45843120ab617ffa6ba5b4c1"
+    },
+    {
+      "path": "docs/submission/figures/report-03-delivery-accounting.png",
+      "byte_size": 47170,
+      "sha256": "3f9de4411ec91568874b8903cd9f43bdf5433851a79d25b417c2e64f0130955a"
+    },
+    {
+      "path": "docs/submission/figures/report-04-fault-handling.png",
+      "byte_size": 28628,
+      "sha256": "71a8bf309c376d65f84c0091bd802a129ca77c8ce37aeb3828ffcfb65c901039"
+    },
+    {
+      "path": "docs/submission/figures/report-05-independent-verification.png",
+      "byte_size": 54674,
+      "sha256": "b7b744bafabdfc8fd897ee50147b3c4b996a576f7c83b1d8d1a2a5eba64a1a33"
+    },
+    {
+      "path": "docs/submission/figures/report-06-watermark-consumption.png",
+      "byte_size": 35299,
+      "sha256": "769cf62c04b4d9cbf0e5f2b2e6ab63df66793464ffa1d69566514084e1e4094f"
+    },
+    {
+      "path": "docs/submission/figures/report-07-recovery.png",
+      "byte_size": 66888,
+      "sha256": "72dbd2f023d4451927c331e50a0b2ebea909749aaf1ac6067977823e03d0fe03"
+    },
+    {
+      "path": "docs/submission/figures/report-08-storage-sql.png",
+      "byte_size": 29078,
+      "sha256": "2b22ebe30a3d3b6f30930671af5443a23e3a7f67f83fe30cea3e36f50450db7a"
+    },
+    {
+      "path": "docs/submission/figures/storage-table.tex",
+      "byte_size": 79,
+      "sha256": "02abc4abf39fde4e3376ee58dc733c67451ea325e0747ba5898cbedf844cd828"
+    },
+    {
+      "path": "docs/submission/project-report.pdf",
+      "byte_size": 683604,
+      "sha256": "4b2a108e58f28cf54bcc191b12fcf638740b7ece0989a543bdc983e8c9f127f0"
+    },
+    {
+      "path": "docs/submission/project-report.tex",
+      "byte_size": 38695,
+      "sha256": "97b858e031c450b9afbd5a6741d7c44ba7e4fe13211abca7ef88c4d143ed3d68"
+    }
+  ]
+}

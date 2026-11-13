@@ -323,6 +323,8 @@ def _profile_workbook(
     """Profile a single workbook file."""
     file_path = root / file_manifest.relative_path
 
+    if file_path.is_symlink():
+        raise ValueError(f"Workbook is a symlink: {file_path}")
     if not file_path.exists():
         raise ValueError(f"Registered file missing: {file_manifest.relative_path}")
 

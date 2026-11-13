@@ -1,74 +1,70 @@
-# Project handover
+# Submission handover
 
-## Submission documents
+## Submit these two items
 
-- [Project report](course-report.md): problem, data, implementation, findings, and limits.
-- [Measured results](results/final/course-results.md): all runs, verification cost, storage, and SQL.
-- [Machine-readable evidence](results/final/final-results.json): counts, hashes, timing records, and semantic comparisons.
-- [Demonstration](demo-script.md): six-minute sequence using saved results.
+- [Project report PDF](submission/project-report.pdf), with [editable LaTeX source](submission/project-report.tex).
+- Repository: https://github.com/nishantharkut-research/IoT-Energy-Data-Pipeline
 
-The final scope contains nine fixtures and three repetitions each at 100K and
-1M events. The 5M runs are excluded because of resource and time constraints.
+The submitted scope is nine fixtures plus three clean repetitions each at 100K and 1M source records. The three 5M repetitions are excluded. The proposed additional report-claim publication gate is not part of this submission.
 
-## Open the dashboard
+## Portable demonstration on Linux
 
-From the repository root, with the project Python environment active:
+From the repository root:
 
-```powershell
-.\scripts\show_completed_run.ps1
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dashboard]"
+python -m streamlit run dashboard/app.py --server.headless true
 ```
 
-To choose a different environment or fixture:
+The default saved-results viewer works without an SSD, dataset or experiment services. Its eight views display the committed closure results and the published source audit. The input index is `docs/results/submission/evidence-index.json`. The loader validates the byte bindings, original plan/scope bindings, run membership, recorded comparison agreement and delivery equations.
+
+Those checks are bounded summary checks. Original runtime verification was recorded on 2 November 2026; this portable checkout does not repeat it. Source-audit figures come from a published Markdown summary because original audit JSON is absent here. [The demo guide](demo-script.md) gives a six-minute route through the evidence.
+
+## Original sealed-run inspection
+
+Choose **Sealed run files** in the sidebar and provide an original finalized run directory. `dashboard/data.py` verifies its manifest seal and all registered artifacts. It rejects missing, incomplete, altered and unreconciled runs. The historical PowerShell launcher remains available on Windows:
 
 ```powershell
 .\scripts\show_completed_run.ps1 -Python <path-to-python.exe> -RunId watermark-restrictive-r01
 ```
 
-The light-mode dashboard validates the complete artifact registry and rejects
-incomplete, altered, or unreconciled runs. It reads saved files and starts no
-experiment services. Use a fixture for live presentation. Opening a 1M run
-requires hashing its much larger artifact set.
+Original runtime directories are not committed. Preserve `reports/runtime/full-assumed-hkt-20261028-003/`, original replay receipts, source package, canonical snapshot and audit JSON on a reliable storage device. They are required for deeper artifact inspection or source reproduction. Do not delete them merely because the portable viewer works.
 
-Dependencies are in `pyproject.toml`. A fresh environment can install the package
-with `python -m pip install -e ".[dashboard,dataset,kafka,dev]"`.
-Runtime data is local and excluded from Git.
+## Regenerate the original closure from saved runtime evidence
 
-## Preserve the evidence
+This command starts no Kafka/Spark/Hadoop workload, but it requires the original files and reads the published artifact set:
 
-The runtime root is `reports/runtime/full-assumed-hkt-20261028-003/`.
-The original plan and final scope are in
-`reports/launches/full-resumable-hkt-002/experiment-plan.json` and
-`final-coursework-scope.json`. The scope binds the original plan by SHA-256 and
-excludes the three 5M repetitions. Preserve the canonical snapshot, source
-package, sealed runtime folders, source audit, and launch receipts. Portable
-summaries do not replace the underlying evidence.
-
-## Regenerate the final report
-
-This verifies scope-bound run seals, published Gold/Hadoop records and
-aggregates, and the reports used for the handover. It starts no workloads.
-
-```powershell
-python -m scripts.close_coursework `
-  --plan reports/launches/full-resumable-hkt-002/experiment-plan.json `
-  --scope reports/launches/full-resumable-hkt-002/final-coursework-scope.json `
-  --runtime reports/runtime/full-assumed-hkt-20261028-003 `
-  --output docs/results/final
+```bash
+python -m scripts.close_coursework \
+  --plan docs/results/final/experiment-plan.json \
+  --scope docs/results/final/final-coursework-scope.json \
+  --runtime reports/runtime/full-assumed-hkt-20261028-003 \
+  --output <separate-review-directory>
 ```
 
-The `coursework-closure-v1` output records revised scope and recovered timings.
-It does not label the original 18-run matrix as complete. The older strict
-`course_report` command is for uninterrupted full matrices; use the closure
-command above for these results.
+Use a separate output directory to preserve the submitted closure bytes. `--full-artifact-check` additionally verifies the entire registered artifact set and can take substantially longer. It is unnecessary for opening the portable viewer.
 
-Add `--full-artifact-check` to rehash the entire registered artifact set,
-including runtime checkpoints and operational logs. That optional audit takes
-substantially longer and is separate from the published-evidence check.
+## Rebuild the submission PDF
 
-## Evidence boundaries
+Install LaTeX and `python -m pip install -e ".[dashboard,report]"`. With Chrome/Chromium available:
 
-Independent agreement is demonstrated through 1M source records. The restrictive
-watermark exposes a candidate omission while Gold remains complete. Monetary
-rates are hypothetical, and residual exposure remains unknown. Hong Kong
-timezone is an experimental assumption. Complete 1M workflow timings are
-unavailable, and query settings differ between scales.
+```bash
+python -m scripts.build_submission_figures
+python -m scripts.capture_submission_screenshots
+cd docs/submission
+latexmk -pdf -interaction=nonstopmode -halt-on-error project-report.tex
+```
+
+Screenshots are actual captures of the running dashboard. Files prefixed `report-` are focused captures of the corresponding panels for readable report inclusion; full-view captures are retained beside them. No synthetic measurements or fabricated finalized runs are used.
+
+## Interpretation checklist
+
+- Source availability and reconciliation refer to different populations.
+- Gold recovers received valid records from Bronze, not genuinely unreceived physical readings.
+- Independent Spark/Hadoop transformations share canonical preparation.
+- The watermark case has incomparable intervals; zero comparable subtotal is not zero total exposure.
+- All 1M workflows recovered. Complete workflow times are unavailable.
+- SQL uses cached-result workloads, including result serialization and hashing; settings differ by scale.
+- The timezone is assumed. Monetary rates are hypothetical. Indian deployment effectiveness was not evaluated.
