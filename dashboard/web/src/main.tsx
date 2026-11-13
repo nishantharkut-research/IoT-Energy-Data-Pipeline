@@ -9,7 +9,7 @@ const theme = createTheme({
   primaryShade: 7,
   fontFamily: 'Inter Variable, Inter, system-ui, sans-serif',
   headings: { fontFamily: 'Inter Variable, Inter, system-ui, sans-serif' },
-  defaultRadius: 'md',
+  defaultRadius: 'xs',
   colors: {
     teal: [
       '#edf8f5',

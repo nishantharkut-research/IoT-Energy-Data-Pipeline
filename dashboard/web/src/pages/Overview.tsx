@@ -1,24 +1,7 @@
 import { useState } from 'react';
-import {
-  Badge,
-  Button,
-  Group,
-  Pagination,
-  Select,
-  SegmentedControl,
-  TextInput,
-} from '@mantine/core';
-import {
-  ArrowUpRight,
-  ClipboardCheck,
-  Database,
-  FileStack,
-  Search,
-  ShieldCheck,
-  TriangleAlert,
-  Workflow,
-} from 'lucide-react';
-import { DataTable, Inspect, Note, Panel, RunTag, Stat, Status } from '../components/Workspace';
+import { Button, Group, Pagination, Select, SegmentedControl, TextInput } from '@mantine/core';
+import { Search } from 'lucide-react';
+import { DataTable, Inspect, Panel, RunTag, Stat, Status } from '../components/Workspace';
 import { Pipeline } from '../components/Pipeline';
 import { compact, filterRuns, number, runName } from '../evidence';
 import type { Evidence, Page, Run } from '../types';
@@ -57,109 +40,45 @@ export function Overview({
           title="Completed experiments"
           value={`${results.runs.length} / 15`}
           note="All declared comparisons agree"
-          icon={<ClipboardCheck size={20} />}
         />
         <Stat
           title="Largest checked workload"
           value={compact(largest)}
           note={`${repetitions} clean repetitions at this scale`}
-          icon={<Database size={20} />}
-          accent="blue"
         />
         <Stat
           title="Source values unavailable"
           value={compact(missing)}
           note="Published resampled rows · HKUST"
-          icon={<FileStack size={20} />}
-          accent="amber"
         />
         <Stat
           title="Recovery output pairs"
           value={`${matching} / ${pairs.length}`}
           note="Recorded semantic hashes match"
-          icon={<ShieldCheck size={20} />}
         />
       </div>
-      <div className="overview-grid">
-        <Panel
-          title="Follow a recorded run"
-          eyebrow="DELIVERY → EXACT RESULT"
-          action={
-            <Button
-              variant="subtle"
-              size="xs"
-              rightSection={<ArrowUpRight size={14} />}
-              onClick={() => navigate('Delivery inspector')}
-            >
-              Open inspector
-            </Button>
-          }
-        >
-          <Select
-            label="Selected experiment"
-            value={selected.run_id}
-            onChange={(v) => v && setSelected(v)}
-            data={results.runs.map((r) => ({ value: r.run_id, label: runName(r) }))}
-            searchable
-            allowDeselect={false}
-            mb="lg"
-          />
-          <Pipeline run={selected} />
-        </Panel>
-        <Panel
-          title="What needs interpretation"
-          eyebrow="REVIEW FINDINGS"
-          className="findings-panel"
-        >
-          <button className="finding" onClick={() => navigate('Source audit')}>
-            <span className="finding-icon amber">
-              <FileStack size={18} />
-            </span>
-            <span>
-              <strong>Source availability</strong>
-              <small>{availability}% of published rows are numeric</small>
-            </span>
-            <ArrowUpRight size={16} />
-          </button>
-          <button className="finding" onClick={() => navigate('Watermark review')}>
-            <span className="finding-icon blue">
-              <Workflow size={18} />
-            </span>
-            <span>
-              <strong>One valid event omitted by Silver</strong>
-              <small>Restrictive case · Gold retains it</small>
-            </span>
-            <ArrowUpRight size={16} />
-          </button>
-          <button className="finding" onClick={() => navigate('Watermark review')}>
-            <span className="finding-icon amber">
-              <TriangleAlert size={18} />
-            </span>
-            <span>
-              <strong>Total exposure remains unknown</strong>
-              <small>Two periods have incomparable supports</small>
-            </span>
-            <ArrowUpRight size={16} />
-          </button>
-          <div className="india-short">
-            <Badge color="teal" variant="light" size="sm">
-              INDIA USE CASE
-            </Badge>
-            <p>Independent data review for a DISCOM examining metering-provider outputs.</p>
-            <Button
-              variant="subtle"
-              size="xs"
-              rightSection={<ArrowUpRight size={14} />}
-              onClick={() => navigate('India use case')}
-            >
-              See the problem connection
-            </Button>
-          </div>
-        </Panel>
-      </div>
+      <Panel
+        title="Selected run"
+        action={
+          <Button variant="subtle" size="xs" onClick={() => navigate('Delivery inspector')}>
+            Open inspector
+          </Button>
+        }
+      >
+        <Select
+          label="Selected experiment"
+          value={selected.run_id}
+          onChange={(v) => v && setSelected(v)}
+          data={results.runs.map((r) => ({ value: r.run_id, label: runName(r) }))}
+          searchable
+          allowDeselect={false}
+          mb="md"
+          className="run-select"
+        />
+        <Pipeline run={selected} />
+      </Panel>
       <Panel
         title="Completed experiment register"
-        eyebrow="SAVED WORKLOADS"
         action={<Status>{results.runs.length} finalized</Status>}
       >
         <div className="table-toolbar">
@@ -212,10 +131,15 @@ export function Overview({
           />
         </Group>
       </Panel>
-      <Note>
-        All views use the committed results. Summary bindings are checked in this browser; original
-        runtime artifacts were verified on 2 November 2026.
-      </Note>
+      <div className="review-links">
+        <button onClick={() => navigate('Source audit')}>
+          Source availability: {availability}% numeric cells
+        </button>
+        <button onClick={() => navigate('Watermark review')}>
+          Restrictive watermark: one Silver omission; two incomparable periods
+        </button>
+        <button onClick={() => navigate('India use case')}>Indian utility-review use case</button>
+      </div>
     </>
   );
 }

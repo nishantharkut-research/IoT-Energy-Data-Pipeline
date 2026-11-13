@@ -1,5 +1,5 @@
-import { Accordion, Text, Timeline } from '@mantine/core';
-import { Check, Clock, Pause, Play, RotateCcw, ShieldCheck } from 'lucide-react';
+import { Accordion } from '@mantine/core';
+
 import { DataTable, Hash, Note, Panel, Stat, Status } from '../components/Workspace';
 
 import { label, number } from '../evidence';
@@ -15,25 +15,20 @@ export function Recovery({ evidence }: { evidence: Evidence }) {
           title="Semantic output pairs"
           value={`${equal} / ${pairs.length}`}
           note="Full recorded hashes match"
-          icon={<ShieldCheck size={20} />}
         />
         <Stat
           title="Recovered 1M runs"
           value={String(scale.filter((r) => r.recovery).length)}
           note="All three finalized with recorded receipts"
-          icon={<RotateCcw size={20} />}
-          accent="blue"
         />
         <Stat
           title="Complete 1M workflow time"
           value="Unavailable"
           note="Component timings remain recorded"
-          icon={<Clock size={20} />}
-          accent="amber"
         />
       </div>
-      <div className="two-columns wide-left">
-        <Panel title="The answer survives interruption" eyebrow="FIXTURE EQUIVALENCE">
+      <div>
+        <Panel title="Fixture output comparison">
           <DataTable
             columns={['Output', 'Uninterrupted hash', 'Resumed hash', 'Result']}
             rows={pairs.map(([key, p]) => [
@@ -48,32 +43,8 @@ export function Recovery({ evidence }: { evidence: Evidence }) {
             logs and physical Parquet layout bytes need not match.
           </Note>
         </Panel>
-        <Panel title="Recovery protocol" eyebrow="IMPLEMENTED WORKFLOW">
-          <Timeline active={3} bulletSize={27} lineWidth={2}>
-            <Timeline.Item bullet={<Play size={14} />} title="Replay and process">
-              <Text c="dimmed" size="sm">
-                Preserve deliveries and durable processing state.
-              </Text>
-            </Timeline.Item>
-            <Timeline.Item bullet={<Pause size={14} />} title="Interrupt">
-              <Text c="dimmed" size="sm">
-                Stop the controlled fixture execution.
-              </Text>
-            </Timeline.Item>
-            <Timeline.Item bullet={<RotateCcw size={14} />} title="Resume">
-              <Text c="dimmed" size="sm">
-                Continue from saved receipts and checkpoints.
-              </Text>
-            </Timeline.Item>
-            <Timeline.Item bullet={<Check size={14} />} title="Compare">
-              <Text c="dimmed" size="sm">
-                Rebuild and compare four semantic outputs.
-              </Text>
-            </Timeline.Item>
-          </Timeline>
-        </Panel>
       </div>
-      <Panel title="Scale-run recovery receipts" eyebrow="COMPLETED REAL-DATA EXECUTIONS">
+      <Panel title="Scale-run recovery receipts">
         <DataTable
           columns={['Run', 'Resumed stage', 'Source records', 'Workflow timing']}
           rows={scale.map((r) => [
@@ -85,7 +56,7 @@ export function Recovery({ evidence }: { evidence: Evidence }) {
         />
         <Accordion variant="default">
           <Accordion.Item value="receipts">
-            <Accordion.Control>Read the recorded recovery reasons</Accordion.Control>
+            <Accordion.Control>Recovery receipts</Accordion.Control>
             <Accordion.Panel>
               {scale.map((r) => (
                 <div className="receipt" key={r.run_id}>

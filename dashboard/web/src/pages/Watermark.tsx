@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Accordion, Badge, SegmentedControl, Text } from '@mantine/core';
+import { Accordion, SegmentedControl, Text } from '@mantine/core';
 import { GitCompare } from 'lucide-react';
 import { DataTable, Note, Panel, Status } from '../components/Workspace';
 
@@ -15,7 +15,6 @@ export function Watermark({ evidence }: { evidence: Evidence }) {
     <>
       <div className="context-toolbar">
         <div>
-          <span className="eyebrow">WATERMARK CONFIGURATION</span>
           <SegmentedControl
             mt={8}
             value={mode}
@@ -26,18 +25,13 @@ export function Watermark({ evidence }: { evidence: Evidence }) {
             ]}
           />
         </div>
-        <Badge color="gray" variant="light">
-          Same finalized Gold / Hadoop output
-        </Badge>
+        <span className="metadata">Same finalized Gold / Hadoop output</span>
       </div>
       <div className="watermark-grid">
-        <Panel title="Operational candidate" eyebrow="SILVER">
+        <Panel title="Operational candidate">
           <div className="large-count">
             {number(l.silver_deliveries)}
             <span>source records</span>
-          </div>
-          <div className="meter-track">
-            <i style={{ width: `${(l.silver_deliveries / run.source_records) * 100}%` }} />
           </div>
           <p>
             {l.late_valid_deliveries
@@ -58,19 +52,16 @@ export function Watermark({ evidence }: { evidence: Evidence }) {
             from Bronze
           </span>
         </div>
-        <Panel title="Finalized source result" eyebrow="GOLD + HADOOP">
+        <Panel title="Finalized source result">
           <div className="large-count">
             {number(run.source_records)}
             <span>source records</span>
-          </div>
-          <div className="meter-track teal">
-            <i style={{ width: '100%' }} />
           </div>
           <p>Exact source identity is rebuilt from received Bronze records after completion.</p>
           <Status>Independent comparison agrees</Status>
         </Panel>
       </div>
-      <Panel title="Consumption needs matching intervals" eyebrow="COMPARISON COVERAGE">
+      <Panel title="Consumption comparison">
         <div className="coverage-strip">
           <div>
             <strong>{d.comparable_meter_period_count}</strong>
@@ -105,7 +96,7 @@ export function Watermark({ evidence }: { evidence: Evidence }) {
       </Panel>
       <Accordion variant="separated" radius="md">
         <Accordion.Item value="policy">
-          <Accordion.Control>How are the exclusions handled?</Accordion.Control>
+          <Accordion.Control>Exclusion rules</Accordion.Control>
           <Accordion.Panel>
             Only supported cumulative-kWh readings are differenced. Initial baselines, ambiguous
             duplicate timestamps, the first new baseline after ambiguity, negative deltas and

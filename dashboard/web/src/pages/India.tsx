@@ -1,13 +1,7 @@
-import { Badge, Button } from '@mantine/core';
-import {
-  ArrowRight,
-  Building2,
-  Database,
-  ExternalLink,
-  FileCheck2,
-  Network,
-  ShieldCheck,
-} from 'lucide-react';
+import type { Evidence } from '../types';
+import { compact, number } from '../evidence';
+
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import { DataTable, Note, Panel } from '../components/Workspace';
 export const indiaSources = [
   {
@@ -36,125 +30,82 @@ export const indiaSources = [
     url: 'https://cag.gov.in/uploads/download_audit_report/2025/6--Chapter-4-069ccbc5e407049.02992125.pdf',
   },
 ];
-export function India() {
+export function India({ evidence }: { evidence: Evidence }) {
+  const combined = evidence.results.runs.find((r) => r.run_id === 'correctness-combined-r01')!;
+  const restrictive = evidence.results.runs.find((r) => r.run_id === 'watermark-restrictive-r01')!;
   return (
     <>
-      <div className="india-hero">
-        <div>
-          <Badge variant="light" color="teal">
-            PROPOSED DISCOM REVIEW WORKFLOW
-          </Badge>
-          <h2>
-            Installing a smart meter is only the start.
-            <br />
-            Its data still has to support a decision.
-          </h2>
-          <p>
-            A distribution utility needs to distinguish unavailable readings, delivery exceptions
-            and processing differences before relying on a meter-data report.
-          </p>
-        </div>
-        <div className="india-symbol">
-          <Building2 size={62} strokeWidth={1.3} />
-          <span>
-            Utility-side
-            <br />
-            data assurance
-          </span>
-        </div>
-      </div>
-      <Panel title="Where this project fits" eyebrow="ALONGSIDE AN EXISTING HES / MDM">
+      <Panel title="Utility review workflow">
+        <p>
+          A DISCOM analyst reviewing metering-provider outputs needs to separate source gaps,
+          delivery exceptions and processing differences. This project provides a reproducible check
+          of received data and finalized results.
+        </p>
         <div className="utility-flow">
-          {[
-            { icon: Network, title: 'Meter / HES', text: 'Collect and communicate' },
-            { icon: Database, title: 'MDM / VEE', text: 'Validate and manage' },
-            { icon: ShieldCheck, title: 'Independent review', text: 'Account, rebuild, compare' },
-            { icon: Building2, title: 'DISCOM analyst', text: 'Inspect evidence and limits' },
-          ].map((n, i) => (
-            <div className={i === 2 ? 'highlight' : ''} key={n.title}>
-              <n.icon size={25} />
-              <strong>{n.title}</strong>
-              <span>{n.text}</span>
+          {['Meter / HES', 'MDM / VEE', 'Independent review', 'DISCOM analyst'].map((name, i) => (
+            <div key={name}>
+              <strong>{name}</strong>
               {i < 3 && <ArrowRight className="utility-arrow" size={18} />}
             </div>
           ))}
         </div>
         <Note>
-          The implemented evaluation uses HKUST telemetry and controlled replay. An Indian
-          deployment would require utility data adapters, agreed contracts, access authorization and
-          field validation.
+          Evaluation uses HKUST telemetry and controlled replay. An Indian deployment would require
+          authorized utility inputs, data adapters, agreed contracts and field validation.
         </Note>
       </Panel>
-      <Panel
-        title="Problem → implemented mechanism → available evidence"
-        eyebrow="CONCRETE CONNECTION"
-      >
+      <Panel title="Problem and available evidence">
         <DataTable
-          columns={['Review problem', 'Implemented mechanism', 'What the project demonstrates']}
+          columns={['Review question', 'Implemented mechanism', 'Existing result']}
           rows={[
             [
-              'A report hides source unavailability',
-              'Source audit and separately retained quality exclusions',
-              '19.04M missing numeric cells in the published HKUST resampled grid.',
+              'Was the source incomplete?',
+              'Source audit and quality exclusions',
+              `${compact(evidence.counts['Missing numeric cells'].clean)} missing numeric cells in the published HKUST resampled grid.`,
             ],
             [
-              'Retries or late arrivals alter an operational view',
-              'Bronze delivery preservation, bounded Silver, exact Gold rebuild',
-              'Combined fixture accounts for 432 deliveries; restrictive Silver 143, Gold 144.',
+              'Did delivery behaviour change the operational result?',
+              'Preserve Bronze; bound Silver; rebuild exact Gold',
+              `${number(combined.layer_counts.bronze_deliveries)} combined-fixture deliveries accounted for. Restrictive Silver ${restrictive.layer_counts.silver_deliveries}; Gold ${restrictive.source_records}.`,
             ],
             [
-              'A completed processing job is accepted without an independent check',
-              'Independent Hadoop source and aggregate comparisons',
-              'All 15 recorded runs agree on declared exact fields.',
+              'Does an independent computation agree?',
+              'Hadoop source and aggregate comparison with Spark Gold',
+              `All ${evidence.results.runs.length} saved runs agree on the declared exact fields.`,
             ],
             [
-              'An incomplete comparison is presented as zero impact',
-              'Matching-interval support and explicit unknown exposure',
-              'Two incomparable periods are not priced as zero or invented savings.',
+              'Is zero impact supported by sufficient coverage?',
+              'Compare matching consumption intervals; retain unknown exposure',
+              `${restrictive.decision.incomparable_meter_period_count} incomparable periods. Total financial exposure remains unknown.`,
             ],
           ]}
         />
       </Panel>
-      <div className="two-columns">
-        <Panel title="What is already standard" eyebrow="POSITIONING">
-          <p>
-            Commercial meter-data systems already offer VEE, quality monitoring, raw retention and
-            audit trails. Our coursework contribution is the reproducible combination of delivery
-            accounting, exact finalization and a separately implemented computation.
-          </p>
-          <Note>No vendor-superiority or first-of-its-kind claim is made.</Note>
-        </Panel>
-        <Panel title="What the current evidence cannot establish" eyebrow="EVALUATION BOUNDARY">
-          <ul className="plain-list">
-            <li>Actual Indian billing errors or financial savings.</li>
-            <li>Repair of radio links, wiring or physical meter calibration.</li>
-            <li>Live AMI performance, prepaid balance safety or statutory compliance.</li>
-            <li>National prevalence inferred from two utility environments.</li>
-          </ul>
-        </Panel>
-      </div>
-      <Panel title="Evidence behind the Indian connection" eyebrow="DATED SOURCES">
-        <div className="source-cards">
+      <Panel title="Scope">
+        <p>
+          Commercial MDM systems already provide VEE, quality monitoring, raw retention and audit
+          trails. The coursework contribution is the reproducible integration of delivery
+          accounting, exact finalization and a separately implemented computation.
+        </p>
+        <p>
+          Gold can recover a received valid event omitted by Silver. A reading that never arrived
+          remains unavailable. The evaluation establishes neither Indian billing savings nor live
+          AMI reliability, physical-meter accuracy or statutory compliance.
+        </p>
+      </Panel>
+      <Panel title="Indian sources">
+        <div className="source-list">
           {indiaSources.map((s) => (
             <article key={s.name}>
-              <div className="source-card-top">
-                <FileCheck2 size={19} />
+              <h3>
+                <a href={s.url} target="_blank" rel="noreferrer">
+                  {s.name}
+                  <ExternalLink size={13} />
+                </a>
                 <span>{s.date}</span>
-              </div>
-              <h3>{s.name}</h3>
+              </h3>
               <p>{s.finding}</p>
-              <small>{s.scope}</small>
-              <Button
-                component="a"
-                href={s.url}
-                target="_blank"
-                rel="noreferrer"
-                variant="subtle"
-                size="xs"
-                rightSection={<ExternalLink size={14} />}
-              >
-                Read source
-              </Button>
+              <p className="muted-small">{s.scope}</p>
             </article>
           ))}
         </div>

@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-13T12:09:16.907600+00:00",
+  "verified_at_utc": "2026-11-13T12:21:55.230095+00:00",
   "scope": "Non-distributed software checks; React saved-evidence presentation and coursework report",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -20,7 +20,7 @@
     "typescript_build": "passed with strict and noUnusedLocals",
     "production_build": "passed",
     "prettier": "passed",
-    "known_build_advisory": "Single bundle exceeds Vite 500 kB advisory threshold; no build failure"
+    "known_build_advisory": "Single bundle exceeds Vite 500 kB advisory threshold (about 938 kB before gzip); no build failure"
   },
   "ruff": "passed",
   "repository_independence": "passed",
@@ -129,12 +129,12 @@
     ]
   },
   "fresh_checkout": {
-    "source": "staged fresh checkout",
+    "source": "staged fresh checkout after visual cleanup",
     "install": "npm ci",
     "checks": "npm run check",
     "production_views_rendered": 9,
     "page_errors": [],
-    "report_sha256": "5d09212ef6d575728a797b0b95548abc70d2e5b978d81591f2b67ef1c9c468ab"
+    "report_sha256": "30a9e01022bb942e46fb02d9e4e90f58c63e5ae28e9587d5ce3639fc84d7e260"
   },
   "additional_reviewer": {
     "status": "unavailable",
@@ -177,5 +177,6 @@
       "byte_size": 3262,
       "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
     }
-  }
+  },
+  "ui_revision": "Compact tables, plain headings and metric rows; decorative cards, labels and illustrations removed"
 }

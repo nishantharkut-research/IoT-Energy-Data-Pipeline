@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Select } from '@mantine/core';
-import { FileStack, Layers, ShieldCheck } from 'lucide-react';
+
 import {
   Bars,
   DataTable,
@@ -28,24 +28,20 @@ export function Faults({ evidence }: { evidence: Evidence }) {
           title="Controlled schedules"
           value={`${runs.length}`}
           note="Clean, duplicate, delayed, malformed, combined"
-          icon={<FileStack size={20} />}
-          accent="blue"
         />
         <Stat
           title="Final source events / schedule"
           value={number(run.source_records)}
           note="Same finalized population in every fixture"
-          icon={<Layers size={20} />}
         />
         <Stat
           title="Semantic artifacts unchanged"
           value={`${Object.keys(hashes).length} / 4`}
           note="Corresponding output hashes agree"
-          icon={<ShieldCheck size={20} />}
         />
       </div>
       <div className="two-columns wide-left">
-        <Panel title="How the delivery counts change" eyebrow="FAULT DISPOSITION">
+        <Panel title="Delivery counts by schedule">
           <Legend
             items={[
               { label: 'Silver candidate', color: palette.teal },
@@ -72,7 +68,7 @@ export function Faults({ evidence }: { evidence: Evidence }) {
             Counts are deliveries. Gold retains 144 unique valid source events in every schedule.
           </span>
         </Panel>
-        <Panel title="Inspect a schedule" eyebrow="RECORDED CASE">
+        <Panel title="Inspect a schedule">
           <Select
             label="Schedule"
             data={runs.map((r) => ({ value: r.fault, label: label(r.fault) }))}
@@ -95,7 +91,7 @@ export function Faults({ evidence }: { evidence: Evidence }) {
           <Status>Semantic result unchanged</Status>
         </Panel>
       </div>
-      <Panel title="Same answer, different delivery histories" eyebrow="CROSS-RUN EVIDENCE">
+      <Panel title="Semantic output comparison">
         <DataTable
           columns={['Semantic output', 'Selected schedule SHA-256', 'Result']}
           rows={Object.entries(hashes).map(([key, value]) => [

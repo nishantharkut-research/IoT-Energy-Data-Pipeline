@@ -1,6 +1,6 @@
 # Submission verification
 
-13 November 2026. This record covers the revised React dashboard, coursework report and supporting code. No new distributed experiment was executed. Commands, input bindings and exact check results are in [verification.json](verification.json); presentation asset hashes are in [asset-manifest.json](asset-manifest.json).
+13 November 2026. This record covers the compact dashboard revision, refreshed report captures and supporting code. Decorative cards, all-caps panel labels, repeated success badges and redundant illustrations were removed. No new distributed experiment was executed. Commands, input bindings and exact check results are in [verification.json](verification.json); presentation asset hashes are in [asset-manifest.json](asset-manifest.json).
 
 | Check | Result |
 | --- | --- |
@@ -19,7 +19,7 @@
 
 The seven Python skips are four Windows-specific rename cases, one mutation fixture whose size condition is not applicable, one duplicate-sheet case openpyxl cannot construct, and one PySpark-dependent check because PySpark is absent. Docker/Kafka/Spark/Hadoop integration workloads were not rerun.
 
-The production bundle triggers Vite's size advisory (about 954 kB before gzip). It builds and renders successfully; the advisory is not a measured dashboard-performance result.
+The production bundle triggers Vite's size advisory (about 938 kB before gzip). It builds and renders successfully; the advisory is not a measured dashboard-performance result.
 
 Original final-results, scope, plan and published source-audit bytes remain unchanged. The original artifact verification date is 2 November 2026. This checkout checks the saved summaries and their bindings; it does not contain or freshly reverify the original runtime trees, complete dataset or original audit JSON. These checks establish declared byte bindings and consistency, not physical measurement truth or adversarial authenticity.
 

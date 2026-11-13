@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import {
-  Badge,
   Button,
   Group,
   Modal,
@@ -13,7 +12,7 @@ import {
   CopyButton,
   ActionIcon,
 } from '@mantine/core';
-import { ArrowUpRight, Check, Copy, Download, FileJson, Info, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, Download, FileJson } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -28,52 +27,32 @@ import { compact, download, label, number, runName } from '../evidence';
 import type { Run } from '../types';
 export function Panel({
   title,
-  eyebrow,
   action,
   children,
   className = '',
 }: {
   title: string;
-  eyebrow?: string;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <Paper className={`panel ${className}`} radius="lg" withBorder>
+    <Paper className={`panel ${className}`} radius={0} withBorder>
       <div className="panel-heading">
-        <div>
-          {eyebrow && <div className="eyebrow">{eyebrow}</div>}
-          <h2>{title}</h2>
-        </div>
+        <h2>{title}</h2>
         {action}
       </div>
       {children}
     </Paper>
   );
 }
-export function Stat({
-  title,
-  value,
-  note,
-  icon,
-  accent = 'teal',
-}: {
-  title: string;
-  value: string;
-  note: string;
-  icon: ReactNode;
-  accent?: string;
-}) {
+export function Stat({ title, value, note }: { title: string; value: string; note: string }) {
   return (
-    <Paper className={`stat-card ${accent}`} withBorder radius="lg">
-      <div className="stat-top">
-        <span>{title}</span>
-        <span className="stat-icon">{icon}</span>
-      </div>
+    <div className="stat-card">
+      <span className="stat-title">{title}</span>
       <strong>{value}</strong>
       <small>{note}</small>
-    </Paper>
+    </div>
   );
 }
 export function Note({
@@ -83,12 +62,7 @@ export function Note({
   children: ReactNode;
   tone?: 'neutral' | 'amber' | 'teal';
 }) {
-  return (
-    <div className={`context-note ${tone}`}>
-      <Info size={18} strokeWidth={1.8} />
-      <div>{children}</div>
-    </div>
-  );
+  return <div className={`context-note ${tone}`}>{children}</div>;
 }
 export function Status({
   children = 'Agreed',
@@ -97,17 +71,7 @@ export function Status({
   children?: ReactNode;
   tone?: 'teal' | 'amber' | 'gray';
 }) {
-  return (
-    <Badge
-      color={tone}
-      variant="light"
-      radius="sm"
-      size="md"
-      leftSection={tone === 'teal' ? <Check size={12} /> : undefined}
-    >
-      {children}
-    </Badge>
-  );
+  return <span className={`result-status ${tone}`}>{children}</span>;
 }
 export function DataTable({ columns, rows }: { columns: string[]; rows: ReactNode[][] }) {
   return (
@@ -251,7 +215,7 @@ export function RunDetails({ run, onClose }: { run: Run | null; onClose: () => v
       onClose={onClose}
       title="Recorded run · evidence details"
       size="xl"
-      radius="lg"
+      radius="sm"
     >
       {run && (
         <>
@@ -339,10 +303,7 @@ export function ExactFields({ run }: { run: Run }) {
   return (
     <div className="field-list">
       {run.source_comparison.exact_fields.map((f) => (
-        <span key={f}>
-          <ShieldCheck size={13} />
-          {label(f)}
-        </span>
+        <span key={f}>{label(f)}</span>
       ))}
     </div>
   );

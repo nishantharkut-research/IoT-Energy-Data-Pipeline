@@ -1,5 +1,3 @@
-import { Badge } from '@mantine/core';
-import { Clock, Database, FileStack } from 'lucide-react';
 import { Bars, DataTable, Hash, Note, Panel, Stat, palette } from '../components/Workspace';
 import { RunSelect } from '../components/RunSelect';
 import { label, number } from '../evidence';
@@ -25,34 +23,27 @@ export function Storage({
     <>
       <div className="context-toolbar">
         <RunSelect evidence={evidence} run={selected} onChange={setSelected} scaleOnly />
-        <Badge variant="light" color="gray">
-          Three repetitions per scale / query
-        </Badge>
+        <span className="metadata">Three repetitions per scale / query</span>
       </div>
       <div className="stats-grid three">
         <Stat
           title="Verification median"
           value={`${(p.verification_seconds.median / 60).toFixed(2)} min`}
           note={`Range ${(p.verification_seconds.minimum / 60).toFixed(2)}–${(p.verification_seconds.maximum / 60).toFixed(2)} min`}
-          icon={<Clock size={20} />}
-          accent="blue"
         />
         <Stat
           title="Verification artifact storage"
           value={`${(p.verification_bytes.median / 1e6).toLocaleString('en-GB', { maximumFractionDigits: 2 })} MB`}
           note="Median · decimal MB · scoped artifacts"
-          icon={<Database size={20} />}
         />
         <Stat
           title="SQL workloads"
           value={String(selected.queries.results.length)}
           note="Full ordered results are hashed"
-          icon={<FileStack size={20} />}
-          accent="blue"
         />
       </div>
       <div className="two-columns">
-        <Panel title="What full verification costs" eyebrow="THREE RECORDED REPETITIONS">
+        <Panel title="Verification time">
           <div className="chart-unit">Median verification time · minutes</div>
           <Bars
             data={evidence.results.performance_summary.map((p) => ({
@@ -66,7 +57,7 @@ export function Storage({
             Gold finalization + layer audit + Hadoop + reconciliation. Not full workflow time.
           </span>
         </Panel>
-        <Panel title="Compression and partitioning" eyebrow="STORED SIZE / NDJSON">
+        <Panel title="Stored size relative to NDJSON">
           <Bars
             percent
             data={[
@@ -89,7 +80,7 @@ export function Storage({
           </span>
         </Panel>
       </div>
-      <Panel title="Read-only SQL measurements" eyebrow="SELECTED REPETITION">
+      <Panel title="Read-only SQL measurements">
         <DataTable
           columns={[
             'Workload',

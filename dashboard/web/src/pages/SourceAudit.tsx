@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Badge, Button, RingProgress, SegmentedControl } from '@mantine/core';
-import { Database, Layers, TriangleAlert } from 'lucide-react';
-import { DataTable, Note, Panel, Stat, palette } from '../components/Workspace';
+import { Button, SegmentedControl } from '@mantine/core';
+
+import { DataTable, Note, Panel, Stat } from '../components/Workspace';
 
 import { compact, download, number } from '../evidence';
 import type { Evidence } from '../types';
@@ -31,50 +31,32 @@ export function SourceAudit({ evidence }: { evidence: Evidence }) {
             { label: 'Raw source', value: 'raw' },
           ]}
         />
-        <Badge color="gray" variant="light">
-          HKUST · published audit, 27 Oct 2026
-        </Badge>
+        <span className="metadata">HKUST · published audit, 27 Oct 2026</span>
       </div>
       <div className="stats-grid three">
         <Stat
           title="Published rows"
           value={compact(total)}
           note={`${number(total)} physical data rows`}
-          icon={<Database size={20} />}
-          accent="blue"
         />
         <Stat
           title="Finite numeric readings"
           value={compact(finite)}
           note="Numeric representation, not physical validity"
-          icon={<Layers size={20} />}
         />
         <Stat
           title="Missing numeric values"
           value={compact(missing)}
           note="Retained as source-quality exclusions"
-          icon={<TriangleAlert size={20} />}
-          accent="amber"
         />
       </div>
       <div className="two-columns wide-left">
-        <Panel title="What is available to processing?" eyebrow="SOURCE ROW ACCOUNTING">
+        <Panel title="Numeric-cell availability">
           <div className="availability-panel">
-            <RingProgress
-              size={190}
-              thickness={17}
-              roundCaps
-              sections={[
-                { value: availability, color: palette.teal },
-                { value: 100 - availability, color: '#edc98c' },
-              ]}
-              label={
-                <div className="ring-label">
-                  <strong>{availability.toFixed(3)}%</strong>
-                  <span>numeric cells</span>
-                </div>
-              }
-            />
+            <div className="availability-number">
+              <strong>{availability.toFixed(3)}%</strong>
+              <span>finite numeric cells</span>
+            </div>
             <div className="availability-details">
               <div>
                 <i className="dot teal" />
@@ -97,7 +79,7 @@ export function SourceAudit({ evidence }: { evidence: Evidence }) {
             coverage, physical accuracy or a utility SLA.
           </Note>
         </Panel>
-        <Panel title="Preparation preserves context" eyebrow="SOURCE CONTRACT">
+        <Panel title="Source registration">
           <div className="compact-fact">
             <span>Registered workbooks</span>
             <strong>{number(c.Workbooks[variant])}</strong>
@@ -118,7 +100,6 @@ export function SourceAudit({ evidence }: { evidence: Evidence }) {
       </div>
       <Panel
         title="Observed quality conditions"
-        eyebrow="REVIEW CATEGORIES"
         action={
           <Button
             size="xs"

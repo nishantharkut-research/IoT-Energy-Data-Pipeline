@@ -1,6 +1,6 @@
 import { Tabs } from '@mantine/core';
-import { ClipboardCheck, Database, FileStack, Layers, ShieldCheck } from 'lucide-react';
-import { DataTable, Hash, Note, Panel, Stat, Status } from '../components/Workspace';
+import { ClipboardCheck, FileStack, Layers } from 'lucide-react';
+import { DataTable, Hash, Panel, Stat, Status } from '../components/Workspace';
 import { Pipeline } from '../components/Pipeline';
 import { number } from '../evidence';
 import type { Evidence, Run } from '../types';
@@ -26,24 +26,19 @@ export function Delivery({
           title="Bronze deliveries"
           value={number(l.bronze_deliveries)}
           note="Every data delivery is retained"
-          icon={<Database size={20} />}
-          accent="blue"
         />
         <Stat
           title="Silver candidate"
           value={number(l.silver_deliveries)}
           note="Operational watermark-bounded result"
-          icon={<Layers size={20} />}
-          accent="blue"
         />
         <Stat
           title="Exact Gold"
           value={number(run.source_records)}
           note="Unique valid source identities"
-          icon={<ShieldCheck size={20} />}
         />
       </div>
-      <Panel title="Delivery path" eyebrow="SELECTED RUN">
+      <Panel title="Delivery path">
         <Tabs defaultValue="path">
           <Tabs.List>
             <Tabs.Tab value="path" leftSection={<Layers size={16} />}>
@@ -120,29 +115,17 @@ export function Delivery({
           </Tabs.Panel>
         </Tabs>
       </Panel>
-      <div className="two-columns">
-        <Panel title="Why keep Bronze?" eyebrow="RECOVERY">
-          <p>
-            Silver releases state to remain bounded. Bronze preserves the received deliveries so
-            batch Gold can rebuild exact source identities after replay completion.
-          </p>
-          <Note tone="teal">Late valid records are accounted for separately from quarantine.</Note>
-        </Panel>
-        <Panel title="Completion is explicit" eyebrow="CONTROL RECORDS">
-          <div className="inline-kpi">
-            <strong>{l.terminal_records}</strong>
-            <span>
-              terminal records
-              <br />
-              <small>separate from data deliveries</small>
-            </span>
-          </div>
-          <p>
-            Partition termination and acknowledgements are checked before exact finalization. A
-            quiet topic alone is not completion evidence.
-          </p>
-        </Panel>
-      </div>
+      <details className="processing-notes">
+        <summary>Processing and completion rules</summary>
+        <p>
+          Silver releases state to remain bounded. Gold rebuilds exact source identities from Bronze
+          after replay completion. Late valid records have a separate disposition from quarantine.
+        </p>
+        <p>
+          {l.terminal_records} terminal partition records are separate from data deliveries.
+          Acknowledgements, partition termination and layer counts are checked before finalization.
+        </p>
+      </details>
     </>
   );
 }

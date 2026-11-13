@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import {
   ActionIcon,
   AppShell,
-  Badge,
   Burger,
   Button,
   Divider,
@@ -33,7 +32,6 @@ import {
   ShieldCheck,
   TableProperties,
   TriangleAlert,
-  Zap,
 } from 'lucide-react';
 import { loadEvidence, download, exportCSV } from './evidence';
 import { DataTable, Hash, Note, RunDetails } from './components/Workspace';
@@ -51,52 +49,47 @@ const pages: { name: Page; icon: typeof Database; subtitle: string }[] = [
   {
     name: 'Overview',
     icon: LayoutDashboard,
-    subtitle:
-      'Review the completed pipeline, its evidence and the results that need interpretation.',
+    subtitle: 'Completed fixtures and scale experiments, through 1M source records.',
   },
   {
     name: 'Source audit',
     icon: Database,
-    subtitle: 'Understand the source population before interpreting a processed result.',
+    subtitle: 'Raw and publisher-resampled HKUST records.',
   },
   {
     name: 'Delivery inspector',
     icon: GitFork,
-    subtitle: 'Follow one recorded experiment from received deliveries to exact source records.',
+    subtitle: 'Deliveries, dispositions and finalized source records.',
   },
   {
     name: 'Fault comparison',
     icon: TriangleAlert,
-    subtitle:
-      'Inspect how controlled delivery faults change dispositions while preserving the finalized answer.',
+    subtitle: 'Clean, duplicate, delayed, malformed and combined schedules.',
   },
   {
     name: 'Verification',
     icon: ShieldCheck,
-    subtitle: 'Compare the independently implemented Spark and Hadoop results.',
+    subtitle: 'Exact-field comparisons of Spark Gold and independent Hadoop outputs.',
   },
   {
     name: 'Watermark review',
     icon: GitCompare,
-    subtitle:
-      'Separate an operational omission from a finalized result and its consumption coverage.',
+    subtitle: 'Candidate omissions and matching-interval consumption coverage.',
   },
   {
     name: 'Recovery',
     icon: RotateCcw,
-    subtitle: 'Check what remained identical when execution was interrupted and resumed.',
+    subtitle: 'Interrupted and uninterrupted outputs, compared by semantic digest.',
   },
   {
     name: 'Storage & SQL',
     icon: ChartColumn,
-    subtitle:
-      'Inspect the recorded cost of independent verification, storage and read-only queries.',
+    subtitle: 'Recorded verification costs, file sizes and query timings.',
   },
   {
     name: 'India use case',
     icon: Building2,
-    subtitle:
-      'A specific utility-review role, supported by Indian evidence and bounded by the current evaluation.',
+    subtitle: 'A proposed DISCOM review of metering-provider data.',
   },
 ];
 export const slug = (p: Page) => p.toLowerCase().replaceAll(' & ', '-').replaceAll(' ', '-');
@@ -137,21 +130,17 @@ export default function App() {
   return (
     <AppShell
       layout="alt"
-      header={{ height: 72 }}
-      navbar={{ width: 252, breakpoint: 'md', collapsed: { mobile: !opened } }}
+      header={{ height: 56 }}
+      navbar={{ width: 220, breakpoint: 'md', collapsed: { mobile: !opened } }}
       padding={0}
     >
       <AppShell.Navbar className="sidebar">
         <a className="brand" href="#overview" onClick={() => navigate('Overview')}>
-          <span className="brand-mark">
-            <Zap size={23} fill="currentColor" />
-          </span>
           <span>
-            <strong>Energy Pipeline</strong>
-            <small>DATA REVIEW WORKSPACE</small>
+            <strong>IoT Energy</strong>
+            <small>IoTBDM coursework</small>
           </span>
         </a>
-        <div className="sidebar-section-label">PROJECT</div>
         <ScrollArea className="nav-scroll" type="auto">
           <nav aria-label="Project navigation">
             {pages.slice(0, 8).map((p) => (
@@ -164,7 +153,7 @@ export default function App() {
                 className="workspace-nav"
               />
             ))}
-            <div className="sidebar-section-label context-label">CONTEXT</div>
+            <div className="nav-divider" />
             <NavLink
               label="India use case"
               leftSection={<Building2 size={19} strokeWidth={1.7} />}
@@ -176,7 +165,6 @@ export default function App() {
         </ScrollArea>
         <div className="sidebar-foot">
           <div className="evidence-status">
-            <span className={`status-dot ${error ? 'failed' : ''}`} />
             <strong>
               {error
                 ? 'Evidence unavailable'
@@ -185,11 +173,7 @@ export default function App() {
                   : 'Checking saved evidence'}
             </strong>
           </div>
-          <p>
-            Completed experiments.
-            <br />
-            No live meter connection.
-          </p>
+          <p>Saved experiment results.</p>
           <button onClick={openEvidence} disabled={!evidence}>
             View evidence provenance <ArrowUpRight size={14} />
           </button>
@@ -211,14 +195,9 @@ export default function App() {
               size="sm"
               aria-label="Toggle navigation"
             />
-            <span className="breadcrumb">
-              Project <span>/</span> <strong>{page}</strong>
-            </span>
+            <span className="breadcrumb">HKUST smart-meter telemetry</span>
           </Group>
           <Group gap="sm" wrap="nowrap">
-            <Badge variant="light" color="gray" className="saved-badge">
-              SAVED EVIDENCE
-            </Badge>
             {evidence?.manifest.report_available && (
               <Button
                 component="a"
@@ -270,7 +249,6 @@ export default function App() {
               <>
                 <div className="page-header">
                   <div>
-                    <div className="eyebrow">IOT ENERGY DATA PIPELINE</div>
                     <h1>{page === 'Overview' ? 'Project overview' : page}</h1>
                     <p>{current.subtitle}</p>
                   </div>
@@ -330,11 +308,9 @@ export default function App() {
                 {page === 'Storage & SQL' && (
                   <Storage evidence={evidence} run={run} setSelected={setSelected} />
                 )}
-                {page === 'India use case' && <India />}
+                {page === 'India use case' && <India evidence={evidence} />}
                 <footer className="workspace-footer">
-                  <span>
-                    <ShieldCheck size={14} /> Original artifact verification: 2 Nov 2026
-                  </span>
+                  <span>Original artifact verification: 2 Nov 2026</span>
                   <span>
                     HKUST evaluation · assumed Hong Kong timezone · selected workloads through 1M
                   </span>
@@ -355,9 +331,7 @@ export default function App() {
         {evidence && (
           <>
             <Group mb="lg">
-              <Badge color="teal" variant="light">
-                Summary bytes checked in this browser
-              </Badge>
+              <span className="metadata">Summary bytes checked in this browser</span>
             </Group>
             <DataTable
               columns={['Saved input', 'SHA-256 binding', 'Bytes']}

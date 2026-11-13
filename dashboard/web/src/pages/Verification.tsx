@@ -1,5 +1,5 @@
 import { Button, Tabs, Text } from '@mantine/core';
-import { Check, Database, FileStack, Layers, ShieldCheck } from 'lucide-react';
+
 import { DataTable, ExactFields, Hash, Note, Panel, Stat, Status } from '../components/Workspace';
 
 import { download, label, number } from '../evidence';
@@ -35,15 +35,11 @@ export function Verification({
           title="Exact source fields"
           value={String(run.source_comparison.exact_fields.length)}
           note="Identity, value, provenance and metadata"
-          icon={<FileStack size={20} />}
-          accent="blue"
         />
         <Stat
           title="Exact aggregate fields"
           value={String(run.aggregate_comparison.exact_fields.length)}
           note="Counts, scaled sums and timestamp bounds"
-          icon={<Layers size={20} />}
-          accent="blue"
         />
         <Stat
           title="Recorded comparison errors"
@@ -51,31 +47,9 @@ export function Verification({
             run.source_comparison.errors.length + run.aggregate_comparison.errors.length,
           )}
           note="For the selected finalized experiment"
-          icon={<ShieldCheck size={20} />}
         />
       </div>
-      <Panel title="Two implementations, one declared comparison" eyebrow="SPARK ↔ HADOOP">
-        <div className="verification-path">
-          <div>
-            <span className="engine-icon blue">
-              <Layers size={24} />
-            </span>
-            <h3>Spark Gold</h3>
-            <span>Rebuilt from Bronze</span>
-          </div>
-          <div className="agreement-line">
-            <ShieldCheck size={24} />
-            <strong>Exact agreement</strong>
-            <small>Source + aggregate records</small>
-          </div>
-          <div>
-            <span className="engine-icon teal">
-              <Database size={24} />
-            </span>
-            <h3>Hadoop Streaming</h3>
-            <span>Reads canonical NDJSON</span>
-          </div>
-        </div>
+      <Panel title="Spark and Hadoop comparison">
         <DataTable
           columns={['Output', 'Spark records', 'Hadoop records', 'Comparison']}
           rows={[
@@ -98,7 +72,7 @@ export function Verification({
           transformations, not physical meter accuracy or source normalization independently.
         </Note>
       </Panel>
-      <Panel title="What is compared?" eyebrow="EXACT FIELD CONTRACT">
+      <Panel title="Compared fields">
         <Tabs defaultValue="source">
           <Tabs.List>
             <Tabs.Tab value="source">
@@ -115,10 +89,7 @@ export function Verification({
           <Tabs.Panel value="aggregate" pt="lg">
             <div className="field-list">
               {run.aggregate_comparison.exact_fields.map((f) => (
-                <span key={f}>
-                  <Check size={13} />
-                  {label(f)}
-                </span>
+                <span key={f}>{label(f)}</span>
               ))}
             </div>
           </Tabs.Panel>
