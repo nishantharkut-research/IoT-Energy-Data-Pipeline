@@ -2,6 +2,11 @@
   "schema_version": "submission-assets-v2",
   "assets": [
     {
+      "path": "docs/HANDOVER.md",
+      "byte_size": 5182,
+      "sha256": "ebf05c68a49a0751a0d543ebab18b9f358dfb0077c12a868704c766993adb0a8"
+    },
+    {
       "path": "docs/india-use-case.md",
       "byte_size": 4345,
       "sha256": "959c5af32d39193db33ea53503a16981f3251d451bd5bd27078c33d2fda09173"
@@ -13,18 +18,18 @@
     },
     {
       "path": "docs/results/submission/verification.json",
-      "byte_size": 6630,
-      "sha256": "6607a5282670c5355ed283bdfeb1b56498a9c4930cfccd2b17114f0f1587d072"
+      "byte_size": 7576,
+      "sha256": "261c965ca46084787cc18867462dd7d87f54eaa02f63fb22003215f5b45bc150"
     },
     {
       "path": "docs/results/submission/verification.md",
-      "byte_size": 3424,
-      "sha256": "4bc8c087d97b1a8c07b632a52e0f4bc4422f04275e8d670d803956da2a1e2274"
+      "byte_size": 4127,
+      "sha256": "10dbb1c736426cabed5366800d1a9a9fd7f1d00bff7c0d74abb92f964707d1cf"
     },
     {
       "path": "docs/submission/README.md",
-      "byte_size": 1705,
-      "sha256": "52585c2a3218eb0e596bd69b0144abb14ca4bad23a7160c33ab097625e037ef2"
+      "byte_size": 2351,
+      "sha256": "4a05fd70fdc89ba130dfdfb0c68d599b33d3f3c97bc65010ca1d968e1fd50e09"
     },
     {
       "path": "docs/submission/figures/01-overview.png",
@@ -202,6 +207,11 @@
       "sha256": "c7d0e1340b2bc1eda9eb8fdcda0e9b7a804f218e2351a8fb3827e28b250a6723"
     },
     {
+      "path": "docs/submission/figures/iiitm-logo.png",
+      "byte_size": 49850,
+      "sha256": "17b60b0a9107fc5f17860023c77d4ab54a588a7913eab279eca44c72cf2ffa69"
+    },
+    {
       "path": "docs/submission/figures/overview-desktop.png",
       "byte_size": 150567,
       "sha256": "22d09b30bf3e7d3661ff3e9610fd41b1e185aff32e4437fc674b82ce9b2db1c9"
@@ -252,19 +262,64 @@
       "sha256": "2b22ebe30a3d3b6f30930671af5443a23e3a7f67f83fe30cea3e36f50450db7a"
     },
     {
+      "path": "docs/submission/figures/report/02-source-audit.png",
+      "byte_size": 63272,
+      "sha256": "dc9f35ab2fb047ef9b3c617ddb876b7967f11de16425146145f232b6100f0da4"
+    },
+    {
+      "path": "docs/submission/figures/report/03-delivery-inspector.png",
+      "byte_size": 63524,
+      "sha256": "6f47a50688b7b7d134ae42f23260aa9900b71a4aacbb14ad34cb72e237bb1328"
+    },
+    {
+      "path": "docs/submission/figures/report/04-fault-comparison.png",
+      "byte_size": 53033,
+      "sha256": "016cb0ceef5c8e94da806e7e192f4ab2f10b969a4ff9eeeed7bd6d93db5cdc10"
+    },
+    {
+      "path": "docs/submission/figures/report/05-verification.png",
+      "byte_size": 63672,
+      "sha256": "2841ee4bc927ae5ff318756749c766073e8f1b09183d807739fd55754ef2dde3"
+    },
+    {
+      "path": "docs/submission/figures/report/06-watermark-review.png",
+      "byte_size": 80248,
+      "sha256": "fabc53ff1adc020aacf19c68bb63c986529c1283f922383fddc6c4ac203dcd53"
+    },
+    {
+      "path": "docs/submission/figures/report/07-recovery.png",
+      "byte_size": 74240,
+      "sha256": "404083d937fba214973d9ed09a556d2dba8d92eb211e920afe6a68aec840094e"
+    },
+    {
+      "path": "docs/submission/figures/report/08-storage-sql.png",
+      "byte_size": 80389,
+      "sha256": "fcf683cc2db444c3173b4b98413155ef1a864f652146f707b65ed54fcde85db0"
+    },
+    {
+      "path": "docs/submission/figures/report/09-india-use-case.png",
+      "byte_size": 105871,
+      "sha256": "55450066ca6370b0835c156340c38da28480d2c4ad6bdd346ac4f19315253a62"
+    },
+    {
       "path": "docs/submission/figures/storage-table.tex",
       "byte_size": 79,
       "sha256": "02abc4abf39fde4e3376ee58dc733c67451ea325e0747ba5898cbedf844cd828"
     },
     {
       "path": "docs/submission/project-report.pdf",
-      "byte_size": 1445178,
-      "sha256": "5d9ce3813e129aa154f9d08c50b29ebcabf33be2ec92d33988703bf0aac34987"
+      "byte_size": 1039068,
+      "sha256": "f73f10fe96f4d6cf00c128819c5850d7af717e402af1d17ab84e4904511ab9e9"
     },
     {
       "path": "docs/submission/project-report.tex",
-      "byte_size": 45679,
-      "sha256": "9d03f248a0337e4a2a62bfb778f0450031323a7f34075042a6a9369d0dba132d"
+      "byte_size": 44430,
+      "sha256": "950507e359f08c8327d15203fecfc447931581b9aee7aa0213642605d93b66db"
+    },
+    {
+      "path": "scripts/capture_report_workspaces.py",
+      "byte_size": 2557,
+      "sha256": "4b1e314f3ddd2a4238d28a586861c166274154bfca6ded4f24bb58d941a37478"
     }
   ]
 }

@@ -59,11 +59,12 @@ Install LaTeX and `python -m pip install -e ".[dashboard,report]"`. With Chrome/
 ```bash
 python -m scripts.build_submission_figures
 python -m scripts.capture_operator_dashboard
+python -m scripts.capture_report_workspaces
 cd docs/submission
 latexmk -pdf -interaction=nonstopmode -halt-on-error project-report.tex
 ```
 
-Screenshots are actual captures of the running React dashboard on port 5173. `figures/dashboard/report-*.png` preserve the full desktop viewport, including navigation. Full-page captures are retained beside them. The report includes nine large landscape captures; longer content remains accessible in the live viewer and full-page PNGs. No synthetic measurements or fabricated finalized runs are used.
+Screenshots are actual captures of the running React dashboard on port 5173. `figures/dashboard/report-*.png` preserve the full desktop viewport, including navigation. Full-page captures are retained beside them. The report uses one landscape application overview and eight readable workspace captures from `figures/report/`, positioned with their discussion. Longer content remains accessible in the live viewer and full-page PNGs. No synthetic measurements or fabricated finalized runs are used.
 
 ## Interpretation checklist
 

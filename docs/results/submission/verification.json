@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-13T13:27:52.887891+00:00",
+  "verified_at_utc": "2026-11-13T14:08:13.929739+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -27,15 +27,33 @@
   "diff_whitespace": "passed",
   "pdf": {
     "path": "docs/submission/project-report.pdf",
-    "pages": 22,
+    "pages": 21,
     "screenshots": 9,
     "vector_diagrams": 2,
     "unresolved_references": false,
     "overfull_boxes": false,
-    "visual_review": "All pages rendered; layout and full application captures inspected",
-    "standalone_source_build": "Passed: 22 pages from LaTeX and 14 required figure/table assets",
+    "visual_review": "All 21 pages rendered and inspected, including cover, captions, tables, vector diagrams and actual desktop workspace captures",
+    "standalone_source_build": "Passed: independently compiled 21 pages from 15 required assets; extracted page text agrees",
     "diagram_text_containment": "Passed for both vector diagrams",
-    "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment"
+    "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment",
+    "cover": "Separate institutional cover with the supplied IIITM logo; abstract on page 2",
+    "screenshot_index_page": 3,
+    "screenshot_pages": [
+      5,
+      8,
+      11,
+      14,
+      12,
+      15,
+      16,
+      18,
+      19
+    ],
+    "screenshot_placement": "One landscape application overview and eight readable workspace captures within their corresponding discussions",
+    "diagram_sizing": "Both vector diagrams use full text width and a common label size",
+    "supplied_logo_sha256": "17b60b0a9107fc5f17860023c77d4ab54a588a7913eab279eca44c72cf2ffa69",
+    "workspace_capture_viewport": "1024x1200 desktop; application workspace clipped to relevant panel bounds",
+    "typography": "11 pt TeX Gyre Termes body; consistent full-width vector diagrams and short figure captions"
   },
   "browser": {
     "page_errors": [],
@@ -173,7 +191,7 @@
       "sha256": "3046b9524a5102d1008f75b1742889e732ca3e1317c7ac0dfe05325f0137a89e"
     }
   },
-  "ui_revision": "Accepted desktop dashboard; final report and cover details completed",
+  "ui_revision": "Accepted desktop application preserved; report reorganized around problem, architecture, implementation and measured results",
   "desktop_layout": {
     "path": "docs/results/submission/desktop-layout-checks.json",
     "cases": 74,
@@ -226,11 +244,11 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "5d9ce3813e129aa154f9d08c50b29ebcabf33be2ec92d33988703bf0aac34987"
+    "report_sha256": "f73f10fe96f4d6cf00c128819c5850d7af717e402af1d17ab84e4904511ab9e9"
   },
   "report_author": {
     "name": "Nishant Harkut",
     "enrollment_number": "2023IMG-040",
-    "instructor": "Amandeep Kaur"
+    "instructor": "Dr. Amandeep Kaur"
   }
 }

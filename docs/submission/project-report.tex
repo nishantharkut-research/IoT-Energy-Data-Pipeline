@@ -1,7 +1,8 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=21mm,headheight=15pt]{geometry}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern,microtype,graphicx,booktabs,tabularx,array,amsmath}
+\usepackage{tgtermes,newtxmath,microtype,graphicx,booktabs,tabularx,array,amsmath}
+\renewcommand{\ttdefault}{lmtt}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{enumitem,float,placeins,fancyhdr,caption,pdflscape}
 \captionsetup{hypcap=false}
@@ -13,8 +14,8 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \definecolor{ink}{HTML}{18344A}
 \definecolor{accent}{HTML}{25669B}
 \usepackage{titlesec}
-\titleformat{\section}{\Large\bfseries\color{ink}}{\thesection}{.7em}{}
-\titleformat{\subsection}{\large\bfseries\color{ink}}{\thesubsection}{.7em}{}
+\titleformat{\section}{\Large\bfseries}{\thesection}{.7em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{.7em}{}
 \captionsetup{font=small,labelfont=bf,justification=raggedright,singlelinecheck=false}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt}
@@ -33,84 +34,132 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \fancyhead[R]{\small Project report}
 \fancyfoot[C]{\thepage}
 \newcommand{\repo}{\url{https://github.com/nishantharkut-research/IoT-Energy-Data-Pipeline}}
-\newcommand{\screen}[3]{\begin{figure}[htbp]\centering\includegraphics[width=\linewidth,height=.48\textheight,keepaspectratio]{figures/#1}\caption{#2}\label{#3}\end{figure}}
+\newcommand{\reportshot}[3]{%
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{#1}
+\caption{#2}\label{#3}
+\end{figure}}
+\newcommand{\overviewpage}{%
+\clearpage\newgeometry{margin=12mm}
+\begin{landscape}\thispagestyle{empty}
+{\large\bfseries Dashboard overview}\hfill{\small\thepage}\par\vspace{5pt}
+\begin{minipage}{\linewidth}\centering
+\includegraphics[width=.91\linewidth,height=150mm,keepaspectratio]{figures/dashboard/report-01-overview.png}
+\captionof{figure}{Experiment register and selected-run accounting in the desktop application.}\label{fig:overview}
+\end{minipage}
+\end{landscape}\restoregeometry}
 \begin{document}
-\fontsize{10.5}{13.2}\selectfont
-\thispagestyle{empty}
-{\small\color{accent}\textbf{ABV-IIITM Gwalior \quad / \quad IoT Big Data Management}}\\[14pt]
-{\Huge\bfseries\color{ink}Auditable IoT Energy\\[5pt]Data Pipeline}\\[12pt]
-{\Large Delivery accounting, exact finalization,\\and independent verification}\\[10pt]
-{\large Project report \hfill 13 November 2026}
-\vspace{8pt}
-\begin{tabularx}{\linewidth}{@{}XX@{}}
-\textbf{Submitted by} & \textbf{Instructor}\\
-Nishant Harkut & Amandeep Kaur\\
-Enrollment number: 2023IMG-040 &\\
+\begin{titlepage}
+\centering
+\vspace*{3mm}
+{\Large\bfseries Atal Bihari Vajpayee\par}
+{\Large\bfseries Indian Institute of Information Technology\par}
+{\Large\bfseries and Management, Gwalior\par}
+\vspace{9mm}
+\includegraphics[height=52mm]{figures/iiitm-logo.png}\par
+\vspace{9mm}
+{\Huge\bfseries\color{ink}Auditable IoT Energy\par Data Pipeline\par}
+\vspace{6mm}
+{\large Project report\par}
+{\large IoT Big Data Management\par}
+\vspace{15mm}
+\begin{tabularx}{.92\linewidth}{@{}XX@{}}
+\textbf{Submitted by} & \textbf{Submitted to}\\[4pt]
+Nishant Harkut & Dr.~Amandeep Kaur\\
+Enrollment number: 2023IMG-040 & Instructor\\
 \end{tabularx}
-\vspace{10pt}\hrule\vspace{10pt}
-\textbf{Submission repository}\\\repo
-
-\section*{Abstract}
-Smart-meter reports depend on a delivery and processing history that can include retries, delayed readings and malformed messages. This project builds a reproducible pipeline that preserves Kafka deliveries in Bronze, maintains a watermark-bounded Silver candidate, and reconstructs exact Gold records from Bronze after replay-completion checks. Independently implemented Hadoop Streaming programs reproduce source records and aggregates from canonical NDJSON. Finalization requires delivery conservation, complete partition termination, exact comparison agreement and bound result artifacts.
-
-The evaluation uses public Hong Kong University of Science and Technology (HKUST) telemetry and controlled delivery fixtures. Fifteen runs are complete: nine correctness, recovery and watermark fixtures, with three clean repetitions each at 100K and 1M source records. All declared source and aggregate comparisons agree. A restrictive watermark leaves 143 records in Silver while Gold and Hadoop retain 144. Interrupted and uninterrupted fixture executions reproduce four semantic artifacts. Median verification costs are 13.88 minutes at 100K and 165.30 minutes at 1M. Consumption comparisons retain explicit coverage limits and unknown total exposure. A read-only dashboard presents the results and their provenance. The proposed Indian utility application is a review of metering-provider outputs; field effectiveness remains future work.
-
 \vfill
-\begin{tabularx}{\linewidth}{@{}lX@{}}
-\toprule
-\textbf{Evaluation boundary} & Historical replay, one designated physical machine, up to 1M selected source records.\\
-\textbf{Submission update} & Report and portable viewer use saved results. No new distributed workloads were executed for this submission.\\
-\textbf{Evidence available} & Versioned result summaries, original scope and plan, source-audit summary, source code and tests.\\
-\bottomrule
+{\large 13 November 2026\par}
+\vspace{6mm}
+{\small\textbf{Project repository}\par\repo}
+\end{titlepage}
+\setcounter{page}{2}
+\section*{Abstract}
+Smart-meter data can reach an analytics platform through repeated, delayed or malformed deliveries. A successful processing job alone gives little information about whether these deliveries produced a complete, usable result. This project builds an auditable energy-data pipeline that preserves received deliveries, reconstructs exact source records and checks the finalized result through a second implementation.
+
+Public HKUST smart-meter workbooks and Brick metadata are registered and converted into exact canonical records. Deterministic Kafka replay introduces controlled delivery faults. Spark stores deliveries in Bronze, maintains an event-time-bounded Silver view and rebuilds finalized Gold from Bronze. Independent Hadoop Streaming programs compute reference records and aggregates from canonical NDJSON. Delivery accounting, replay termination and exact comparisons must agree before publication.
+
+Fifteen runs were completed: nine correctness, recovery and watermark fixtures, plus three repetitions each at 100K and 1M source records. All declared Spark/Hadoop comparisons agree. A restrictive watermark leaves 143 records in Silver, while Gold retains all 144 source records. Interrupted and uninterrupted fixture executions reproduce four semantic outputs. Median verification time is 13.88 minutes at 100K and 165.30 minutes at 1M.
+
+A read-only dashboard presents source quality, delivery dispositions, verification, recovery and storage/query costs. Consumption analysis distinguishes matching intervals from unsupported comparisons: the measured discrepancy is zero on 138 comparable periods, while two unmatched periods leave total exposure unknown. The proposed Indian application is a DISCOM review of metering-provider data, evaluated here using historical HKUST replay rather than a live utility deployment.
+
+\vspace{8mm}
+\textbf{Keywords:} smart-meter data, delivery accounting, Apache Kafka, Apache Spark, Hadoop Streaming, independent verification.
+\clearpage
+\setcounter{tocdepth}{1}\tableofcontents
+\vspace{6mm}
+\textbf{Reading the report.} Sections 1--3 explain the problem, architecture and data. Sections 4--5 describe processing and verification. Sections 6--9 present measured results. Section 10 explains the dashboard and proposed utility-review workflow. Figures are placed with their discussion. Full desktop captures are also supplied with the project.
+
+\vspace{4mm}
+\subsection*{Dashboard views in this report}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule
+\textbf{View} & \textbf{Page}\\\midrule
+Overview and experiment register & \pageref{fig:overview}\\
+Source audit & \pageref{fig:source}\\
+Delivery inspector & \pageref{fig:layers}\\
+Fault comparison & \pageref{fig:faults}\\
+Independent verification & \pageref{fig:verification}\\
+Watermark and consumption review & \pageref{fig:watermark}\\
+Recovery & \pageref{fig:recovery}\\
+Storage and SQL & \pageref{fig:storage}\\
+Indian utility-review workflow & \pageref{fig:india}\\\bottomrule
 \end{tabularx}
 \clearpage
-\setcounter{tocdepth}{1}
-\tableofcontents
-\vspace{8pt}
-\textbf{Reading the results.} Source availability, delivery conservation, computation agreement and consumption usability are reported separately. Agreement on selected canonical records does not establish that all original measurements were available. Screenshots show the actual read-only dashboard using committed summaries. They do not represent a new live experiment.
-\clearpage
+\section{Introduction}
+\subsection{Problem and motivation}
+Smart-meter analytics depends on more than the value recorded by a meter. The platform must also establish which readings arrived, which were rejected, which were repeated and which contributed to the final result. A retry creates another delivery of the same source event. A delayed reading may arrive after an operational stream has released its state. A malformed message must remain traceable even when it is excluded from analysis.
 
-\section{Problem, objective and contribution}
-A meter-data platform must distinguish the physical reading, its source row, each attempt to deliver that row, and the record eventually used in analysis. Confusing these identities can cause errors. A retry can create two deliveries of one source event. Two workbook rows can have the same timestamp. A valid record can arrive after the operational stream has released its deduplication state. A message can also fail the declared contract while remaining important evidence of what was delivered.
+The project addresses the following problem: \emph{how can a completed meter-data result be checked against its source and delivery history, rather than accepted because a processing job finished?} The solution preserves received evidence, accounts for delivery outcomes, reconstructs exact records after replay completion and compares them with a separately implemented computation.
 
-The project asks a practical question: \emph{what evidence supports the completeness and correctness of a finalized result when the operational delivery path contains controlled faults?} Completing a Spark job answers only part of that question. The implementation therefore records deliveries, classifies their outcomes, reconstructs a finalized source result, and compares that result with a separately implemented computation.
+\subsection{Connection to Indian smart-meter systems}
+The intended user is a distribution-company (DISCOM) analyst reviewing outputs from an advanced metering infrastructure service provider (AMISP). A head-end system (HES) collects readings, and meter-data management (MDM) systems apply validation, estimation and editing (VEE). The analyst needs to distinguish source-data gaps from delivery exceptions and processing differences before interpreting a reported energy result.
 
-\subsection{Indian smart-meter data-review use case}
-The intended user is a distribution-company (DISCOM) analyst reviewing meter-data outputs supplied through an advanced metering infrastructure service provider (AMISP). A head-end system (HES) collects readings, while meter-data management (MDM) systems apply validation, estimation and editing (VEE). The review question is whether a reported result is adequately supported by the received data and its processing history.
+A CSIS survey published on 30 October 2026 reports communication and data-integration limitations in TNPDCL and Tata Power-operated Odisha utilities~\cite{csis}. A CAG report also records historical communication and reporting problems in a Tripura smart-grid project during 2018--2021~\cite{cag}. These are specific examples motivating data review, not estimates of national failure prevalence.
 
-A 30 October 2026 CSIS survey of TNPDCL and Tata Power-operated Odisha utilities reports communication failures and data-integration limitations~\cite{csis}. These two environments motivate the use case; they do not establish a national failure rate. A CAG report published in 2025 also documents historical communication and missing reporting problems in a Tripura smart-grid project during 2018--2021~\cite{cag}. The distinction matters: installation counts alone do not establish that the data needed for analysis are available.
+Raw-data retention, VEE and quality monitoring already exist. MSEDCL's 2022 tender requires original received data, VEE data and edit trails~\cite{msedcl}, while commercial MDM systems expose quality and timeliness metrics~\cite{oracle}. Quality control for AMI data is also established in the literature~\cite{garrison}. This project contributes an evaluated, reproducible integration of delivery accounting, exact reconstruction, independent computation and explicit comparison coverage. It is intended to support review alongside existing systems.
 
-MSEDCL's 2022 procurement document already requires original received raw data, VEE data and change trails~\cite{msedcl}. Commercial systems also provide quality and timeliness monitoring~\cite{oracle}. The proposed role is an inspectable review alongside this established infrastructure. The prototype is not a replacement for HES, MDM or VEE.
-
-\begin{table}[htbp]\centering\small
-\caption{How the Indian review use case connects to the implemented evaluation.}
-\label{tab:india}
-\begin{tabularx}{\linewidth}{@{}p{.24\linewidth}XX@{}}
-\toprule
-\textbf{Analyst's question} & \textbf{Implemented mechanism} & \textbf{Available evidence}\\
-\midrule
-Was source data unavailable? & Profile published rows and retain quality exclusions. & The HKUST resampled grid has 19.04M missing numeric cells.\\
-Did delivery behaviour alter the operational view? & Preserve Bronze, classify dispositions, rebuild exact Gold. & Combined fixture: 432 deliveries; restrictive Silver: 143 versus 144 in Gold.\\
-Does a second implementation agree? & Compare independent Hadoop records and aggregates with Spark Gold. & All 15 saved runs agree on the declared exact fields.\\
-Is a reported zero sufficiently supported? & Compare only matching consumption intervals and retain unknown exposure. & Two incomparable periods prevent a total energy-loss estimate.\\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-The connection is about data accountability rather than a claim of measured Indian billing savings. The pipeline can reconstruct a valid reading that reached Bronze but was omitted by bounded Silver. It cannot recover a physical reading that never arrived. An Indian deployment would require authorized utility inputs, adapters for the actual HES/MDM exports, verified units and time conventions, agreed review rules, and field evaluation.
-
-The engineering contribution is the reproducible integration of delivery accounting, exact source reconstruction, independent computation, recovery checks and explicit comparison coverage. Quality checking is established practice~\cite{garrison}; this project evaluates the integration with public HKUST telemetry and controlled delivery faults.
-
-\subsection{Questions evaluated}
+\subsection{Objectives and completed scope}
+The implementation has five objectives:
 \begin{enumerate}
-\item Can every received data delivery be assigned a recorded valid, duplicate, late or quarantine disposition?
-\item Does finalized Gold agree with an independent implementation on every declared exact field?
-\item Does interrupting and resuming the fixture change its semantic outputs?
-\item Can a restrictive watermark change Silver while exact Gold remains unchanged?
-\item What verification, storage and SQL costs were recorded for the completed 100K and 1M workloads?
+\item Preserve and account for each received delivery, including retries and rejected messages.
+\item Separate the bounded operational result from the exact finalized source result.
+\item Verify source records and aggregates through independent Hadoop programs.
+\item Demonstrate recovery without changing the declared semantic outputs.
+\item Present quality, consumption support and measured processing costs in a usable review interface.
 \end{enumerate}
+The evaluation contains 15 completed runs through 1M selected source records. The 5M experiments were excluded because of resource and time constraints. The Indian application is a proposed workflow, supported by public-source motivation and tested mechanisms. Field billing savings and live utility reliability are outside the evaluation.
 
-The completed evaluation addresses these questions through controlled fixtures and selected real-data workloads. Its scope ends at exact processing of the received canonical records and the recorded verification, storage and query costs.
+
+\overviewpage
+\section{System architecture and technology choices}
+Figure~\ref{fig:architecture} shows the two computation paths. Source registration and canonicalization are shared. Kafka and Spark form the delivery path. Canonical NDJSON also enters HDFS for Hadoop Streaming. Both outputs are checked before finalization. The comparison is independent in implementation after canonicalization, not independent in physical measurement or source preparation.
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{figures/architecture.pdf}
+\caption{Processing path and independent reference computation share a declared canonical input.}\label{fig:architecture}
+\end{figure}
+
+\begin{table}[H]\centering\small
+\caption{Technology choices and their role in the implementation.}\label{tab:stack}
+\begin{tabularx}{\linewidth}{@{}p{.23\linewidth}X@{}}\toprule
+\textbf{Component} & \textbf{Role and reason for use}\\\midrule
+Kafka 3.7.1 & Partitioned delivery log, acknowledgement tracking and reproducible replay~\cite{kafka}.\\
+Spark 3.5.1 & Stateful event-time processing and batch reconstruction from retained deliveries~\cite{spark}.\\
+Hadoop 3.4.3 & HDFS input and standalone Streaming programs for a separately implemented reference~\cite{hadoop}.\\
+NDJSON / Parquet & Explicit record interchange for verification / compressed columnar storage for analysis.\\
+SQLite & Disk-backed ordering and interval processing with bounded working memory.\\
+React / TypeScript & Read-only desktop review of saved results, with Mantine components and Recharts plots.\\
+JSON manifests & Bind source, configuration, completed outputs and presentation inputs by recorded hashes.\\\bottomrule
+\end{tabularx}\end{table}
+
+\subsection{Review workflow and storage decisions}
+The reviewer begins with the source population, selects a completed experiment, checks delivery conservation and exact comparisons, then interprets consumption coverage and execution cost. Figure~\ref{fig:overview} shows the application entry point. Its experiment register links these review tasks to the same selected run.
+
+The workload is historical replay and read-only analysis. Files provide the durable experiment outputs, while SQLite supports local ordered processing. A separate serving database such as HBase would add operational complexity without answering a measured random-access requirement in this project. Parquet and Spark SQL provide the implemented analytical path.
+
+Docker Compose provides Kafka, Spark and Hadoop services for the original experiments. The portable dashboard uses React and TypeScript, Mantine interface components, Recharts plots and Lucide icons to present saved summaries. A Python export step preserves the exact evidence bytes; the browser checks their SHA-256 bindings. The original Streamlit sealed-run viewer remains available for inspecting original local artifacts. The portable viewer runs separately from the experiment services and uses committed result summaries.
+
+
+
 
 \section{Dataset and source preparation}
 \subsection{Public telemetry and metadata}
@@ -144,10 +193,12 @@ The denominator is the number of published rows. It is not an independently expe
 \subsection{Registration and preservation}
 Registration records relative paths, byte sizes and SHA-256 hashes. Structural profiling examines workbook sheets and cells. The exhaustive telemetry audit records value, timestamp and ordering observations. Numeric canonical events and source-quality exclusions are retained separately. Source-quality exclusions are not Kafka quarantine: the former concern preparation, while the latter concerns delivered messages.
 
-The prepared snapshot accounts for 63,273,828 source rows as 44,238,638 numeric records and 19,035,190 source-quality records. This accounting includes finite numeric values that may still have quality flags. It does not declare all numeric readings physically valid. Full audit JSON and row-level files were retained locally during the original work. This portable submission contains their published audit summary, not those large originals.
+The prepared snapshot accounts for 63,273,828 source rows as 44,238,638 numeric records and 19,035,190 source-quality records. This accounting includes finite numeric values that may still have quality flags. It does not declare all numeric readings physically valid.
 
-\section{Canonical identity, time and numeric representation}
-\subsection{A source row is different from a delivery}
+\reportshot{figures/report/02-source-audit.png}{Raw/resampled selection, numeric-cell availability and source-registration counts.}{fig:source}
+
+\subsection{Canonical identity and exact representation}
+\subsubsection{Source rows and delivery identities}
 The source identifier is a SHA-256 digest of a structural locator:
 \begin{equation}
 \mathrm{source\_event\_id}=H(v\,\Vert\,s\,\Vert\,p\,\Vert\,w\,\Vert\,r),
@@ -170,26 +221,15 @@ Brick identifiers and quality flags & Retain semantic relationships and observed
 \end{tabularx}
 \end{table}
 
-\subsection{Exact values and an explicit timezone assumption}
+\subsubsection{Numeric precision and time interpretation}
 For a stored decimal $x$ with scale $d$, the canonical value is the exact integer $z=x10^d$. The scale accompanies the value. The source reader retains stored cell text before conversion through a binary floating-point representation can change it. A bounded check found that meter D0779's stored value \texttt{26724.7}, at scale 15, requires integer \texttt{26724700000000000000}. It exceeds signed 64-bit range. The implemented storage contract uses signed values within a 38-digit decimal envelope, checked through the Spark representation path. This is a representation finding, not evidence of an incorrect physical reading.
 
 All audited timestamps are naive. The executed snapshot interprets them in \texttt{Asia/Hong\_Kong} under an explicit experimental assumption. The dataset authors did not confirm that convention. Original timestamp text is preserved, and absolute UTC boundaries remain conditional on the assumption. The report does not reinterpret HKUST observations as Indian household measurements.
 
-\subsection{Preparation at bounded memory}
+\subsubsection{Bounded-memory preparation}
 The resumable preparation path creates sorted workbook units, writes checkpoints, and merges bounded groups into canonical NDJSON and the quality ledger. It subsequently writes Parquet and the snapshot manifest. The per-workbook checkpoints support preparation recovery without keeping the complete source in memory. They are intermediate work products, distinct from the immutable completed snapshot. The full source is prepared once; the scale runs select source-identifier-sorted prefixes from the numeric snapshot. Those prefixes are not guaranteed continuous meter-days and cannot support an outage-duration or time-of-use study.
 
-\section{System architecture and technology choices}
-Figure~\ref{fig:architecture} shows the two computation paths. Source registration and canonicalization are shared. Kafka and Spark form the delivery path. Canonical NDJSON also enters HDFS for Hadoop Streaming. Both outputs are checked before finalization. The comparison is independent in implementation after canonicalization, not independent in physical measurement or source preparation.
-\begin{figure}[H]\centering
-\includegraphics[width=\linewidth,height=.49\textheight,keepaspectratio]{figures/architecture.pdf}
-\caption{Processing path and independent reference computation share a declared canonical input.}\label{fig:architecture}
-\end{figure}
 
-Kafka supplies ordered partition logs, offsets and producer acknowledgements~\cite{kafka}. Spark Structured Streaming supplies event-time processing and bounded state~\cite{spark}. Hadoop Streaming allows standalone mapper and reducer programs to consume and emit records through standard input and output~\cite{hadoop}. The independent programs do not import Spark transformations.
-
-Parquet is used for columnar storage and Spark SQL. NDJSON is the explicit interchange format for independent processing and exact exported records. SQLite supplies disk-backed ordering and interval-processing support where needed. JSON manifests and reports supply bounded presentation inputs. These storage choices support historical replay and read-only reporting without introducing a separate application-serving database.
-
-Docker Compose provides Kafka, Spark and Hadoop services for the original experiments. The portable dashboard uses React and TypeScript, Mantine interface components, Recharts plots and Lucide icons to present saved summaries. A Python export step preserves the exact evidence bytes; the browser checks their SHA-256 bindings. The original Streamlit sealed-run viewer remains available for inspecting original local artifacts. The portable viewer runs separately from the original experiment services.
 
 \section{Delivery processing and finalization}
 \subsection{Replay records and terminal evidence}
@@ -201,12 +241,12 @@ Bronze archives data deliveries with their transport evidence. Terminal controls
 Silver is an operational candidate. Its event-time watermark bounds state and the period over which duplicate suppression can be maintained. Late valid deliveries are accounted for separately from invalid deliveries. Spark's documented watermark and deduplication semantics motivate this distinction~\cite{spark}. Silver can therefore be useful while still being unsuitable as the sole source for an exact completed result.
 
 Gold is a batch reconstruction from Bronze after completion checks. It parses valid deliveries, deduplicates exact source identities, and computes finalized source records and aggregates. This path retains received valid records that Silver omitted because of the operational watermark. It cannot recover a physical reading that was never supplied to the pipeline. Figure~\ref{fig:finalization} shows the control and data paths.
-\begin{figure}[H]\centering
-\includegraphics[width=\linewidth,height=.49\textheight,keepaspectratio]{figures/finalization.pdf}
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{figures/finalization.pdf}
 \caption{Delivery dispositions and exact finalization. Gold uses Bronze rather than inheriting Silver's omissions.}\label{fig:finalization}
 \end{figure}
 
-The layer audit checks two conservation equations. Let $B$ be Bronze data deliveries, $V$ parsed-valid deliveries, $Q$ quarantine deliveries, $S$ Silver records, $D$ duplicate-valid dispositions and $L$ late-valid dispositions. Under the recorded run definitions,
+Figure~\ref{fig:layers} presents the selected run and its delivery accounting. The layer audit checks two conservation equations. Let $B$ be Bronze data deliveries, $V$ parsed-valid deliveries, $Q$ quarantine deliveries, $S$ Silver records, $D$ duplicate-valid dispositions and $L$ late-valid dispositions. Under the recorded run definitions,
 \begin{align}
 B &= V+Q,\\
 V &= S+D+L.
@@ -218,25 +258,9 @@ The completion check separately binds acknowledged data deliveries to Bronze and
 \subsection{Fail-closed publication of completed runs}
 Finalization requires the replay manifests, delivery totals, terminal offsets, layer dispositions and exact comparisons to reconcile. Decision, query and storage reports must bind to the corresponding finalized artifacts. A run manifest registers the artifacts and is sealed with a SHA-256 binding. The original sealed-run dashboard checks both this manifest and its registered files and rejects incomplete, altered or unreconciled runs. These checks establish byte bindings and declared processing consistency, not adversarial authenticity or physical accuracy.
 
-\section{Experiment design and controlled-fault results}
-The final matrix contains five correctness schedules, two recovery executions, two watermark configurations and six real-data scale executions. Each correctness schedule uses a 144-source-event fixture. The clean scale workloads use 100K or 1M selected canonical numeric records, with three repetitions at each scale. The originally planned 5M repetitions are explicitly excluded for resource and time constraints.
-
-The declared services are Kafka 3.7.1, Spark 3.5.1 and Hadoop 3.4.3. Correctness and recovery fixtures use three Kafka partitions, at most 60 offsets per trigger, and a 24-hour watermark. Both watermark fixtures use one partition and one offset per trigger, with retaining and restrictive thresholds of 24 hours and one minute, respectively. Scale runs use three partitions and 10,000 offsets per trigger. Original machine metadata is hash-bound in the execution plan, but CPU and memory specifications are absent from the portable closure. The reported timings should therefore be interpreted as measurements from that original host, not directly transferable hardware benchmarks.
-
-\begin{table}[htbp]\centering\small
-\caption{Fixture layer counts from the saved closure report. Terminal controls are separate.}\label{tab:fixtures}
-\begin{tabular}{@{}lrrrrrr@{}}\toprule
-Fixture & Bronze & Silver & Dup. & Late & Quar. & Gold\\\midrule
-\csname @@input\endcsname{figures/fixture-table.tex}
-\bottomrule\end{tabular}
-\end{table}
-
-The duplicate schedule repeats unchanged valid deliveries. The malformed schedule adds rejected messages alongside valid originals. The combined schedule includes both effects. Consequently, these schedules test delivery preservation and disposition under declared faults. They do not simulate arbitrary physical-meter corruption or guarantee a nonzero consumption error.
-
-In the combined fixture, 432 Bronze deliveries split into 288 parsed-valid and 144 quarantined deliveries. The valid deliveries split into 144 Silver records and 144 duplicate dispositions. Gold contains the same 144 source records as the clean execution. The five correctness schedules have identical hashes for each of the four corresponding semantic outputs: Gold source records, Gold aggregates, Hadoop source records and Hadoop aggregates. This is stronger than merely reporting equal row totals.
+\reportshot{figures/report/03-delivery-inspector.png}{Selected-run delivery accounting and processing layers.}{fig:layers}
 
 
-The source and aggregate error lists are empty for all 15 completed runs. These results support the implemented fault-accounting and reconstruction behaviour under the selected schedules. They do not estimate the frequency of such faults in HKUST infrastructure or Indian AMI deployments.
 
 \section{Independent Hadoop verification}
 The Hadoop path reads canonical NDJSON rather than Spark's Gold result. Its standalone source-record program emits the declared exact representation, while the mapper/reducer path produces grouped counts, exact scaled-value sums, timestamp bounds and quality counts. Python integer arithmetic supports exact checksum accumulation within the declared contract. Group dimensions include the meter, unit, measurement kind and decimal scale, avoiding addition of incompatible representations.
@@ -246,7 +270,42 @@ Reconciliation sorts and compares exported source records by their declared iden
 
 Checksums of cumulative readings in aggregate records are useful exact processing checks. They are not energy-consumption totals. Consumption is computed separately from valid differences between supported successive readings. This prevents interpreting a large sum of meter-register values as electricity delivered during a period.
 
-All 15 saved comparisons have matching source/aggregate counts and empty error lists. The largest checked source population is 1M selected canonical records. Independence ends at the shared canonical input boundary: both computations can agree on an incorrectly normalized input. The design therefore retains source-audit evidence and the assumptions used during preparation instead of treating cross-engine agreement as physical truth.
+Figure~\ref{fig:verification} exposes the exact-field contract and selected-run comparison. All 15 saved comparisons have matching source/aggregate counts and empty error lists. The largest checked source population is 1M selected canonical records. Independence ends at the shared canonical input boundary: both computations can agree on an incorrectly normalized input. The design therefore retains source-audit evidence and the assumptions used during preparation instead of treating cross-engine agreement as physical truth.
+
+\reportshot{figures/report/05-verification.png}{Recorded Spark/Hadoop source and aggregate comparisons with the exact-field contract.}{fig:verification}
+
+
+
+\section{Experiment design and controlled-fault results}
+The final matrix contains five correctness schedules, two recovery executions, two watermark configurations and six real-data scale executions. Each correctness schedule uses a 144-source-event fixture. The clean scale workloads use 100K or 1M selected canonical numeric records, with three repetitions at each scale. The originally planned 5M repetitions are explicitly excluded for resource and time constraints.
+
+\begin{table}[H]\centering\small
+\caption{Executed streaming configurations. All use the declared stack in Table~\ref{tab:stack}.}
+\begin{tabularx}{\linewidth}{@{}Xrrl@{}}\toprule
+\textbf{Family} & \textbf{Partitions} & \textbf{Offsets/trigger} & \textbf{Watermark}\\\midrule
+Correctness / recovery & 3 & 60 & 24 hours\\
+Watermark comparison & 1 & 1 & 24 hours / 1 minute\\
+Clean scale & 3 & 10,000 & 24 hours\\\bottomrule
+\end{tabularx}\end{table}
+
+\begin{table}[htbp]\centering\small
+\caption{Fixture layer counts from the saved closure report. Terminal controls are separate.}\label{tab:fixtures}
+\begin{tabular}{@{}lrrrrrr@{}}\toprule
+Fixture & Bronze & Silver & Dup. & Late & Quar. & Gold\\\midrule
+\csname @@input\endcsname{figures/fixture-table.tex}
+\bottomrule\end{tabular}
+\end{table}
+
+Figure~\ref{fig:faults} compares the five delivery schedules. The duplicate schedule repeats unchanged valid deliveries. The malformed schedule adds rejected messages alongside valid originals. The combined schedule includes both effects. Consequently, these schedules test delivery preservation and disposition under declared faults. They do not simulate arbitrary physical-meter corruption or guarantee a nonzero consumption error.
+
+In the combined fixture, 432 Bronze deliveries split into 288 parsed-valid and 144 quarantined deliveries. The valid deliveries split into 144 Silver records and 144 duplicate dispositions. Gold contains the same 144 source records as the clean execution. The five correctness schedules have identical hashes for each of the four corresponding semantic outputs: Gold source records, Gold aggregates, Hadoop source records and Hadoop aggregates. This is stronger than merely reporting equal row totals.
+
+
+The source and aggregate error lists are empty for all 15 completed runs. These results support the implemented fault-accounting and reconstruction behaviour under the selected schedules. They do not estimate the frequency of such faults in HKUST infrastructure or Indian AMI deployments.
+
+\reportshot{figures/report/04-fault-comparison.png}{Delivery dispositions across the five controlled schedules.}{fig:faults}
+
+
 
 \section{Watermark behaviour and consumption interpretation}
 The retaining watermark fixture preserves 144 source records in Silver. The restrictive configuration preserves 143, with the remaining valid record classified as late. Both executions produce identical finalized Gold and Hadoop source records. Thus the observed difference is an operational candidate omission, not a failure of exact Gold reconstruction.
@@ -265,19 +324,35 @@ D_{\mathcal C}=\sum_{(m,a,b)\in\mathcal C}
 It is a subtotal over $\mathcal C$, not an error estimate for intervals outside it.
 
 
-The restrictive execution has 140 candidate intervals and 138 verified intervals. There are 138 comparable periods and two incomparable periods. Candidate and verified flagged-record counts are three and six, respectively. The numeric discrepancy over comparable periods is zero. The two incomparable periods cannot be assigned a numeric error from these reports. The report therefore does not call them a 2~kWh loss or claim that verification saved that energy.
+\begin{table}[H]\centering\small
+\caption{Consumption support in the restrictive-watermark execution.}\label{tab:consumption}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule
+\textbf{Observation} & \textbf{Recorded result}\\\midrule
+Candidate / verified intervals & 140 / 138\\
+Comparable / incomparable periods & 138 / 2\\
+Candidate / verified flagged records & 3 / 6\\
+Absolute discrepancy on comparable support & 0 kWh\\
+Total residual exposure & Unknown\\\bottomrule
+\end{tabularx}\end{table}
+Table~\ref{tab:consumption} separates a numeric subtotal from its coverage. The two unmatched periods have no supported numeric error estimate. In particular, they do not represent a measured 2~kWh loss. The dashboard presents the omission and the comparison support together (Figure~\ref{fig:watermark}).
 
 Scenario rates of 0.5, 1.0 and 2.0 currency units per kWh are declared hypothetical rates. They are neither HKUST tariffs nor Indian billing rates. A zero subtotal on comparable intervals yields a zero scenario subtotal there, while total energy error and residual financial exposure remain unknown. The project demonstrates preservation, reconstruction and careful interpretation of coverage; it does not demonstrate actual financial savings.
 
+\reportshot{figures/report/06-watermark-review.png}{Restrictive Silver omission, exact Gold and consumption-comparison coverage.}{fig:watermark}
+
+
+
 \section{Recovery and reproducibility of the finalized answer}
-The recovery fixture compares uninterrupted execution with an interrupted-and-resumed execution. For each semantic artifact, its full SHA-256 digest is compared across the two executions. The four pairs agree. Transport offsets, timing files and physical Parquet layouts are not required to match, because they describe execution details rather than the declared semantic output.
+Figure~\ref{fig:recovery} presents the saved output comparisons. The recovery fixture compares uninterrupted execution with an interrupted-and-resumed execution. For each semantic artifact, its full SHA-256 digest is compared across the two executions. The four pairs agree. Transport offsets, timing files and physical Parquet layouts are not required to match, because they describe execution details rather than the declared semantic output.
 
 
 The scale executions also required recovery. Saved receipts document resumed stages and configuration bindings. All three 1M runs finalized, but their complete workflow durations are unavailable. The report preserves that distinction. A recovered result can still support the recorded exact comparison and the measured component costs without supplying an uninterrupted end-to-end latency measurement.
 
-The current submission did not rerun the pipeline. Its portable loader checks the bytes of committed summaries against an evidence index, verifies their original plan/scope bindings, checks the 15 run identities, and recomputes delivery-conservation equalities. These are new checks of the reporting package. Original runtime verification is recorded at 2 November 2026 in the closure report. Reproducing the original per-artifact checks requires the original sealed directories, which are not included in a small Git checkout.
+The portable submission checks committed summary bytes against an evidence index, verifies original plan/scope bindings, checks the 15 run identities and recomputes delivery-conservation equalities. Original runtime verification was recorded on 2 November 2026. The portable report does not repeat that per-artifact audit of the large original directories. The strict sealed-run viewer remains available when those directories are supplied.
 
-This separation avoids silently treating a screenshot as evidence that the original large files were freshly examined. The original strict loader remains accessible for users who retain those files. The portable mode instead makes the saved results usable without an attached SSD or an operating Kafka/Spark/Hadoop deployment.
+\reportshot{figures/report/07-recovery.png}{Matching fixture output digests and saved scale-recovery receipts.}{fig:recovery}
+
+
 
 \section{Scale, storage and SQL measurements}
 \subsection{Verification cost}
@@ -289,10 +364,10 @@ Events & Minimum & Median & Maximum & Median storage\\\midrule
 \csname @@input\endcsname{figures/performance-table.tex}
 \bottomrule\end{tabular}
 \end{table}
-The 1M median is about 11.91 times the 100K median for a tenfold event-count increase. This is a descriptive ratio on one machine, not a claim of asymptotic complexity or production throughput. The absolute cost is relevant: full independent recomputation is substantially more expensive than showing a job-completion status. The current project measures that cost rather than claiming it negligible.
+Original CPU and memory specifications are absent from the portable closure, although the execution plan binds the original machine metadata. These are single-host measurements. The 1M median is about 11.91 times the 100K median for a tenfold event-count increase. This is a descriptive ratio on one machine, not a claim of asymptotic complexity or production throughput. The absolute cost matters: full independent recomputation is substantially more expensive than showing a job-completion status. The current project measures that cost rather than claiming it negligible.
 
 \subsection{Storage formats}
-Table~\ref{tab:storage} compares the finalized NDJSON export with Zstandard Parquet outputs. Ratios are stored bytes divided by NDJSON bytes. The same ratio is recorded in all three repetitions at each scale. Unpartitioned compressed Parquet is smaller in these workloads. Partitioning adds file and metadata overhead; no benchmark here establishes that partitioning improves query speed.
+Figure~\ref{fig:storage} provides the selected-run storage and cost view. Table~\ref{tab:storage} compares the finalized NDJSON export with Zstandard Parquet outputs. Ratios are stored bytes divided by NDJSON bytes. The same ratio is recorded in all three repetitions at each scale. Unpartitioned compressed Parquet is smaller in these workloads. Partitioning adds file and metadata overhead; no benchmark here establishes that partitioning improves query speed.
 \begin{table}[htbp]\centering\small
 \caption{Recorded storage sizes and ratios for each scale.}\label{tab:storage}
 \begin{tabular}{@{}rrrr@{}}\toprule
@@ -307,31 +382,65 @@ Five read-only SQL workloads cover meter, building, time window, quality and exp
 
 The 100K runs use the original settings. Smaller query partitions were used at 1M. Their timings therefore cannot be treated as a configuration-controlled scaling benchmark. A zero-row quality query in a selected numeric prefix also does not contradict full-source quality findings. Different populations and definitions require separate denominators. Per-run minimum, median and maximum timings and result digests remain available in the committed results instead of being replaced by a single favourable run.
 
-\section{Dashboard, evidence access and demonstration}
-\subsection{Nine views organised around review tasks}
-The entry view combines a selected-run pipeline with an experiment register. An analyst can filter and search the register, inspect a run, export its saved summary, or download the original complete result JSON. Source audit, delivery inspector, fault comparison, verification, watermark review, recovery, storage/SQL and India use case provide the remaining views. The interface uses plain section headings, compact metric rows, tables and a consistent light theme. Units remain visible, and wide tables scroll locally. Figures~\ref{fig:overview}--\ref{fig:india} show actual browser captures with navigation and page context intact. They are grouped in Appendix~\ref{app:dashboard} to keep each capture large enough to read. Each landscape capture preserves a 1280 by 900 desktop viewport. Longer content continues below it; full-page PNGs and a run-inspector dialog capture are retained in \path{docs/submission/figures/dashboard/}.
+\reportshot{figures/report/08-storage-sql.png}{Verification cost and storage results for the selected repetition.}{fig:storage}
 
-The controls operate on saved evidence. Switching source variants changes the displayed population; selecting a run changes its counts and contract; the watermark switch exposes the retaining/restrictive distinction. CSV and JSON exports contain the selected saved records. No control initiates a new experiment or invents a live meter feed.
 
-The portable mode loads only bounded files already in the repository. An evidence index binds the closure report, original scope, original experiment plan and published source-audit summary. Missing or altered inputs prevent the view from displaying affirmative results. The loader also checks count conservation and recorded comparison agreement. Its result is explicitly a validated saved-summary presentation. It is not a replacement for per-artifact verification of the original sealed experiment directories.
 
-The separate sealed-run mode retains the original strict artifact checks. A user who supplies a valid local run directory can inspect the original six sealed views. Opening an absent or incomplete run produces an error. The default portable mode avoids requiring a multi-gigabyte evidence tree merely to review the submitted results.
+\section{Dashboard implementation and utility-review workflow}
+\subsection{From experiment results to a review interface}
+The dashboard has nine task-based views: overview, source audit, delivery inspector, fault comparison, verification, watermark review, recovery, storage/SQL and India use case. The interface uses a consistent light theme, readable metric rows, local table scrolling and visible units. The overview establishes the experiment context. The remaining views answer one review question at a time.
 
-\subsection{A short demonstration}
-A six-minute demonstration can begin with the overview, then show source quality and explain the published-row denominator. The combined-fault view demonstrates the delivery equations. Independent verification shows the declared comparison fields and experiment families. The watermark view explains the 143/144 distinction and unknown total exposure. Recovery and storage/SQL show reproducibility and cost. The India view closes with the intended analyst, the supporting sources and the limits of the evaluation. No live 1M replay is needed.
+Selecting a run updates its recorded counts and comparison contract. Search and filtering operate on the experiment register. The source selector switches between raw and resampled populations. The watermark selector exposes the retaining/restrictive result. Run dialogs, CSV exports, JSON downloads and the report link provide access to the underlying saved information. The viewer starts no experiment services and presents no simulated live meter feed.
 
-A fresh checkout can launch the React viewer with Python 3.11 or newer for its standard-library evidence exporter and Node.js 24 for the locked frontend dependencies. Run \texttt{npm ci} and \texttt{npm run dev} from \path{dashboard/web/}. The separate strict viewer uses the documented Python/Streamlit environment. The README links this report, its LaTeX source, screenshots and machine-readable results. The original dataset is obtained from Dryad separately. It is unnecessary for reviewing the portable submission, but required for reproducing source preparation.
+A Python exporter copies the bounded evidence files without changing their bytes. The browser checks their SHA-256 bindings before displaying results. Missing or altered inputs are rejected. The separate Streamlit sealed-run viewer checks original artifact directories, including their registered files, when those are available. This distinction makes the submission reviewable without requiring the external SSD while retaining the original artifact-verification path.
 
-\section{Limitations, contribution and conclusion}
+\subsection{Proposed Indian utility application}
+Figure~\ref{fig:india} maps the implemented mechanisms to a DISCOM analyst's review. The first step is to identify the source population and its missingness. The next is to account for deliveries and inspect processing exceptions. A finalized result is compared against an independent implementation before consumption coverage is interpreted. This is an accountability workflow alongside HES/MDM/VEE, rather than a replacement for them.
+\begin{table}[H]\centering\small
+\caption{Review questions and the evidence demonstrated in this project.}
+\begin{tabularx}{\linewidth}{@{}p{.38\linewidth}X@{}}\toprule
+\textbf{Review question} & \textbf{Demonstrated evidence}\\\midrule
+Was the supplied source population complete? & Source audit distinguishes missing published cells from delivered-message quarantine.\\
+Did delivery behaviour affect the operational view? & Combined faults are conserved, and restrictive Silver omits one received valid event.\\
+Does a second implementation agree? & Exact source/aggregate comparisons agree for all 15 saved runs.\\
+Can an energy result be interpreted safely? & Comparable support is explicit and unmatched periods retain unknown exposure.\\\bottomrule
+\end{tabularx}\end{table}
+\reportshot{figures/report/09-india-use-case.png}{Proposed DISCOM review workflow and its connection to the implemented checks.}{fig:india}
+
+\subsection{Software verification and handover}
+The submission checks cover parsing and precision, deterministic identity, replay contracts, conservation, finalization, independent computation and presentation bindings. The current non-distributed verification records 582 passing Python tests and seven skips, plus eight frontend tests. Desktop browser checks cover 74 page/viewport and interaction-state cases. No new distributed replay was needed to build this report.
+
+\begin{table}[H]\centering\small
+\caption{Acceptance evidence available in the submission.}
+\begin{tabularx}{\linewidth}{@{}p{.40\linewidth}X@{}}\toprule
+\textbf{Requirement} & \textbf{Verification basis}\\\midrule
+Account for received deliveries & Saved closure totals and recomputed conservation equalities.\\
+Reconstruct exact source events & Gold/source comparisons and controlled-fault semantic output hashes.\\
+Use an independent reference & Standalone Hadoop programs and repository independence scan.\\
+Recover the same semantic answer & Four matching output pairs for the recovery fixture.\\
+Reject unsupported publication & Contract tests, manifest bindings and tampered-evidence browser check.\\
+Provide a usable desktop viewer & Frontend checks, browser interaction checks and 74 layout cases.\\\bottomrule
+\end{tabularx}\end{table}
+
+The seven Python skips comprise four Windows-specific rename checks, one inapplicable mutation fixture, one duplicate-sheet case that openpyxl cannot construct and one unavailable PySpark-dependent check. They are not counted as passes. The reported software checks supplement the completed experiment evidence.
+
+The repository includes code, configurations, tests, committed summaries, report source, figures and a six-minute demonstration guide. The portable bundle includes the compiled report, standalone LaTeX assets, source snapshot and full dashboard captures. Raw workbooks and original large runtime directories are separate. The README documents both the lightweight viewer launch and the experiment environment. A demonstration can follow source audit, combined faults, independent verification, watermark coverage and recovery without a live large-scale replay.
+
+
+\section{Discussion and conclusion}
+\subsection{What the project establishes}
 The implemented contribution is an evidence-preserving pipeline that combines deterministic delivery schedules, an operational stream, exact batch reconstruction, independent computation, recovery checks and a read-only evidence presentation. Its value is demonstrated by concrete distinctions: deliveries differ from source events, Silver differs from exact Gold, and computation agreement differs from source adequacy.
 
+\subsection{Evaluation limits}
 Several limits determine how the results can be used. The workloads are historical replay on one physical machine. Fault schedules are controlled rather than estimated from an Indian utility network. The scale selections are source-identifier prefixes rather than continuous meter-days. Canonicalization is shared by both engines. Absolute timestamps depend on an unconfirmed timezone assumption. Physical measurement accuracy, tariff correctness, live-system reliability and actual financial savings were not evaluated. The final scale evaluation ends at 1M selected source records.
 
 The zero comparable-energy subtotal is a valid scoped result. It also reflects the chosen experiment and comparison definition: duplicate deliveries retain unchanged values, malformed deliveries accompany valid originals, and unmatched interval supports are not priced. A cumulative-register series can lose an intermediate observation without changing the energy difference between unchanged endpoints. The project therefore reports the observable accounting and coverage effects with their comparison coverage.
 
 All 15 saved runs pass their declared source-record and aggregate comparisons. Exact Gold retains the valid source event omitted by restrictive Silver, and the interrupted fixture reproduces four semantic artifacts. These findings support the implemented recovery and independent-verification design through 1M selected source records. The proposed utility-review workflow requires further evaluation on authorized utility data before operational adoption.
 
+\subsection{Future work}
 Further work could evaluate realistic communication-loss histories, continuous-window consumption effects or cheaper selective verification. Such extensions would require new baselines and experiments. They are outside this submitted scope.
+
 
 \FloatBarrier
 \begin{thebibliography}{99}\small
@@ -348,100 +457,5 @@ Further work could evaluate realistic communication-loss histories, continuous-w
 \bibitem{cag} Comptroller and Auditor General of India, Report No. 2 of 2025, Tripura, year ended 31 March 2024, chapter IV, printed p. 144. \href{https://cag.gov.in/uploads/download_audit_report/2025/6--Chapter-4-069ccbc5e407049.02992125.pdf}{Historical smart-grid project observations}.
 \end{thebibliography}
 
-
-\clearpage
-\appendix
-\refstepcounter{section}\label{app:dashboard}
-\addcontentsline{toc}{section}{A Dashboard walkthrough}
-\newgeometry{margin=12mm}
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Overview}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-01-overview.png}
-\captionof{figure}{Select a recorded run, follow its delivery accounting, or search the completed experiment register below.}\label{fig:overview}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Source audit}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-02-source-audit.png}
-\captionof{figure}{Switch between raw and publisher-resampled populations. Numeric-cell availability uses published rows as its denominator.}\label{fig:source}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Delivery inspector}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-03-delivery-inspector.png}
-\captionof{figure}{Inspect one run. Pipeline, accounting and run-contract tabs separate the processing path from its recorded configuration.}\label{fig:layers}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Controlled-fault comparison}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-04-fault-comparison.png}
-\captionof{figure}{Compare five deterministic schedules. Duplicate and quarantined deliveries change while the exact finalized source result is preserved.}\label{fig:faults}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Independent verification}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-05-verification.png}
-\captionof{figure}{Review source and aggregate comparisons from independently implemented Spark and Hadoop transformations over shared canonical inputs.}\label{fig:verification}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Watermark and consumption review}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-06-watermark-review.png}
-\captionof{figure}{Switch watermark policies. The restrictive candidate omits one event; matching-interval energy and unknown total exposure remain distinct.}\label{fig:watermark}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Interrupted execution and recovery}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-07-recovery.png}
-\captionof{figure}{Inspect the four matching semantic output pairs and the separate timing limitations for recovered scale executions.}\label{fig:recovery}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Storage and SQL}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-08-storage-sql.png}
-\captionof{figure}{Choose a recorded scale repetition. Verification cost, storage ratios and ordered-result SQL bindings have explicit measurement scopes.}\label{fig:storage}
-\end{minipage}
-\end{landscape}
-\clearpage
-\begin{landscape}
-\thispagestyle{empty}
-{\large\bfseries\color{ink}Indian utility-review use case}\hfill{\small Energy Pipeline / dashboard}\par\vspace{5pt}
-\begin{minipage}{\linewidth}
-\centering
-\includegraphics[width=.86\linewidth]{figures/dashboard/report-09-india-use-case.png}
-\captionof{figure}{Locate the proposed independent review alongside an existing HES/MDM. The full view includes problem-to-evidence mappings and dated sources.}\label{fig:india}
-\end{minipage}
-\end{landscape}
 
 \end{document}
