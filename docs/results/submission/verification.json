@@ -48,5 +48,13 @@
     "playwright": "1.65.1",
     "pypdf": "7.0.1"
   },
-  "review": "Independent read-only review found no actionable factual or evidence-handling findings."
+  "review": "Independent read-only review found no actionable factual or evidence-handling findings.",
+  "fresh_checkout": {
+    "separate_environment": true,
+    "installed_extra": "dashboard",
+    "saved_runs_loaded": 15,
+    "views_rendered": 8,
+    "missing_sealed_files_rejected": true,
+    "runtime_dataset_required": false
+  }
 }

@@ -49,12 +49,12 @@
     {
       "path": "docs/submission/figures/architecture.pdf",
       "byte_size": 19822,
-      "sha256": "b8a9d3348510f29cb2554192deff50f4c8c9203a890e54b081478eff7e6aa005"
+      "sha256": "7f8bb9160d82a78fd9bceb579b733dcd9b937f3d87653155088dbf437b5b8fa7"
     },
     {
       "path": "docs/submission/figures/architecture.svg",
-      "byte_size": 71312,
-      "sha256": "e73ebd663e2b64062cf3526d9e6559c3921c98c28429d4c9a147b5ab3f2f100b"
+      "byte_size": 70405,
+      "sha256": "be85e644ee3b7ff5840bdfc0a516f3900551a3c9f53f96bd36cff1c365f1edd1"
     },
     {
       "path": "docs/submission/figures/browser-checks.json",
@@ -64,12 +64,12 @@
     {
       "path": "docs/submission/figures/finalization.pdf",
       "byte_size": 19774,
-      "sha256": "7d4bccb0863980ee9501520d00a80bfe56dee2a5eb91a8963b0ad52a146a1f6d"
+      "sha256": "d3165065f35d4b48088502a0adcee491f34eede0ad339cce3c19dff3d754543d"
     },
     {
       "path": "docs/submission/figures/finalization.svg",
-      "byte_size": 67053,
-      "sha256": "1dae5765acea449407bbc27a5c4d0c4e6a00dfd7840cc7e11024d5fa49e50599"
+      "byte_size": 66125,
+      "sha256": "6d17d6adbebbe2f5cedf69624b10ceb9518acb61eabbae10e3356a25c74f30e2"
     },
     {
       "path": "docs/submission/figures/fixture-table.tex",
@@ -134,7 +134,7 @@
     {
       "path": "docs/submission/project-report.pdf",
       "byte_size": 683604,
-      "sha256": "4b2a108e58f28cf54bcc191b12fcf638740b7ece0989a543bdc983e8c9f127f0"
+      "sha256": "7eec37293d5723ac54e7e9847a0f666ba46846e1ce28f2c5d90e917162f480c6"
     },
     {
       "path": "docs/submission/project-report.tex",

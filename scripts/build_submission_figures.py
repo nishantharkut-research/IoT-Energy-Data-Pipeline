@@ -69,7 +69,14 @@ def arrow(ax, start, end, points=None):
 
 def save(fig, name):
     for extension in ("pdf", "svg"):
-        fig.savefig(OUT / f"{name}.{extension}", bbox_inches="tight", pad_inches=0.07)
+        target = OUT / f"{name}.{extension}"
+        fig.savefig(target, bbox_inches="tight", pad_inches=0.07)
+        if extension == "svg":
+            target.write_text(
+                "\n".join(line.rstrip() for line in target.read_text().splitlines())
+                + "\n",
+                encoding="utf-8",
+            )
     plt.close(fig)
 
 

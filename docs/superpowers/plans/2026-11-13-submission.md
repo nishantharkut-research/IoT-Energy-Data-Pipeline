@@ -30,4 +30,5 @@ Combined fixture: 432 Bronze = 288 parsed-valid + 144 quarantine; 288 valid = 14
 - Verification: non-distributed unit/contract/property suite 580 passed, 7 skipped; lint and repository-independence scan pass. Two historical documentation paths made portable. Original final JSON and source-audit summary bytes remain unchanged.
 - Presentation: 16-page LaTeX report; eight actual dashboard captures and two vector diagrams. Rendered PDF inspected; overlapping zero chart labels removed and finalization arrows routed to distinct inputs.
 - Independent review: no actionable factual or evidence-handling findings. No new workload runs; publication-claim gate remains deferred.
-- Delivery: commit and fresh-checkout verification follow; publish the reviewed result to the repository default branch without rewriting history.
+- Fresh checkout: installed the dashboard extra in a separate environment, loaded all 15 saved runs, rendered all eight views, and confirmed that strict mode rejects absent original evidence.
+- Delivery: use reviewed commits and a fast-forward update to the repository default branch; preserve original experiment history.

@@ -12,6 +12,7 @@
 | Eight actual browser views | No page errors or horizontal page overflow |
 | Additional viewport widths | 1280 and 720 pixels, no horizontal page overflow |
 | Explicit sealed-run mode with missing evidence | Rejected, as required |
+| Fresh checkout and separate environment | Dashboard extra installed; all eight views rendered with no runtime dataset |
 | PDF | 16 pages, 8 dashboard captures, 2 vector diagrams; no unresolved references or overfull text warnings |
 | Independent read-only review | No actionable factual or evidence-handling findings |
 
