@@ -118,4 +118,5 @@ export type Page =
   | 'Watermark review'
   | 'Recovery'
   | 'Storage & SQL'
-  | 'India use case';
+  | 'India use case'
+  | 'Meter review demo';

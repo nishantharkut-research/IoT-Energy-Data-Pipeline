@@ -26,6 +26,8 @@ Median verification cost was **13.88 minutes at 100K** and **165.30 minutes at 1
 
 ## Open the portable dashboard
 
+The **Meter review demo** workspace offers three fictional cases: late receipt, duplicate delivery and a source gap. Select a case, compare readings, add an analyst note, mark it reviewed and export the decision. It uses clearly labelled sample data, separately from measured experiment results. Decisions stay in browser memory until reset or refresh; export JSON to retain a copy.
+
 From a fresh checkout, install **Python 3.11+ and Node.js 24**, then run:
 
 ```bash

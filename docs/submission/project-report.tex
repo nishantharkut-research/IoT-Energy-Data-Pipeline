@@ -100,7 +100,8 @@ Independent verification & \pageref{fig:verification}\\
 Watermark and consumption review & \pageref{fig:watermark}\\
 Recovery & \pageref{fig:recovery}\\
 Storage and SQL & \pageref{fig:storage}\\
-Indian utility-review workflow & \pageref{fig:india}\\\bottomrule
+Indian utility-review workflow & \pageref{fig:india}\\
+Illustrative meter review & \pageref{fig:meter-demo}\\\bottomrule
 \end{tabularx}
 \clearpage
 \FloatBarrier
@@ -398,7 +399,7 @@ The 100K runs use the original settings. Smaller query partitions were used at 1
 \FloatBarrier
 \section{Dashboard implementation and utility-review workflow}
 \subsection{From experiment results to a review interface}
-The dashboard has nine task-based views: overview, source audit, delivery inspector, fault comparison, verification, watermark review, recovery, storage/SQL and India use case. The interface uses a consistent light theme, readable metric rows, local table scrolling and visible units. The overview establishes the experiment context. The remaining views answer one review question at a time.
+The dashboard has ten task-based views: overview, source audit, delivery inspector, fault comparison, verification, watermark review, recovery, storage/SQL, India use case and the illustrative meter-review workspace. The interface uses a consistent light theme, readable metric rows, local table scrolling and visible units. The overview establishes the experiment context. The remaining views answer one review question at a time.
 
 Selecting a run updates its recorded counts and comparison contract. Search and filtering operate on the experiment register. The source selector switches between raw and resampled populations. The watermark selector exposes the retaining/restrictive result. Run dialogs, CSV exports, JSON downloads and the report link provide access to the underlying saved information. The viewer starts no experiment services and presents no simulated live meter feed.
 
@@ -416,6 +417,14 @@ Does a second implementation agree? & Exact source/aggregate comparisons agree f
 Can an energy result be interpreted safely? & Comparable support is explicit and unmatched periods retain unknown exposure.\\\bottomrule
 \end{tabularx}\end{table}
 \reportshot{figures/report/09-india-use-case.png}{Proposed DISCOM review workflow and its connection to the implemented checks.}{fig:india}
+
+\subsection{Interactive meter-review demonstration}
+The meter-review workspace in Figure~\ref{fig:meter-demo} turns the proposed analyst workflow into an interactive demonstration. Three fictional meters represent a late reading, a duplicate receipt and an unavailable source reading. A reviewer selects a case, compares the operational and reconstructed readings, records a note and exports the decision as JSON. Marking a case reviewed updates its queue status; a reset clears session decisions.
+
+The fixed cumulative readings are 1000, 1001, 1003 and 1004~kWh at half-hour boundaries. The late case restores the intermediate interval boundary, while the duplicate case retains one source event from two receipts. Both preserve the 4~kWh endpoint difference. In the source-gap case, the missing reading remains unavailable and its neighbouring half-hour allocations remain unresolved. The interface recommends requesting the source rather than inventing a replacement value.
+
+These readings and meter identities are explicitly labelled synthetic. The demonstration exercises the analyst interaction and is separate from the 15 measured Kafka/Spark/Hadoop runs. Review notes are held in browser memory and can be exported; the prototype has no utility connection or persistent case-management backend.
+\reportshot{figures/report/10-meter-review.png}{Selected fictional meter: operational readings, reconstructed records and the review explanation.}{fig:meter-demo}
 
 \subsection{Software verification and handover}
 The submission checks cover parsing and precision, deterministic identity, replay contracts, conservation, finalization, independent computation and presentation bindings. The current non-distributed verification records 582 passing Python tests and seven skips, plus eight frontend tests. Desktop browser checks cover 74 page/viewport and interaction-state cases. No new distributed replay was needed to build this report.

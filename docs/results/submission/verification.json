@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-13T17:44:57.139840+00:00",
+  "verified_at_utc": "2026-11-14T16:47:47.951795+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -20,20 +20,20 @@
     "typescript_build": "passed with strict and noUnusedLocals",
     "production_build": "passed",
     "prettier": "passed",
-    "known_build_advisory": "Single bundle exceeds Vite 500 kB advisory threshold (about 938 kB before gzip); no build failure"
+    "known_build_advisory": "Vite single-chunk size advisory; production build passes"
   },
   "ruff": "passed",
   "repository_independence": "passed",
   "diff_whitespace": "passed",
   "pdf": {
     "path": "docs/submission/project-report.pdf",
-    "pages": 21,
-    "screenshots": 9,
+    "pages": 22,
+    "screenshots": 10,
     "vector_diagrams": 2,
     "unresolved_references": false,
     "overfull_boxes": false,
-    "visual_review": "All 21 final portrait pages rendered and inspected for layout, readable figures and borders",
-    "standalone_source_build": "Passed: 21 portrait pages from 15 required assets; extracted text agrees on every page",
+    "visual_review": "Original pages retained; new demonstration and final report pages rendered and inspected",
+    "standalone_source_build": "Passed: 22 portrait pages from 16 required assets; all extracted page text agrees",
     "diagram_text_containment": "Passed for both vector diagrams",
     "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment",
     "cover": "Separate institutional cover with the supplied IIITM logo; abstract on page 2",
@@ -47,16 +47,17 @@
       15,
       16,
       18,
-      20
+      20,
+      21
     ],
-    "screenshot_placement": "Nine readable portrait workspace captures within corresponding sections; floats constrained to their section",
+    "screenshot_placement": "Ten readable application captures within corresponding sections; floats constrained to their section",
     "diagram_sizing": "Both vector diagrams use full text width and a common label size",
     "supplied_logo_sha256": "17b60b0a9107fc5f17860023c77d4ab54a588a7913eab279eca44c72cf2ffa69",
     "workspace_capture_viewport": "1024x1200 desktop; application workspace clipped to relevant panel bounds",
     "typography": "10.5 pt TeX Gyre Termes body with 13.2 pt leading",
     "title": "MeterTrace: Smart-Meter Data Verification and Review",
     "orientation": "All pages A4 portrait; no rotated or landscape pages",
-    "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all nine screenshots and two vector diagrams"
+    "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all ten screenshots and two vector diagrams"
   },
   "browser": {
     "page_errors": [],
@@ -247,11 +248,25 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "ea6f1e762a401264371148226f632a8e7b110b173e84f5ef056a948fb1134c2c"
+    "report_sha256": "7ae4d1000d0e73d8456a5522a6a317f6ffbac04d4d810e691e3ca02798697861"
   },
   "report_author": {
     "name": "Nishant Harkut",
     "enrollment_number": "2023IMG-040",
     "instructor": "Dr. Amandeep Kaur"
+  },
+  "meter_review_demo": {
+    "basis": "Clearly labelled fixed synthetic data, separate from measured runs",
+    "command": "python -m scripts.check_meter_review_demo",
+    "passed": [
+      "three case selection",
+      "exception filtering",
+      "analyst notes",
+      "review status",
+      "JSON export contents",
+      "session reset",
+      "1024/1280/1440 desktop overflow checks"
+    ],
+    "new_distributed_runs": 0
   }
 }

@@ -16,4 +16,6 @@ Start with `npm run dev` from `dashboard/web` after `npm ci`. Open http://localh
 
 If asked about novelty, explain the engineering integration: exact source reconstruction after bounded streaming, delivery conservation, independent exact comparison and inspectable evidence. Do not claim a new streaming algorithm, actual billing savings or an Indian field deployment.
 
+For a hands-on example, open **Meter review demo**. Explain that the three cases use fictional readings. Select the late-reading case, compare the missing 09:30 observation with its reconstructed counterpart, add a note and mark it reviewed. Select the source-gap case and show why the outcome requests the missing source. Export a review as JSON. This demonstration illustrates the analyst workflow separately from the measured runs; notes are held in browser memory until refresh or reset.
+
 If asked to inspect original artifacts, use the separate Python/Streamlit viewer and select **Sealed run files** only when the original finalized directory is available. The default viewer checks saved summary bindings; it does not silently recreate or rehash missing runtime evidence.

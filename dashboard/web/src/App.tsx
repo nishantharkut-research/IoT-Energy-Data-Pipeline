@@ -16,6 +16,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   Building2,
+  ClipboardCheck,
   ChartColumn,
   ChevronDown,
   Database,
@@ -42,8 +43,14 @@ import { SourceAudit } from './pages/SourceAudit';
 import { Recovery } from './pages/Recovery';
 import { Storage } from './pages/Storage';
 import { India } from './pages/India';
+import { MeterReview } from './pages/MeterReview';
 import type { Evidence, Page, Run } from './types';
 const pages: { name: Page; icon: typeof Database; subtitle: string }[] = [
+  {
+    name: 'Meter review demo',
+    icon: ClipboardCheck,
+    subtitle: 'Explore a fictional meter case, compare readings and record a review decision.',
+  },
   {
     name: 'Overview',
     icon: LayoutDashboard,
@@ -140,16 +147,18 @@ export default function App() {
         </a>
         <ScrollArea className="nav-scroll" type="auto">
           <nav aria-label="Project navigation">
-            {pages.slice(0, 8).map((p) => (
-              <NavLink
-                key={p.name}
-                label={p.name}
-                leftSection={<p.icon size={19} strokeWidth={1.7} />}
-                active={p.name === page}
-                onClick={() => navigate(p.name)}
-                className="workspace-nav"
-              />
-            ))}
+            {pages
+              .filter((p) => p.name !== 'India use case')
+              .map((p) => (
+                <NavLink
+                  key={p.name}
+                  label={p.name}
+                  leftSection={<p.icon size={19} strokeWidth={1.7} />}
+                  active={p.name === page}
+                  onClick={() => navigate(p.name)}
+                  className="workspace-nav"
+                />
+              ))}
             <div className="nav-divider" />
             <NavLink
               label="India use case"
@@ -181,7 +190,11 @@ export default function App() {
               size="sm"
               aria-label="Toggle navigation"
             />
-            <span className="breadcrumb">HKUST smart-meter telemetry</span>
+            <span className="breadcrumb">
+              {page === 'Meter review demo'
+                ? 'Illustrative meter-review workspace'
+                : 'HKUST smart-meter telemetry'}
+            </span>
           </Group>
           <Group gap="sm" wrap="nowrap">
             {evidence?.manifest.report_available && (
@@ -295,10 +308,17 @@ export default function App() {
                   <Storage evidence={evidence} run={run} setSelected={setSelected} />
                 )}
                 {page === 'India use case' && <India evidence={evidence} />}
+                {page === 'Meter review demo' && <MeterReview />}
                 <footer className="workspace-footer">
-                  <span>Original artifact verification: 2 Nov 2026</span>
                   <span>
-                    HKUST evaluation · assumed Hong Kong timezone · selected workloads through 1M
+                    {page === 'Meter review demo'
+                      ? 'Synthetic readings · local session only'
+                      : 'Original artifact verification: 2 Nov 2026'}
+                  </span>
+                  <span>
+                    {page === 'Meter review demo'
+                      ? 'Sample clock times · no utility data or measured savings'
+                      : 'HKUST evaluation · assumed Hong Kong timezone · selected workloads through 1M'}
                   </span>
                 </footer>
               </>
