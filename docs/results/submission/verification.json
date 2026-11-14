@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-14T16:47:47.951795+00:00",
+  "verified_at_utc": "2026-11-14T16:59:05.796675+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -248,7 +248,7 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "7ae4d1000d0e73d8456a5522a6a317f6ffbac04d4d810e691e3ca02798697861"
+    "report_sha256": "334dac3bae20e5a1383a78f79e5ad59328ce672862cd0ffc23bd7ed63f40f4c4"
   },
   "report_author": {
     "name": "Nishant Harkut",

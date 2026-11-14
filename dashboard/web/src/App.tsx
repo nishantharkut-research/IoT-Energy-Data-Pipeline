@@ -49,7 +49,7 @@ const pages: { name: Page; icon: typeof Database; subtitle: string }[] = [
   {
     name: 'Meter review demo',
     icon: ClipboardCheck,
-    subtitle: 'Explore a fictional meter case, compare readings and record a review decision.',
+    subtitle: 'Inspect the meter register, compare readings and record a review decision.',
   },
   {
     name: 'Overview',
@@ -192,7 +192,7 @@ export default function App() {
             />
             <span className="breadcrumb">
               {page === 'Meter review demo'
-                ? 'Illustrative meter-review workspace'
+                ? 'Meter-review workspace'
                 : 'HKUST smart-meter telemetry'}
             </span>
           </Group>
@@ -312,7 +312,7 @@ export default function App() {
                 <footer className="workspace-footer">
                   <span>
                     {page === 'Meter review demo'
-                      ? 'Synthetic readings · local session only'
+                      ? 'Demo data · local session only'
                       : 'Original artifact verification: 2 Nov 2026'}
                   </span>
                   <span>

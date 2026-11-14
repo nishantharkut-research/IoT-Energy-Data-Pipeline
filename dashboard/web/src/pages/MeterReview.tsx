@@ -45,6 +45,11 @@ export function MeterReview() {
   const item = reviewCases.find((c) => c.id === selected)!;
   const readings = [1000, 1001, 1003, 1004];
   const times = ['09:00', '09:30', '10:00', '10:30'];
+  const [readingIndex, setReadingIndex] = useState(3);
+  const unavailable = item.missing && readingIndex === 1;
+  const displayReading = unavailable
+    ? '------'
+    : readings[readingIndex].toFixed(1).padStart(8, '0');
   const visible = reviewCases.filter((c) => filter === 'All exceptions' || c.issue === filter);
   const rows = readings.map((value, i) => {
     const affected = i === 1;
@@ -67,8 +72,8 @@ export function MeterReview() {
     ];
   });
   function exportReview() {
-    download(`${item.id}-illustrative-review.json`, {
-      basis: 'Synthetic demonstration; not measured experiment or utility data',
+    download(`${item.id}-review.json`, {
+      basis: 'Demo data',
       scenario: item,
       readings: rows,
       note: notes[item.id] ?? '',
@@ -78,14 +83,126 @@ export function MeterReview() {
   }
   return (
     <>
-      <div className="review-demo-banner">
-        <Badge variant="light" color="blue">
-          Illustrative scenario
-        </Badge>
-        <span>
-          Fixed sample readings · fictional meter IDs · separate from the 15 measured runs
-        </span>
-      </div>
+      <Panel
+        title="Smart meter"
+        className="meter-device-panel"
+        action={
+          <Badge color="gray" variant="light">
+            Demo data
+          </Badge>
+        }
+      >
+        <div className="meter-device-layout">
+          <svg
+            className="meter-face"
+            viewBox="0 0 340 370"
+            role="img"
+            aria-label={`Digital meter ${item.id}, ${unavailable ? 'reading unavailable' : readings[readingIndex].toFixed(1) + ' kWh'} at ${times[readingIndex]}`}
+          >
+            <rect
+              x="25"
+              y="12"
+              width="290"
+              height="344"
+              rx="22"
+              fill="#e3e7e9"
+              stroke="#9da8af"
+              strokeWidth="2"
+            />
+            <rect x="35" y="22" width="270" height="269" rx="15" fill="#fafbf9" stroke="#c3cacd" />
+            <text x="59" y="54" fill="#244b5b" fontSize="19" fontWeight="700">
+              MeterTrace
+            </text>
+            <text x="59" y="74" fill="#64757a" fontSize="10" letterSpacing="1.2">
+              DIGITAL ENERGY REGISTER
+            </text>
+            <rect
+              x="55"
+              y="94"
+              width="230"
+              height="102"
+              rx="5"
+              fill="#aab899"
+              stroke="#6b7862"
+              strokeWidth="2"
+            />
+            <text x="70" y="116" fontSize="11" fill="#34432e">
+              TOTAL IMPORT
+            </text>
+            <text
+              x="268"
+              y="154"
+              textAnchor="end"
+              fontFamily="monospace"
+              fontSize="37"
+              fill="#233021"
+              data-testid="meter-register"
+            >
+              {displayReading}
+            </text>
+            <text x="268" y="181" textAnchor="end" fontSize="13" fill="#34432e">
+              kWh
+            </text>
+            <circle cx="76" cy="220" r="5" fill={unavailable ? '#b48536' : '#397966'} />
+            <text x="91" y="224" fontSize="11" fill="#4e605e">
+              {unavailable ? 'READING UNAVAILABLE' : 'READING AVAILABLE'}
+            </text>
+            <text x="58" y="251" fontSize="12" fill="#34444b">
+              {item.id}
+            </text>
+            <text x="58" y="270" fontSize="10" fill="#64757a">
+              Cumulative register · kWh
+            </text>
+            <path d="M37 303 H303" stroke="#afb8bc" />
+            {[70, 120, 170, 220, 270].map((x) => (
+              <g key={x}>
+                <rect x={x - 9} y="316" width="18" height="23" rx="3" fill="#b9c1c4" />
+                <circle cx={x} cy="326" r="5" fill="#e6e9e8" stroke="#909b9f" />
+                <path d={`M${x - 3} 326 h6`} stroke="#909b9f" />
+              </g>
+            ))}
+            <circle cx="47" cy="34" r="4" fill="#bbc3c5" />
+            <circle cx="293" cy="34" r="4" fill="#bbc3c5" />
+          </svg>
+          <div className="meter-device-details">
+            <span className="meter-kicker">ENERGY REGISTER</span>
+            <h2>{item.id}</h2>
+            <p>{item.location}</p>
+            <div className="meter-reading-value">
+              {unavailable ? 'Unavailable' : `${readings[readingIndex].toFixed(1)}`}
+              <small>{unavailable ? '' : 'kWh'}</small>
+            </div>
+            <p>
+              Cumulative reading at <strong>{times[readingIndex]}</strong>. Select a timestamp to
+              inspect the register.
+            </p>
+            <Group gap="xs">
+              {times.map((time, index) => (
+                <Button
+                  key={time}
+                  size="sm"
+                  variant={readingIndex === index ? 'filled' : 'default'}
+                  onClick={() => setReadingIndex(index)}
+                  aria-pressed={readingIndex === index}
+                >
+                  {time}
+                </Button>
+              ))}
+            </Group>
+            <div className="meter-device-facts">
+              <span>
+                Measurement<strong>Cumulative energy</strong>
+              </span>
+              <span>
+                Review window<strong>09:00–10:30</strong>
+              </span>
+              <span>
+                Exception<strong>{item.issue}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </Panel>
       <div className="review-summary">
         <Stat title="Review queue" value="3" note="One case per exception type" />
         <Stat
@@ -170,7 +287,7 @@ export function MeterReview() {
         <p>{item.action}</p>
         <Textarea
           label="Analyst note"
-          description="Optional note for this fictional case. Export to keep a copy; refreshing clears session decisions."
+          description="Export to keep a copy; refreshing clears session decisions."
           placeholder="Record the reason for your decision…"
           value={notes[item.id] ?? ''}
           onChange={(e) => setNotes({ ...notes, [item.id]: e.currentTarget.value })}

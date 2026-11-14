@@ -9,7 +9,7 @@
 
 Submit [project-report.pdf](project-report.pdf) and the repository link. The editable report is [project-report.tex](project-report.tex).
 
-The 22-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all ten application captures and both vector diagrams have a consistent thin border. The contents page indexes the dashboard views. The final demonstration uses labelled fictional readings and includes working case selection, notes, review decisions and JSON export.
+The 22-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all ten application captures and both vector diagrams have a consistent thin border. The contents page indexes the dashboard views. The final demonstration uses configured demonstration readings and includes working case selection, notes, review decisions and JSON export.
 
 | Dashboard view | Report page |
 | --- | ---: |
@@ -22,7 +22,7 @@ The 22-page report explains the problem, technology choices, implementation and 
 | Recovery | 16 |
 | Storage and SQL | 18 |
 | Indian utility-review workflow | 20 |
-| Illustrative meter review | 21 |
+| Meter display and review | 21 |
 
 Full desktop screenshots and the run-inspector capture are in `figures/dashboard/`. The readable report workspace captures are in `figures/report/`. Both sets come from the running application.
 
