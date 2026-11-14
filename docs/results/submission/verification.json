@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-14T17:23:50.329067+00:00",
+  "verified_at_utc": "2026-11-14T18:08:01.312362+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -59,7 +59,7 @@
     "orientation": "All pages A4 portrait; no rotated or landscape pages",
     "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all ten screenshots and two vector diagrams",
     "screenshot_sizing": "Screenshots use 86% of text width with original aspect ratio and consistent border",
-    "figure_4_sizing": "Figure 4 delivery-inspector screenshot uses 94% of text width",
+    "figure_4_sizing": "Figure 4 supplied vector diagram uses 96% of text width",
     "caption_alignment": "All figure and table captions are centered",
     "cover_alignment": "Submitted-by and submitted-to details are separated into aligned blocks"
   },
@@ -252,7 +252,7 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "8f90ab7855ea33bbc78523dfbd57658639252db0707329a6c1c850880526bd48"
+    "report_sha256": "5ee416158017b719e5e5bddde98d426a82b0d327ab523e9302c94be629055e9f"
   },
   "report_author": {
     "name": "Nishant Harkut",

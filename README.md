@@ -124,7 +124,7 @@ python -m pytest tests/unit/test_submission_data.py tests/contract/test_final_ev
 
 For the broader non-distributed suite, install the dataset extras in a compatible Python environment (Python 3.11/3.12 for the original PyArrow range), then run `python -m pytest tests/unit tests/contract tests/property -q`. Docker integration checks are separate; do not interpret the portable viewer check as a new distributed experiment.
 
-The report is built with LaTeX. To regenerate figures and actual browser captures, install the report extra with `python -m pip install -e ".[dashboard,report]"`, with Chrome/Chromium available:
+The report is built with LaTeX. To regenerate result-derived tables and browser captures, install the report extra with `python -m pip install -e ".[dashboard,report]"`, with Chrome/Chromium available. The editable process diagrams are stored as SVG files in `docs/submission/figures/` and included with vector PDF exports:
 
 ```bash
 python -m scripts.build_submission_figures

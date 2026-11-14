@@ -15,7 +15,7 @@
 | Production build | All nine views, metric alignment, watermark spacing, count-table fit, menus, dialogs and selected 1M results passed; the prior fresh-install record is retained with its revision |
 | Report download | Served PDF digest matches the current tracked report |
 | Standalone LaTeX source | Compiles independently with 16 logo/figure/table assets to 17 pages |
-| Vector figures | All box labels have internal clearance; repeated PDF/SVG generation is byte-identical in the checked environment |
+| Vector figures | Editable SVG source files are included; report PDFs contain embedded text and vector artwork, with no raster image layer |
 | PDF | 17 pages: separate cover, abstract and technical report with ten section-local portrait desktop workspace captures; two vector diagrams; no unresolved references or overfull boxes |
 | Additional independent reviewer | Unavailable because of usage limit; no successful review claimed for this revision |
 
@@ -29,7 +29,7 @@ Original final-results, scope, plan and published source-audit bytes remain unch
 
 The Indian connection is a sourced proposed DISCOM review role alongside HES/MDM. It is not an evaluated Indian deployment, billing-saving result or replacement for commercial VEE.
 
-The supplied IIITM logo is preserved byte for byte. The dashboard index is on page 3. Captures appear on pages 6, 7, 9, 10, 11, 12, 13, 14, 15 and 16. The source archive compiles independently to the same page count and extracted page text. Figures 1 and 4 use 96% of text width, the delivery-inspector capture uses 94%, and other screenshots use 86%. Original aspect ratios and borders are preserved. Figure and table captions are centered. The 17-page version condenses repeated prose and duplicate tables while retaining the measured results and all ten dashboard captures.
+The supplied IIITM logo is preserved byte for byte. The dashboard index is on page 3. Captures appear on pages 6, 7, 9, 10, 11, 12, 13, 14, 15 and 16. The source archive compiles independently to the same page count and extracted page text. Figures 1 and 4 use 96% of text width; other screenshots use 86%. Original aspect ratios and borders are preserved. Figure and table captions are centered. The 17-page version condenses repeated prose and duplicate tables while retaining the measured results and all ten dashboard captures.
 
 The report was organized around the user task, design choices, implementation and outcomes after comparison with the supplied example report. Ten workspace captures improve printed readability while full application views remain available separately. All numerical results remain bound to the original saved inputs.
 

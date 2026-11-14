@@ -54,7 +54,7 @@ Use a separate output directory to preserve the submitted closure bytes. `--full
 
 ## Rebuild the MeterTrace report PDF
 
-Install LaTeX and `python -m pip install -e ".[dashboard,report]"`. With Chrome/Chromium available:
+Install LaTeX and `python -m pip install -e ".[dashboard,report]"`. The result-derived tables are rebuilt by the script; process diagrams are the editable SVG/PDF assets in `docs/submission/figures/`. With Chrome/Chromium available:
 
 ```bash
 python -m scripts.build_submission_figures
