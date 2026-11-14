@@ -14,9 +14,9 @@
 | Mutated summary input | Viewer rejected it before displaying affirmative results |
 | Production build | All nine views, metric alignment, watermark spacing, count-table fit, menus, dialogs and selected 1M results passed; the prior fresh-install record is retained with its revision |
 | Report download | Served PDF digest matches the current tracked report |
-| Standalone LaTeX source | Compiles independently with 15 logo/figure/table assets to 22 pages |
+| Standalone LaTeX source | Compiles independently with 15 logo/figure/table assets to 17 pages |
 | Vector figures | All box labels have internal clearance; repeated PDF/SVG generation is byte-identical in the checked environment |
-| PDF | 22 pages: separate cover, abstract and technical report with ten section-local portrait desktop workspace captures; two vector diagrams; no unresolved references or overfull boxes |
+| PDF | 17 pages: separate cover, abstract and technical report with ten section-local portrait desktop workspace captures; two vector diagrams; no unresolved references or overfull boxes |
 | Additional independent reviewer | Unavailable because of usage limit; no successful review claimed for this revision |
 
 The regression check reproduced the old watermark defect as a 0.125 px gap between neighbouring text. The corrected production build passes the spacing check. The forced table minimum was removed, metric labels now reserve a consistent height, and 1M conservation equations use full width on smaller desktop windows. Mobile-specific changes explored during investigation were discarded.
@@ -29,10 +29,10 @@ Original final-results, scope, plan and published source-audit bytes remain unch
 
 The Indian connection is a sourced proposed DISCOM review role alongside HES/MDM. It is not an evaluated Indian deployment, billing-saving result or replacement for commercial VEE.
 
-The supplied IIITM logo is preserved byte for byte. The dashboard index is on page 3. Captures appear on pages 6, 8, 11, 12, 14, 15, 16, 18 and 20. The source archive compiles independently to the same page count and extracted page text. Both pipeline diagrams use the same full-width rendering rule.
+The supplied IIITM logo is preserved byte for byte. The dashboard index is on page 3. Captures appear on pages 6, 7, 9, 10, 11, 12, 13, 14, 15 and 16. The source archive compiles independently to the same page count and extracted page text. Both pipeline diagrams use 82% of text width; screenshots use 86%. Original aspect ratios and borders are preserved. The 17-page version condenses repeated prose and duplicate tables while retaining the measured results and all ten dashboard captures.
 
 The report was reorganized around the user task, design choices, implementation and outcomes after comparison with the supplied example report. Nine workspace captures improve printed readability while full application views remain available separately. All numerical results remain bound to the original saved inputs.
 
-The project is titled **MeterTrace: Smart-Meter Data Verification and Review**. All 22 pages are A4 portrait. Every numbered figure has a uniform thin border; screenshots use readable desktop workspace crops. The new name is reflected in the running dashboard and repository README.
+The project is titled **MeterTrace: Smart-Meter Data Verification and Review**. All 17 pages are A4 portrait. Every numbered figure has a uniform thin border; screenshots use readable desktop workspace crops. The new name is reflected in the running dashboard and repository README.
 
 The Meter review demo adds three clearly labelled fictional cases, exception filtering, reading comparison, analyst notes, review status, reset and JSON export. The dedicated browser check passed all three cases, filtering, export contents and 1024/1280/1440 desktop widths. It is separate from measured experiments and has no persistent backend. The report source was independently compiled with all 16 required assets.

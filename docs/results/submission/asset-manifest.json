@@ -53,18 +53,18 @@
     },
     {
       "path": "docs/results/submission/verification.json",
-      "byte_size": 8123,
-      "sha256": "caffd47aefc422694f34cf236fcd36c30480937349c427d80a261e767c7d0d13"
+      "byte_size": 8319,
+      "sha256": "e09ab1bfbf56c68685cb0cbc4c884478fb456df0404cdb3155832453a6d3db44"
     },
     {
       "path": "docs/results/submission/verification.md",
-      "byte_size": 4808,
-      "sha256": "827f191aaac678676c7105d7016770fc353275354ee231e7ac0a7952b0f132d9"
+      "byte_size": 5000,
+      "sha256": "3df8c46b5fa182d4a430cab9d8cc8764b17fed742241fbe312e01cbd4c449770"
     },
     {
       "path": "docs/submission/README.md",
-      "byte_size": 2519,
-      "sha256": "7b7cc157e08b285f2be3c2d480eaf8f5cd7685cb62c05b8d66c08749d8c7cff1"
+      "byte_size": 2582,
+      "sha256": "ad9e3e3bd2879d6763464bbfff3f94baf1ae2b688dc059bfe125343b7cc01cff"
     },
     {
       "path": "docs/submission/figures/01-overview.png",
@@ -358,13 +358,13 @@
     },
     {
       "path": "docs/submission/project-report.pdf",
-      "byte_size": 1030382,
-      "sha256": "334dac3bae20e5a1383a78f79e5ad59328ce672862cd0ffc23bd7ed63f40f4c4"
+      "byte_size": 1017861,
+      "sha256": "8d8660c25d9ec7024ce49cb9617887c9cc1462f35f90c9cbde13b0824333360f"
     },
     {
       "path": "docs/submission/project-report.tex",
-      "byte_size": 45982,
-      "sha256": "ff1afc66e430850143131b4c5a0b7ecb351a39a7ef5151f7dd5fe1c38afb1a1b"
+      "byte_size": 34959,
+      "sha256": "3f53748a255c97002cc60f43127d1251617b9d283bbb472d5aead11b09500461"
     },
     {
       "path": "scripts/capture_report_workspaces.py",

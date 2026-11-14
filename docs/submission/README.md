@@ -9,20 +9,20 @@
 
 Submit [project-report.pdf](project-report.pdf) and the repository link. The editable report is [project-report.tex](project-report.tex).
 
-The 22-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all ten application captures and both vector diagrams have a consistent thin border. The contents page indexes the dashboard views. The final demonstration uses configured demonstration readings and includes working case selection, notes, review decisions and JSON export.
+The 17-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all ten application captures and both vector diagrams have a consistent thin border. The contents page indexes the dashboard views. The meter demonstration includes timestamp selection, notes, review decisions and JSON export. Repeated explanations and duplicate tables were condensed; the measured results and assumptions are retained.
 
 | Dashboard view | Report page |
 | --- | ---: |
 | Overview and selected-run accounting | 6 |
-| Source audit | 8 |
-| Delivery inspector | 11 |
-| Fault comparison | 14 |
-| Independent verification | 12 |
-| Watermark and consumption review | 15 |
-| Recovery | 16 |
-| Storage and SQL | 18 |
-| Indian utility-review workflow | 20 |
-| Meter display and review | 21 |
+| Source audit | 7 |
+| Delivery inspector | 9 |
+| Fault comparison | 11 |
+| Independent verification | 10 |
+| Watermark and consumption review | 12 |
+| Recovery | 13 |
+| Storage and SQL | 14 |
+| Indian utility-review workflow | 15 |
+| Meter display and review | 16 |
 
 Full desktop screenshots and the run-inspector capture are in `figures/dashboard/`. The readable report workspace captures are in `figures/report/`. Both sets come from the running application.
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-14T16:59:05.796675+00:00",
+  "verified_at_utc": "2026-11-14T17:08:35.363123+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -27,37 +27,38 @@
   "diff_whitespace": "passed",
   "pdf": {
     "path": "docs/submission/project-report.pdf",
-    "pages": 22,
+    "pages": 17,
     "screenshots": 10,
     "vector_diagrams": 2,
     "unresolved_references": false,
     "overfull_boxes": false,
-    "visual_review": "Original pages retained; new demonstration and final report pages rendered and inspected",
-    "standalone_source_build": "Passed: 22 portrait pages from 16 required assets; all extracted page text agrees",
+    "visual_review": "All 17 compact portrait pages rendered and inspected; all screenshots, diagrams, key results and meter display retained",
+    "standalone_source_build": "Passed: 17 portrait pages from 16 required assets; all extracted page text agrees",
     "diagram_text_containment": "Passed for both vector diagrams",
     "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment",
     "cover": "Separate institutional cover with the supplied IIITM logo; abstract on page 2",
     "screenshot_index_page": 3,
     "screenshot_pages": [
       6,
-      8,
+      7,
+      9,
       11,
-      14,
+      10,
       12,
+      13,
+      14,
       15,
-      16,
-      18,
-      20,
-      21
+      16
     ],
     "screenshot_placement": "Ten readable application captures within corresponding sections; floats constrained to their section",
-    "diagram_sizing": "Both vector diagrams use full text width and a common label size",
+    "diagram_sizing": "Both vector diagrams use 82% of text width, with original aspect ratio and consistent border",
     "supplied_logo_sha256": "17b60b0a9107fc5f17860023c77d4ab54a588a7913eab279eca44c72cf2ffa69",
     "workspace_capture_viewport": "1024x1200 desktop; application workspace clipped to relevant panel bounds",
-    "typography": "10.5 pt TeX Gyre Termes body with 13.2 pt leading",
+    "typography": "10.5 pt TeX Gyre Termes body with 13 pt leading; compact headings and tables",
     "title": "MeterTrace: Smart-Meter Data Verification and Review",
     "orientation": "All pages A4 portrait; no rotated or landscape pages",
-    "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all ten screenshots and two vector diagrams"
+    "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all ten screenshots and two vector diagrams",
+    "screenshot_sizing": "Screenshots use 86% of text width with original aspect ratio and consistent border"
   },
   "browser": {
     "page_errors": [],
@@ -248,7 +249,7 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "334dac3bae20e5a1383a78f79e5ad59328ce672862cd0ffc23bd7ed63f40f4c4"
+    "report_sha256": "8d8660c25d9ec7024ce49cb9617887c9cc1462f35f90c9cbde13b0824333360f"
   },
   "report_author": {
     "name": "Nishant Harkut",
