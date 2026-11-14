@@ -16,7 +16,7 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \usepackage{titlesec}
 \titleformat{\section}{\Large\bfseries}{\thesection}{.7em}{}
 \titleformat{\subsection}{\large\bfseries}{\thesubsection}{.7em}{}
-\captionsetup{font=small,labelfont=bf,justification=raggedright,singlelinecheck=false}
+\captionsetup{font=small,labelfont=bf,justification=centering,singlelinecheck=true}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{3pt}
 \titlespacing*{\section}{0pt}{12pt}{6pt}
@@ -44,10 +44,10 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 \begingroup\setlength{\fboxsep}{4pt}\setlength{\fboxrule}{.5pt}%
 \fcolorbox{black!60}{white}{\includegraphics[width=\dimexpr#1-2\fboxsep-2\fboxrule\relax]{#2}}%
 \endgroup}
-\newcommand{\reportshot}[3]{%
+\newcommand{\reportshot}[4][.86\linewidth]{%
 \begin{figure}[!htbp]\centering
-\framedfigure[.86\linewidth]{#1}
-\caption{#2}\label{#3}
+\framedfigure[#1]{#2}
+\caption{#3}\label{#4}
 \end{figure}}
 \begin{document}
 \fontsize{10.5}{13}\selectfont
@@ -67,11 +67,18 @@ pdfkeywords={smart meters, Kafka, Spark, Hadoop, reconciliation}}
 {\large Project report\par}
 {\large IoT Big Data Management\par}
 \vspace{15mm}
-\begin{tabularx}{.92\linewidth}{@{}XX@{}}
-\textbf{Submitted by} & \textbf{Submitted to}\\[4pt]
-Nishant Harkut & Dr.~Amandeep Kaur\\
-Enrollment number: 2023IMG-040 & Instructor\\
-\end{tabularx}
+\noindent\begin{minipage}[t]{.43\linewidth}
+\raggedright
+{\large\bfseries Submitted by}\par\vspace{5pt}
+Nishant Harkut\par
+Enrollment number: 2023IMG-040
+\end{minipage}\hfill
+\begin{minipage}[t]{.43\linewidth}
+\raggedright
+{\large\bfseries Submitted to}\par\vspace{5pt}
+Dr.~Amandeep Kaur\par
+Instructor
+\end{minipage}
 \vfill
 {\large 13 November 2026\par}
 \vspace{6mm}
@@ -139,7 +146,7 @@ The evaluation contains 15 completed runs through 1M selected source records. Th
 \section{System architecture and technology choices}
 Figure~\ref{fig:architecture} shows the two computation paths. Source registration and canonicalization are shared. Kafka and Spark form the delivery path. Canonical NDJSON also enters HDFS for Hadoop Streaming. Both outputs are checked before finalization. The comparison is independent in implementation after canonicalization, not independent in physical measurement or source preparation.
 \begin{figure}[H]\centering
-\framedfigure[.82\linewidth]{figures/architecture.pdf}
+\framedfigure[.96\linewidth]{figures/architecture.pdf}
 \caption{Processing path and independent reference computation share a declared canonical input.}\label{fig:architecture}
 \end{figure}
 
@@ -227,7 +234,7 @@ A deterministic schedule fixes source selections, seed, partitions and faults. R
 \subsection{Operational Silver and finalized Gold}
 Silver uses event-time watermarking to bound state and duplicate suppression~\cite{spark}; late-valid records are distinct from invalid messages. After completion checks, batch Gold rebuilds valid source records and aggregates from Bronze, deduplicating exact source identities. It retains received valid records omitted by Silver's watermark, while genuinely unreceived readings remain unavailable. Figure~\ref{fig:finalization} shows both paths.
 \begin{figure}[H]\centering
-\framedfigure[.82\linewidth]{figures/finalization.pdf}
+\framedfigure[.96\linewidth]{figures/finalization.pdf}
 \caption{Delivery dispositions and exact finalization. Gold uses Bronze rather than inheriting Silver's omissions.}\label{fig:finalization}
 \end{figure}
 
@@ -243,7 +250,7 @@ The completion check separately binds acknowledged data deliveries to Bronze and
 \subsection{Fail-closed publication of completed runs}
 Finalization requires the replay manifests, delivery totals, terminal offsets, layer dispositions and exact comparisons to reconcile. Decision, query and storage reports must bind to the corresponding finalized artifacts. A run manifest registers the artifacts and is sealed with a SHA-256 binding. The original sealed-run dashboard checks both this manifest and its registered files and rejects incomplete, altered or unreconciled runs. These checks establish byte bindings and declared processing consistency, not adversarial authenticity or physical accuracy.
 
-\reportshot{figures/report/03-delivery-inspector.png}{Selected-run delivery accounting and processing layers.}{fig:layers}
+\reportshot[.94\linewidth]{figures/report/03-delivery-inspector.png}{Selected-run delivery accounting and processing layers.}{fig:layers}
 
 
 

@@ -8,7 +8,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+from matplotlib.patches import Circle, Ellipse, FancyArrowPatch, FancyBboxPatch, Polygon, Rectangle
 
 from dashboard.submission_data import load_submission_evidence
 
@@ -31,7 +31,61 @@ def canvas(height: float):
     return fig, ax
 
 
-def box(ax, x, y, w, h, text, fill=BLUE):
+def draw_icon(ax, name, x, y, color=NAVY):
+    """Draw small, consistent line icons inside the diagram cards."""
+    ax.add_patch(Circle((x, y), 0.28, facecolor="white", edgecolor="#c5d3df", lw=1.0, zorder=4))
+    lw = 1.45
+    if name in {"file", "ledger", "stack"}:
+        for offset in ([0] if name != "stack" else [-0.09, 0, 0.09]):
+            ax.add_patch(Rectangle((x - 0.13 + offset, y - 0.16 + offset), 0.26, 0.32,
+                                   fill=False, edgecolor=color, linewidth=lw, zorder=5))
+        if name != "file":
+            for row in (-0.07, 0, 0.07):
+                ax.plot([x - 0.08, x + 0.08], [y + row, y + row], color=color, lw=lw, zorder=6)
+    elif name in {"stream", "nodes", "spark"}:
+        points = [(-0.13, -0.1), (0.12, 0), (-0.13, 0.12)]
+        if name == "spark":
+            points = [(-0.13, 0), (0, -0.13), (0.13, 0), (0, 0.13)]
+        if name == "nodes":
+            points = [(-0.13, 0.11), (0, -0.12), (0.13, 0.11)]
+        for a, b in zip(points, points[1:] + points[:1]):
+            ax.plot([x + a[0], x + b[0]], [y + a[1], y + b[1]], color=color, lw=lw, zorder=5)
+        for dx, dy in points:
+            ax.add_patch(Circle((x + dx, y + dy), 0.045, facecolor="white", edgecolor=color, lw=lw, zorder=6))
+    elif name in {"database", "archive"}:
+        ax.add_patch(Ellipse((x, y + 0.12), 0.28, 0.1, fill=False, edgecolor=color, lw=lw, zorder=5))
+        ax.plot([x - 0.14, x - 0.14], [y + 0.12, y - 0.12], color=color, lw=lw, zorder=5)
+        ax.plot([x + 0.14, x + 0.14], [y + 0.12, y - 0.12], color=color, lw=lw, zorder=5)
+        ax.add_patch(Ellipse((x, y - 0.12), 0.28, 0.1, fill=False, edgecolor=color, lw=lw, zorder=5))
+    elif name in {"check", "shield"}:
+        if name == "shield":
+            ax.add_patch(Polygon([(x - 0.15, y + 0.14), (x + 0.15, y + 0.14),
+                                  (x + 0.12, y - 0.04), (x, y - 0.17),
+                                  (x - 0.12, y - 0.04)], closed=True,
+                                 fill=False, edgecolor=color, linewidth=lw, zorder=5))
+        else:
+            ax.add_patch(Circle((x, y), 0.16, fill=False, edgecolor=color, lw=lw, zorder=5))
+        ax.plot([x - 0.08, x - 0.02, x + 0.1], [y, y - 0.07, y + 0.08], color=color, lw=1.8, zorder=6)
+    elif name in {"clock", "window"}:
+        ax.add_patch(Circle((x, y), 0.16, fill=False, edgecolor=color, lw=lw, zorder=5))
+        ax.plot([x, x, x + 0.08], [y + 0.1, y, y - 0.04], color=color, lw=lw, zorder=6)
+    elif name in {"warning", "funnel"}:
+        ax.add_patch(Polygon([(x, y + 0.16), (x + 0.16, y - 0.13), (x - 0.16, y - 0.13)],
+                             closed=True, fill=False, edgecolor=color, linewidth=lw, zorder=5))
+        if name == "warning":
+            ax.plot([x, x], [y + 0.05, y - 0.04], color=color, lw=1.8, zorder=6)
+            ax.add_patch(Circle((x, y - 0.09), 0.015, facecolor=color, edgecolor=color, zorder=6))
+        else:
+            ax.plot([x - 0.1, x + 0.1], [y + 0.03, y + 0.03], color=color, lw=lw, zorder=6)
+            ax.plot([x - 0.06, x + 0.06], [y - 0.04, y - 0.04], color=color, lw=lw, zorder=6)
+    elif name == "dashboard":
+        for dx in (-0.08, 0.08):
+            for dy in (-0.08, 0.08):
+                ax.add_patch(Rectangle((x + dx - 0.055, y + dy - 0.055), 0.11, 0.11,
+                                       fill=False, edgecolor=color, linewidth=lw, zorder=5))
+
+
+def box(ax, x, y, w, h, text, fill=BLUE, icon=None):
     patch = FancyBboxPatch(
         (x - w / 2, y - h / 2),
         w,
@@ -42,13 +96,21 @@ def box(ax, x, y, w, h, text, fill=BLUE):
         facecolor=fill,
     )
     ax.add_patch(patch)
+    if icon:
+        icon_x = x - w / 2 + 0.4
+        draw_icon(ax, icon, icon_x, y)
+        text_x = x - w / 2 + 0.82
+        alignment = "left"
+    else:
+        text_x = x
+        alignment = "center"
     ax.text(
-        x,
+        text_x,
         y,
         text,
-        ha="center",
+        ha=alignment,
         va="center",
-        fontsize=14,
+        fontsize=14.5,
         color=NAVY,
         linespacing=1.35,
     )
@@ -98,14 +160,15 @@ def save(fig, name):
 
 def diagrams():
     fig, ax = canvas(8.2)
-    box(ax, 5, 7.7, 4.5, 0.65, "HKUST workbooks + Brick metadata", "#f1f3f5")
+    box(ax, 5, 7.7, 4.5, 0.78, "HKUST workbooks\nBrick metadata", "#f1f3f5", "file")
     box(
         ax,
         5,
         6.5,
         4.5,
         0.85,
-        "Register, audit and canonicalize\nStable row identity · exact decimal values",
+        "Register, audit and canonicalize\nStable row identity\nExact decimal values",
+        icon="ledger",
     )
     box(
         ax,
@@ -113,7 +176,8 @@ def diagrams():
         5.15,
         4.5,
         0.85,
-        "Canonical snapshot\nParquet + NDJSON + source-quality ledger",
+        "Canonical snapshot\nParquet + NDJSON\nSource-quality ledger",
+        icon="stack",
     )
     arrow(ax, (5, 7.35), (5, 6.95))
     arrow(ax, (5, 6.05), (5, 5.6))
@@ -124,9 +188,10 @@ def diagrams():
         4.1,
         0.85,
         "Deterministic Kafka replay\n"
-        "Schedule and acknowledgements\nTerminal partition records",
+        "Scheduled delivery + receipts\nTerminal partition records",
+        icon="stream",
     )
-    box(ax, 7.6, 3.8, 4.1, 0.85, "HDFS input\nCanonical NDJSON", TEAL)
+    box(ax, 7.6, 3.8, 4.1, 0.85, "HDFS input\nCanonical NDJSON", TEAL, "database")
     arrow(ax, (3.4, 4.7), (2.4, 4.25))
     arrow(ax, (6.6, 4.7), (7.6, 4.25))
     box(
@@ -136,6 +201,7 @@ def diagrams():
         4.1,
         0.85,
         "Spark Structured Streaming\nBronze · Silver · quarantine",
+        icon="spark",
     )
     box(
         ax,
@@ -143,8 +209,9 @@ def diagrams():
         2.45,
         4.1,
         0.85,
-        "Independent Hadoop Streaming\nSource records + exact aggregates",
+        "Independent Hadoop job\nSource records + aggregates",
         TEAL,
+        "nodes",
     )
     arrow(ax, (2.4, 3.35), (2.4, 2.9))
     arrow(ax, (7.6, 3.35), (7.6, 2.9))
@@ -154,7 +221,8 @@ def diagrams():
         1.15,
         4.1,
         0.75,
-        "Completion checks → batch Gold\nRebuild from Bronze by source ID",
+        "Completion checks → Gold\nRebuild Bronze by source ID",
+        icon="check",
     )
     arrow(ax, (2.4, 2.0), (2.4, 1.55))
     box(
@@ -163,8 +231,9 @@ def diagrams():
         1.15,
         4.1,
         0.75,
-        "Reconciliation + saved reports\nCompare Gold with Hadoop outputs",
+        "Reconciliation + saved reports\nCompare Gold + Hadoop results",
         TEAL,
+        "shield",
     )
     arrow(ax, (4.48, 1.15), (5.5, 1.15))
     arrow(ax, (7.6, 2.0), (7.6, 1.55))
@@ -175,13 +244,14 @@ def diagrams():
         "comparison coverage and recorded costs",
         ha="center",
         color=NAVY,
-        fontsize=13,
+        fontsize=14,
     )
     save(fig, "architecture")
 
     fig, ax = canvas(6.8)
     box(
-        ax, 2.4, 6.1, 3.9, 0.8, "Kafka data deliveries\nBronze preserves every delivery"
+        ax, 2.4, 6.1, 3.9, 0.8, "Kafka data deliveries\nBronze stores every delivery"
+        , icon="stream"
     )
     box(
         ax,
@@ -191,6 +261,7 @@ def diagrams():
         0.8,
         "Replay completion evidence\nReceipts and terminal offsets",
         TEAL,
+        "check",
     )
     box(
         ax,
@@ -198,7 +269,8 @@ def diagrams():
         4.6,
         3.9,
         0.85,
-        "Parse and validate\nSource identity · event time · value",
+        "Parse and validate\nCheck ID, time and value",
+        icon="funnel",
     )
     arrow(ax, (2.4, 5.65), (2.4, 5.05))
     box(
@@ -209,11 +281,13 @@ def diagrams():
         0.85,
         "Exact batch Gold\nDeduplicate valid source IDs\nfrom Bronze",
         TEAL,
+        "database",
     )
     arrow(ax, (7.5, 5.65), (7.5, 5.05))
     arrow(ax, (4.4, 6.1), (6.5, 5.05))
     box(
-        ax, 2.4, 2.95, 3.9, 0.85, "Operational Silver\nBounded event-time deduplication"
+        ax, 2.4, 2.95, 3.9, 0.85, "Operational Silver\nEvent-time deduplication",
+        icon="clock",
     )
     arrow(ax, (2.4, 4.15), (2.4, 3.4))
     box(
@@ -222,8 +296,9 @@ def diagrams():
         2.95,
         3.9,
         0.85,
-        "Invalid deliveries → quarantine\nKeep payload and rejection category",
+        "Invalid → quarantine\nRetain payload\nRecord rejection reason",
         AMBER,
+        "warning",
     )
     arrow(ax, (4.4, 4.6), (5.5, 2.95), [(4.95, 4.6), (4.95, 2.95)])
     box(
@@ -232,9 +307,9 @@ def diagrams():
         1.1,
         5.4,
         1.0,
-        "Finalization checks\nDelivery conservation · partition completion\n"
-        "Gold/Hadoop agreement · artifact bindings",
+        "Finalization checks\nDelivery + offset accounting\nGold/Hadoop + artifact checks",
         TEAL,
+        "shield",
     )
     arrow(ax, (7.5, 2.5), (6.5, 1.65))
     arrow(ax, (2.4, 2.5), (3.5, 1.65))
@@ -246,7 +321,7 @@ def diagrams():
         "Late valid records are not quarantine.",
         ha="center",
         color=NAVY,
-        fontsize=13,
+        fontsize=14,
     )
     save(fig, "finalization")
 

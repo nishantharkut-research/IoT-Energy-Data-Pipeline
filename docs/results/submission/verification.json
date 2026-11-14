@@ -1,6 +1,6 @@
 {
   "schema_version": "submission-verification-v2",
-  "verified_at_utc": "2026-11-14T17:08:35.363123+00:00",
+  "verified_at_utc": "2026-11-14T17:23:50.329067+00:00",
   "scope": "Final report, desktop presentation and non-distributed software checks",
   "original_evidence_commit": "1bddfa99ab52b882942ef75973b785954c8aba6c",
   "tests": {
@@ -32,7 +32,7 @@
     "vector_diagrams": 2,
     "unresolved_references": false,
     "overfull_boxes": false,
-    "visual_review": "All 17 compact portrait pages rendered and inspected; all screenshots, diagrams, key results and meter display retained",
+    "visual_review": "All 17 portrait pages rendered and inspected; Figures 1 and 4 enlarged and checked for label fit; captions centered; all screenshots, diagrams, key results and meter display retained",
     "standalone_source_build": "Passed: 17 portrait pages from 16 required assets; all extracted page text agrees",
     "diagram_text_containment": "Passed for both vector diagrams",
     "vector_regeneration": "Byte-identical PDF/SVG regeneration in the checked environment",
@@ -42,8 +42,8 @@
       6,
       7,
       9,
-      11,
       10,
+      11,
       12,
       13,
       14,
@@ -51,14 +51,17 @@
       16
     ],
     "screenshot_placement": "Ten readable application captures within corresponding sections; floats constrained to their section",
-    "diagram_sizing": "Both vector diagrams use 82% of text width, with original aspect ratio and consistent border",
+    "diagram_sizing": "Figures 1 and 4 use 96% of text width; original aspect ratio and consistent border are preserved",
     "supplied_logo_sha256": "17b60b0a9107fc5f17860023c77d4ab54a588a7913eab279eca44c72cf2ffa69",
     "workspace_capture_viewport": "1024x1200 desktop; application workspace clipped to relevant panel bounds",
     "typography": "10.5 pt TeX Gyre Termes body with 13 pt leading; compact headings and tables",
     "title": "MeterTrace: Smart-Meter Data Verification and Review",
     "orientation": "All pages A4 portrait; no rotated or landscape pages",
     "figure_boundaries": "Consistent 0.5 pt grey border with 4 pt padding on all ten screenshots and two vector diagrams",
-    "screenshot_sizing": "Screenshots use 86% of text width with original aspect ratio and consistent border"
+    "screenshot_sizing": "Screenshots use 86% of text width with original aspect ratio and consistent border",
+    "figure_4_sizing": "Figure 4 delivery-inspector screenshot uses 94% of text width",
+    "caption_alignment": "All figure and table captions are centered",
+    "cover_alignment": "Submitted-by and submitted-to details are separated into aligned blocks"
   },
   "browser": {
     "page_errors": [],
@@ -249,7 +252,7 @@
   "current_production": {
     "command": "python -m scripts.check_dashboard_layout --serve dashboard/web/dist",
     "layout_cases_passed": 74,
-    "report_sha256": "8d8660c25d9ec7024ce49cb9617887c9cc1462f35f90c9cbde13b0824333360f"
+    "report_sha256": "8f90ab7855ea33bbc78523dfbd57658639252db0707329a6c1c850880526bd48"
   },
   "report_author": {
     "name": "Nishant Harkut",
@@ -257,7 +260,7 @@
     "instructor": "Dr. Amandeep Kaur"
   },
   "meter_review_demo": {
-    "basis": "Clearly labelled fixed synthetic data, separate from measured runs",
+    "basis": "Configured demo data, separate from measured runs",
     "command": "python -m scripts.check_meter_review_demo",
     "passed": [
       "three case selection",

@@ -9,7 +9,7 @@
 
 Submit [project-report.pdf](project-report.pdf) and the repository link. The editable report is [project-report.tex](project-report.tex).
 
-The 17-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all ten application captures and both vector diagrams have a consistent thin border. The contents page indexes the dashboard views. The meter demonstration includes timestamp selection, notes, review decisions and JSON export. Repeated explanations and duplicate tables were condensed; the measured results and assumptions are retained.
+The 17-page report explains the problem, technology choices, implementation and measured results in that order. Every page is portrait. The supplied IIITM cover logo is preserved, and all ten application captures and both vector diagrams have a consistent thin border. Figures 1 and 4 use larger labels and restrained line illustrations to distinguish source data, processing, storage, and verification. Figure 1 separates the delivery and reference paths. All figure and table captions are centered, and the cover details use separate aligned blocks. The contents page indexes the dashboard views. The meter demonstration includes timestamp selection, notes, review decisions and JSON export. Repeated explanations and duplicate tables were condensed; the measured results and assumptions are retained.
 
 | Dashboard view | Report page |
 | --- | ---: |

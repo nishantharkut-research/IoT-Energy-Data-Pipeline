@@ -53,18 +53,18 @@
     },
     {
       "path": "docs/results/submission/verification.json",
-      "byte_size": 8319,
-      "sha256": "e09ab1bfbf56c68685cb0cbc4c884478fb456df0404cdb3155832453a6d3db44"
+      "byte_size": 8626,
+      "sha256": "12a2ce8584d71ecfcf3901cd3619ee4ea67ff4a4964102b06575b6cf7c6cac06"
     },
     {
       "path": "docs/results/submission/verification.md",
-      "byte_size": 5000,
-      "sha256": "3df8c46b5fa182d4a430cab9d8cc8764b17fed742241fbe312e01cbd4c449770"
+      "byte_size": 5065,
+      "sha256": "5fdd1feb39d5ae435f6092d30cde8e9dd3b13bc78a991ce7c6b07d51c25d6f71"
     },
     {
       "path": "docs/submission/README.md",
-      "byte_size": 2582,
-      "sha256": "ad9e3e3bd2879d6763464bbfff3f94baf1ae2b688dc059bfe125343b7cc01cff"
+      "byte_size": 2865,
+      "sha256": "46ff71cb6365f7f9f0bf3389fd867bb5db5da52cfa3b684514598e8872ba9474"
     },
     {
       "path": "docs/submission/figures/01-overview.png",
@@ -108,13 +108,13 @@
     },
     {
       "path": "docs/submission/figures/architecture.pdf",
-      "byte_size": 19761,
-      "sha256": "3bd1fe7c97e12310ba11e0904b8aa8db3063f0b80cb6f571ec7bc666d973ebf2"
+      "byte_size": 23831,
+      "sha256": "78ae30a8dc5cbb0d5de71df46ca35375269ab918477532202b6e0b72c1d864be"
     },
     {
       "path": "docs/submission/figures/architecture.svg",
-      "byte_size": 71059,
-      "sha256": "1e34aef0a02085ae49d4c78b529fee31bf20a2aab8db72b105b57fc90a1600d9"
+      "byte_size": 89253,
+      "sha256": "1d2de94f968f5a2f72f148d3d812b4e117125f874007ae6bb263534c789c8e3b"
     },
     {
       "path": "docs/submission/figures/browser-checks.json",
@@ -228,13 +228,13 @@
     },
     {
       "path": "docs/submission/figures/finalization.pdf",
-      "byte_size": 19334,
-      "sha256": "e66f38f41d0139db71a75530b52c8ad8a8e446ad65f76554c9937790ebd7a28f"
+      "byte_size": 22139,
+      "sha256": "1b46f1f1c90ac6156af3acd63dc03927a06c542dfec3099398ab285f7e562db9"
     },
     {
       "path": "docs/submission/figures/finalization.svg",
-      "byte_size": 65156,
-      "sha256": "9cf38cace081e18ceb969d1784e50af2ac7473dd6afd26729b7ee71d8ccae44e"
+      "byte_size": 73978,
+      "sha256": "145fc837c35addb215b6bee5f8be2387f52b2abb4739f5189e882a548cbd7406"
     },
     {
       "path": "docs/submission/figures/fixture-table.tex",
@@ -358,13 +358,13 @@
     },
     {
       "path": "docs/submission/project-report.pdf",
-      "byte_size": 1017861,
-      "sha256": "8d8660c25d9ec7024ce49cb9617887c9cc1462f35f90c9cbde13b0824333360f"
+      "byte_size": 1025091,
+      "sha256": "8f90ab7855ea33bbc78523dfbd57658639252db0707329a6c1c850880526bd48"
     },
     {
       "path": "docs/submission/project-report.tex",
-      "byte_size": 34959,
-      "sha256": "3f53748a255c97002cc60f43127d1251617b9d283bbb472d5aead11b09500461"
+      "byte_size": 35100,
+      "sha256": "7a4c52076522d91824503c21da8e5d8cdeb154169af808fd0cc97ac4a9a57e86"
     },
     {
       "path": "scripts/capture_report_workspaces.py",
